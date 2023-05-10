@@ -38,8 +38,8 @@ void main(List<String> args) async {
   // A PostRequest.
   //
   // Prints:
-  // 'mutative request success'
-  // 'success!' <-- From ExampleEventListener
+  // 'mutative request success' <-- From ExampleEventListener
+  // 'success!'
   await client.execute<String, void>(
     PostRequest('/foo', data: NetworkRequestBody.empty()),
     onResponse: (r) {
