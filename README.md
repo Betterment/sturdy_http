@@ -43,7 +43,8 @@ Future<Result<MyData>> fetch({required int id}) async {
   );
 }
 ```
-Note: because `Result` types are _very_ opinionated, `SturdyHttp` does not return a `Result` but rather the generic type provided to `execute` (and returned by `onResponse`). If this type fails to be
+> **Note**
+> Because `Result` types are _very_ opinionated, `SturdyHttp` does not return a `Result` but rather the generic type provided to `execute` (and returned by `onResponse`). If this type fails to be
 deserialized, an `Exception` will be thrown. This can be managed by adding an extension on top of the client itself, which is how we interact with the client ourselves. For example:
 
 ```dart
@@ -66,6 +67,9 @@ extension SturdyHttpX on SturdyHttp {
   }
 }
 ```
+
+> **Warning**
+> We're considering open-sourcing our `Result` type and integrating it into `SturdyHttp`. If we did, we'd likely change `execute`'s return type to be a `Result`, and offer `executeUnsafe` as the non-`Result` (i.e `Exception` throwing) alternative. This would be a breaking change.
 
 ## Contributing
 
