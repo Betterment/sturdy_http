@@ -33,7 +33,7 @@ class MainIsolateDeserializer implements Deserializer {
   }
 }
 
-const _workerIsolateName = 'httpClientWorkerIsolate';
+const _workerIsolateName = 'sturdyHttpWorkerIsolate';
 
 /// A [Deserializer] that shifts its work to a worker isolate
 /// named [_workerIsolateName]. The worker isolate is spawned
