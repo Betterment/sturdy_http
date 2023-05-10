@@ -43,7 +43,7 @@ Future<Result<MyData>> fetch({required int id}) async {
   );
 }
 ```
-Note: because `Result` types are _very_ opinionated, the `SturdyHttp` does not return a `Result` but rather the generic type provided to `execute` (and returned by `onResponse`). If this type fails to be
+Note: because `Result` types are _very_ opinionated, `SturdyHttp` does not return a `Result` but rather the generic type provided to `execute` (and returned by `onResponse`). If this type fails to be
 deserialized, an `Exception` will be thrown. This can be managed by adding an extension on top of the client itself, which is how we interact with the client ourselves. For example:
 
 ```dart
