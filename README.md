@@ -17,6 +17,7 @@ A strongly typed, event-based, reliable HTTP client that wraps `Dio`.
 - Clear enumeration of response types (see `NetworkResponse`)
 
 > **Note**
+
 > At Betterment, we've used `SturdyHttp` internally for the past year. It's been battle-tested across over 200 network request call sites throughout the application and its opinionated nature is a direct result of this experimentation. We're always open to making it more flexible if it makes sense to do so; feel free to drop an Issue to discuss doing so!
 
 ## Usage
@@ -45,6 +46,7 @@ Future<Result<MyData>> fetch({required int id}) async {
 }
 ```
 > **Note**
+
 > Because `Result` types are _very_ opinionated, `SturdyHttp` does not return a `Result` but rather the generic type provided to `execute` (and returned by `onResponse`). If this type fails to be
 deserialized, an `Exception` will be thrown. This can be managed by adding an extension on top of the client itself, which is how we interact with the client ourselves. For example:
 
@@ -70,6 +72,7 @@ extension SturdyHttpX on SturdyHttp {
 ```
 
 > **Warning**
+
 > We're considering open-sourcing our `Result` type and integrating it into `SturdyHttp`. If we did, we'd likely change `execute`'s return type to be a `Result`, and offer `executeUnsafe` as the non-`Result` (i.e `Exception` throwing) alternative. This would be a breaking change.
 
 ## Contributing
