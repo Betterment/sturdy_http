@@ -16,6 +16,8 @@ A strongly typed, event-based, reliable HTTP client that wraps `Dio`.
 - Worker `Isolate` deserialization to avoid bogging down the main `Isolate` (see `Deserializer`)
 - Clear enumeration of response types (see `NetworkResponse`)
 
+> **Note:** At Betterment, we've used `SturdyHttp` internally for the past year. It's been battle-tested across over 200 network request call sites throughout the application and its opinionated nature is a direct result of this experimentation. We're always open to making it more flexible if it makes sense to do so; feel free to drop an Issue to discuss doing so!
+
 ## Usage
 
 Start by creating your `SturdyHttp` instance, likely during application bootstrap:
