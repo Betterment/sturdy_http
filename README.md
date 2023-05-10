@@ -1,5 +1,10 @@
 # SturdyHttp
 
+[![pub package](https://img.shields.io/pub/v/sturdy_http.svg)](https://pub.dev/packages/sturdy_http)
+[![Build status](https://github.com/Betterment/sturdy_http/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Betterment/sturdy_http/actions/workflows/ci.yml?query=branch%3Amain)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Betterment/sturdy_http/pulse)
+
 A strongly typed, event-based, reliable HTTP client that wraps `Dio`.
 
 ## Features
