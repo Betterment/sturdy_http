@@ -58,7 +58,7 @@ class NetworkResponse<R> with _$NetworkResponse<R> {
 }
 
 /// Extensions on the [NetworkResponse] type
-extension NetworkResponseX on NetworkResponse {
+extension NetworkResponseX<M> on NetworkResponse<M> {
   /// Whether this [NetworkResponse] should be considered successful
   bool get isSuccess => this is _Ok || this is _OkNoContent;
 }
