@@ -1,4 +1,4 @@
-library http_client;
+library sturdy_http;
 
 export 'src/_dio_error.dart';
 export 'src/sturdy_http.dart';
