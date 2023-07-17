@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sturdy_http/sturdy_http.dart';
 
@@ -25,7 +26,10 @@ abstract class NetworkRequest {
     required this.data,
     required this.shouldTriggerDataMutation,
     this.queryParams,
-    this.headers,
+    this.options,
+    this.cancelToken,
+    this.onReceiveProgress,
+    this.onSendProgress,
   });
 
   /// {@macro network_request_type}
@@ -45,8 +49,17 @@ abstract class NetworkRequest {
   /// Query parameters for this request
   final Map<String, dynamic>? queryParams;
 
-  /// Headers for this request
-  final Map<String, String>? headers;
+  /// [Options] for this request
+  final Options? options;
+
+  /// [CancelToken] for this request
+  final CancelToken? cancelToken;
+
+  /// [ProgressCallback] for receive progress for this request
+  final ProgressCallback? onReceiveProgress;
+
+  /// [ProgressCallback] for send progress for this request
+  final ProgressCallback? onSendProgress;
 }
 
 /// {@template get_request}
@@ -58,7 +71,9 @@ class GetRequest extends NetworkRequest {
     String path, {
     super.data = const NetworkRequestBody.empty(),
     Map<String, dynamic>? queryParameters,
-    super.headers,
+    super.options,
+    super.onReceiveProgress,
+    super.onSendProgress,
   }) : super(
           type: NetworkRequestType.Get,
           path: path,
@@ -77,7 +92,9 @@ class PostRequest extends NetworkRequest {
     required super.data,
     Map<String, dynamic>? queryParameters,
     super.shouldTriggerDataMutation = true,
-    super.headers,
+    super.options,
+    super.onReceiveProgress,
+    super.onSendProgress,
   }) : super(
           type: NetworkRequestType.Post,
           path: path,
@@ -95,7 +112,9 @@ class PutRequest extends NetworkRequest {
     required super.data,
     Map<String, dynamic>? queryParameters,
     super.shouldTriggerDataMutation = true,
-    super.headers,
+    super.options,
+    super.onReceiveProgress,
+    super.onSendProgress,
   }) : super(
           type: NetworkRequestType.Put,
           path: path,
@@ -113,7 +132,9 @@ class DeleteRequest extends NetworkRequest {
     super.data = const NetworkRequestBody.empty(),
     Map<String, dynamic>? queryParameters,
     super.shouldTriggerDataMutation = true,
-    super.headers,
+    super.options,
+    super.onReceiveProgress,
+    super.onSendProgress,
   }) : super(
           type: NetworkRequestType.Delete,
           path: path,

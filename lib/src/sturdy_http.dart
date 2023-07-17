@@ -134,10 +134,12 @@ class SturdyHttp {
           json: (json) => json,
         ),
         queryParameters: request.queryParams,
-        options: Options(
-          method: request.type.name,
-          headers: request.headers,
-        ),
+        options: request.options != null
+            ? request.options!.copyWith(method: request.type.name)
+            : Options(method: request.type.name),
+        cancelToken: request.cancelToken,
+        onReceiveProgress: request.onReceiveProgress,
+        onSendProgress: request.onSendProgress,
       );
       if (dioResponse.statusCode == 204) {
         resolvedResponse = const NetworkResponse.okNoContent();

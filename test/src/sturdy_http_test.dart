@@ -147,6 +147,31 @@ void main() {
               );
             });
           });
+
+          group('when manual options are provided', () {
+            test('request options contain manually provided values', () async {
+              await buildSubject().execute<Json, Foo?>(
+                GetRequest(
+                  '/foo',
+                  data: NetworkRequestBody.json(
+                    <String, dynamic>{
+                      'foo': 'bar',
+                    },
+                  ),
+                  options: Options(extra: {'foo': 'bar'}),
+                ),
+                onResponse: (response) {
+                  return response.maybeWhen(orElse: () => null);
+                },
+              );
+              expect(
+                options.extra,
+                isA<Json>()
+                    .having((json) => json.keys.single, 'key', 'foo')
+                    .having((json) => json.values.single, 'value', 'bar'),
+              );
+            });
+          });
         });
 
         group('queryParameters', () {
