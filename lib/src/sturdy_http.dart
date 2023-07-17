@@ -3,7 +3,6 @@ import 'dart:isolate';
 
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sturdy_http/sturdy_http.dart';
 import 'package:uuid/uuid.dart';
@@ -164,7 +163,7 @@ class SturdyHttp {
           resolvedResponse = NetworkResponse.ok(data as R);
         }
       }
-    } on DioError catch (error) {
+    } on DioException catch (error) {
       switch (error.response?.statusCode) {
         case 401:
           await _onEvent(SturdyHttpEvent.authFailure(error.requestOptions));
@@ -240,22 +239,6 @@ Dio _configureDio({
     ..map((dio) {
       if (customAdapter != null) {
         return dio..httpClientAdapter = customAdapter;
-      }
-      return dio;
-    })
-    ..map((dio) {
-      if (proxy != null && dio.httpClientAdapter is IOHttpClientAdapter) {
-        final host = proxy['host'];
-        final port = proxy['port'];
-        final proxyString = '$host:$port';
-
-        (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
-            (client) {
-          client.findProxy = (url) {
-            return 'PROXY $proxyString';
-          };
-          return null;
-        };
       }
       return dio;
     });
