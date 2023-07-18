@@ -20,18 +20,21 @@ mixin _$NetworkRequestBody {
   TResult when<TResult extends Object?>({
     required TResult Function() empty,
     required TResult Function(Map<String, dynamic> data) json,
+    required TResult Function(Object? data) raw,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? empty,
     TResult? Function(Map<String, dynamic> data)? json,
+    TResult? Function(Object? data)? raw,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? empty,
     TResult Function(Map<String, dynamic> data)? json,
+    TResult Function(Object? data)? raw,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -39,53 +42,24 @@ mixin _$NetworkRequestBody {
   TResult map<TResult extends Object?>({
     required TResult Function(_Empty value) empty,
     required TResult Function(_Json value) json,
+    required TResult Function(_Raw value) raw,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Empty value)? empty,
     TResult? Function(_Json value)? json,
+    TResult? Function(_Raw value)? raw,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Empty value)? empty,
     TResult Function(_Json value)? json,
+    TResult Function(_Raw value)? raw,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $NetworkRequestBodyCopyWith<$Res> {
-  factory $NetworkRequestBodyCopyWith(
-          NetworkRequestBody value, $Res Function(NetworkRequestBody) then) =
-      _$NetworkRequestBodyCopyWithImpl<$Res, NetworkRequestBody>;
-}
-
-/// @nodoc
-class _$NetworkRequestBodyCopyWithImpl<$Res, $Val extends NetworkRequestBody>
-    implements $NetworkRequestBodyCopyWith<$Res> {
-  _$NetworkRequestBodyCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-}
-
-/// @nodoc
-abstract class _$$_EmptyCopyWith<$Res> {
-  factory _$$_EmptyCopyWith(_$_Empty value, $Res Function(_$_Empty) then) =
-      __$$_EmptyCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$_EmptyCopyWithImpl<$Res>
-    extends _$NetworkRequestBodyCopyWithImpl<$Res, _$_Empty>
-    implements _$$_EmptyCopyWith<$Res> {
-  __$$_EmptyCopyWithImpl(_$_Empty _value, $Res Function(_$_Empty) _then)
-      : super(_value, _then);
 }
 
 /// @nodoc
@@ -112,6 +86,7 @@ class _$_Empty implements _Empty {
   TResult when<TResult extends Object?>({
     required TResult Function() empty,
     required TResult Function(Map<String, dynamic> data) json,
+    required TResult Function(Object? data) raw,
   }) {
     return empty();
   }
@@ -121,6 +96,7 @@ class _$_Empty implements _Empty {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? empty,
     TResult? Function(Map<String, dynamic> data)? json,
+    TResult? Function(Object? data)? raw,
   }) {
     return empty?.call();
   }
@@ -130,6 +106,7 @@ class _$_Empty implements _Empty {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? empty,
     TResult Function(Map<String, dynamic> data)? json,
+    TResult Function(Object? data)? raw,
     required TResult orElse(),
   }) {
     if (empty != null) {
@@ -143,6 +120,7 @@ class _$_Empty implements _Empty {
   TResult map<TResult extends Object?>({
     required TResult Function(_Empty value) empty,
     required TResult Function(_Json value) json,
+    required TResult Function(_Raw value) raw,
   }) {
     return empty(this);
   }
@@ -152,6 +130,7 @@ class _$_Empty implements _Empty {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Empty value)? empty,
     TResult? Function(_Json value)? json,
+    TResult? Function(_Raw value)? raw,
   }) {
     return empty?.call(this);
   }
@@ -161,6 +140,7 @@ class _$_Empty implements _Empty {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Empty value)? empty,
     TResult Function(_Json value)? json,
+    TResult Function(_Raw value)? raw,
     required TResult orElse(),
   }) {
     if (empty != null) {
@@ -172,35 +152,6 @@ class _$_Empty implements _Empty {
 
 abstract class _Empty implements NetworkRequestBody {
   const factory _Empty() = _$_Empty;
-}
-
-/// @nodoc
-abstract class _$$_JsonCopyWith<$Res> {
-  factory _$$_JsonCopyWith(_$_Json value, $Res Function(_$_Json) then) =
-      __$$_JsonCopyWithImpl<$Res>;
-  @useResult
-  $Res call({Map<String, dynamic> data});
-}
-
-/// @nodoc
-class __$$_JsonCopyWithImpl<$Res>
-    extends _$NetworkRequestBodyCopyWithImpl<$Res, _$_Json>
-    implements _$$_JsonCopyWith<$Res> {
-  __$$_JsonCopyWithImpl(_$_Json _value, $Res Function(_$_Json) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? data = null,
-  }) {
-    return _then(_$_Json(
-      null == data
-          ? _value._data
-          : data // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-    ));
-  }
 }
 
 /// @nodoc
@@ -233,17 +184,12 @@ class _$_Json implements _Json {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(_data));
 
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_JsonCopyWith<_$_Json> get copyWith =>
-      __$$_JsonCopyWithImpl<_$_Json>(this, _$identity);
-
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() empty,
     required TResult Function(Map<String, dynamic> data) json,
+    required TResult Function(Object? data) raw,
   }) {
     return json(data);
   }
@@ -253,6 +199,7 @@ class _$_Json implements _Json {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? empty,
     TResult? Function(Map<String, dynamic> data)? json,
+    TResult? Function(Object? data)? raw,
   }) {
     return json?.call(data);
   }
@@ -262,6 +209,7 @@ class _$_Json implements _Json {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? empty,
     TResult Function(Map<String, dynamic> data)? json,
+    TResult Function(Object? data)? raw,
     required TResult orElse(),
   }) {
     if (json != null) {
@@ -275,6 +223,7 @@ class _$_Json implements _Json {
   TResult map<TResult extends Object?>({
     required TResult Function(_Empty value) empty,
     required TResult Function(_Json value) json,
+    required TResult Function(_Raw value) raw,
   }) {
     return json(this);
   }
@@ -284,6 +233,7 @@ class _$_Json implements _Json {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Empty value)? empty,
     TResult? Function(_Json value)? json,
+    TResult? Function(_Raw value)? raw,
   }) {
     return json?.call(this);
   }
@@ -293,6 +243,7 @@ class _$_Json implements _Json {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Empty value)? empty,
     TResult Function(_Json value)? json,
+    TResult Function(_Raw value)? raw,
     required TResult orElse(),
   }) {
     if (json != null) {
@@ -306,6 +257,104 @@ abstract class _Json implements NetworkRequestBody {
   const factory _Json(final Map<String, dynamic> data) = _$_Json;
 
   Map<String, dynamic> get data;
-  @JsonKey(ignore: true)
-  _$$_JsonCopyWith<_$_Json> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+
+class _$_Raw implements _Raw {
+  const _$_Raw(this.data);
+
+  @override
+  final Object? data;
+
+  @override
+  String toString() {
+    return 'NetworkRequestBody.raw(data: $data)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$_Raw &&
+            const DeepCollectionEquality().equals(other.data, data));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(data));
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() empty,
+    required TResult Function(Map<String, dynamic> data) json,
+    required TResult Function(Object? data) raw,
+  }) {
+    return raw(data);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? empty,
+    TResult? Function(Map<String, dynamic> data)? json,
+    TResult? Function(Object? data)? raw,
+  }) {
+    return raw?.call(data);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? empty,
+    TResult Function(Map<String, dynamic> data)? json,
+    TResult Function(Object? data)? raw,
+    required TResult orElse(),
+  }) {
+    if (raw != null) {
+      return raw(data);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Empty value) empty,
+    required TResult Function(_Json value) json,
+    required TResult Function(_Raw value) raw,
+  }) {
+    return raw(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Empty value)? empty,
+    TResult? Function(_Json value)? json,
+    TResult? Function(_Raw value)? raw,
+  }) {
+    return raw?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Empty value)? empty,
+    TResult Function(_Json value)? json,
+    TResult Function(_Raw value)? raw,
+    required TResult orElse(),
+  }) {
+    if (raw != null) {
+      return raw(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _Raw implements NetworkRequestBody {
+  const factory _Raw(final Object? data) = _$_Raw;
+
+  Object? get data;
 }

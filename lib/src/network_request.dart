@@ -146,12 +146,40 @@ class DeleteRequest extends NetworkRequest {
         );
 }
 
+/// {@template raw_request}
+/// A [NetworkRequest] that allows for passing a [NetworkRequestType] (useful
+/// for when this can't be known until runtime). It also defaults to a raw
+/// (null) body.
+/// {@endtemplate}
+class RawRequest extends NetworkRequest {
+  /// {@macro raw_request}
+  const RawRequest(
+    String path, {
+    required super.type,
+    super.data = const NetworkRequestBody.empty(),
+    Map<String, dynamic>? queryParameters,
+    super.shouldTriggerDataMutation = true,
+    super.options,
+    super.cancelToken,
+    super.onReceiveProgress,
+    super.onSendProgress,
+  }) : super(
+          path: path,
+          queryParams: queryParameters,
+        );
+}
+
 /// The body of a [NetworkRequest].
-@freezed
+@Freezed(copyWith: false)
 class NetworkRequestBody with _$NetworkRequestBody {
   /// An empty body. Results in `null` being passed to `data` of the request.
   const factory NetworkRequestBody.empty() = _Empty;
 
   /// A JSON body. Passed directly to `data` of the request.
   const factory NetworkRequestBody.json(Json data) = _Json;
+
+  /// A raw body. Allows for nullable untyped data that is passed directly
+  /// to `data` of the request, useful for instances where the data type
+  /// is not known until runtime.
+  const factory NetworkRequestBody.raw(Object? data) = _Raw;
 }

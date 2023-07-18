@@ -131,6 +131,7 @@ class SturdyHttp {
         data: request.data.when(
           empty: () => null,
           json: (json) => json,
+          raw: (data) => data,
         ),
         queryParameters: request.queryParams,
         options: request.options != null
