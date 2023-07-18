@@ -170,7 +170,7 @@ class RawRequest extends NetworkRequest {
 }
 
 /// The body of a [NetworkRequest].
-@freezed
+@Freezed(copyWith: false)
 class NetworkRequestBody with _$NetworkRequestBody {
   /// An empty body. Results in `null` being passed to `data` of the request.
   const factory NetworkRequestBody.empty() = _Empty;

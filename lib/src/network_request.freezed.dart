@@ -63,38 +63,6 @@ mixin _$NetworkRequestBody {
 }
 
 /// @nodoc
-abstract class $NetworkRequestBodyCopyWith<$Res> {
-  factory $NetworkRequestBodyCopyWith(
-          NetworkRequestBody value, $Res Function(NetworkRequestBody) then) =
-      _$NetworkRequestBodyCopyWithImpl<$Res, NetworkRequestBody>;
-}
-
-/// @nodoc
-class _$NetworkRequestBodyCopyWithImpl<$Res, $Val extends NetworkRequestBody>
-    implements $NetworkRequestBodyCopyWith<$Res> {
-  _$NetworkRequestBodyCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-}
-
-/// @nodoc
-abstract class _$$_EmptyCopyWith<$Res> {
-  factory _$$_EmptyCopyWith(_$_Empty value, $Res Function(_$_Empty) then) =
-      __$$_EmptyCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$_EmptyCopyWithImpl<$Res>
-    extends _$NetworkRequestBodyCopyWithImpl<$Res, _$_Empty>
-    implements _$$_EmptyCopyWith<$Res> {
-  __$$_EmptyCopyWithImpl(_$_Empty _value, $Res Function(_$_Empty) _then)
-      : super(_value, _then);
-}
-
-/// @nodoc
 
 class _$_Empty implements _Empty {
   const _$_Empty();
@@ -187,35 +155,6 @@ abstract class _Empty implements NetworkRequestBody {
 }
 
 /// @nodoc
-abstract class _$$_JsonCopyWith<$Res> {
-  factory _$$_JsonCopyWith(_$_Json value, $Res Function(_$_Json) then) =
-      __$$_JsonCopyWithImpl<$Res>;
-  @useResult
-  $Res call({Map<String, dynamic> data});
-}
-
-/// @nodoc
-class __$$_JsonCopyWithImpl<$Res>
-    extends _$NetworkRequestBodyCopyWithImpl<$Res, _$_Json>
-    implements _$$_JsonCopyWith<$Res> {
-  __$$_JsonCopyWithImpl(_$_Json _value, $Res Function(_$_Json) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? data = null,
-  }) {
-    return _then(_$_Json(
-      null == data
-          ? _value._data
-          : data // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-    ));
-  }
-}
-
-/// @nodoc
 
 class _$_Json implements _Json {
   const _$_Json(final Map<String, dynamic> data) : _data = data;
@@ -244,12 +183,6 @@ class _$_Json implements _Json {
   @override
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(_data));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_JsonCopyWith<_$_Json> get copyWith =>
-      __$$_JsonCopyWithImpl<_$_Json>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -324,34 +257,6 @@ abstract class _Json implements NetworkRequestBody {
   const factory _Json(final Map<String, dynamic> data) = _$_Json;
 
   Map<String, dynamic> get data;
-  @JsonKey(ignore: true)
-  _$$_JsonCopyWith<_$_Json> get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$_RawCopyWith<$Res> {
-  factory _$$_RawCopyWith(_$_Raw value, $Res Function(_$_Raw) then) =
-      __$$_RawCopyWithImpl<$Res>;
-  @useResult
-  $Res call({Object? data});
-}
-
-/// @nodoc
-class __$$_RawCopyWithImpl<$Res>
-    extends _$NetworkRequestBodyCopyWithImpl<$Res, _$_Raw>
-    implements _$$_RawCopyWith<$Res> {
-  __$$_RawCopyWithImpl(_$_Raw _value, $Res Function(_$_Raw) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? data = freezed,
-  }) {
-    return _then(_$_Raw(
-      freezed == data ? _value.data : data,
-    ));
-  }
 }
 
 /// @nodoc
@@ -378,12 +283,6 @@ class _$_Raw implements _Raw {
   @override
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(data));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$_RawCopyWith<_$_Raw> get copyWith =>
-      __$$_RawCopyWithImpl<_$_Raw>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -458,6 +357,4 @@ abstract class _Raw implements NetworkRequestBody {
   const factory _Raw(final Object? data) = _$_Raw;
 
   Object? get data;
-  @JsonKey(ignore: true)
-  _$$_RawCopyWith<_$_Raw> get copyWith => throw _privateConstructorUsedError;
 }
