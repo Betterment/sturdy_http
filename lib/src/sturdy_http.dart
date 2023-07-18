@@ -30,8 +30,7 @@ class SturdyHttp {
   final SturdyHttpEventListener? _eventListener;
 
   /// The interceptors provided when this [SturdyHttp] was constructed.
-  UnmodifiableListView<Interceptor> get interceptors =>
-      UnmodifiableListView<Interceptor>(_dio.interceptors);
+  UnmodifiableListView<Interceptor> get interceptors => UnmodifiableListView<Interceptor>(_dio.interceptors);
 
   /// The base URL of the underlying [Dio] instance.
   String get baseUrl => _dio.options.baseUrl;
@@ -117,8 +116,7 @@ class SturdyHttp {
     }
   }
 
-  Future<_ResponsePayload<R>> _handleRequest<R, M>(
-      NetworkRequest request) async {
+  Future<_ResponsePayload<R>> _handleRequest<R, M>(NetworkRequest request) async {
     late final NetworkResponse<R> resolvedResponse;
     Response<Object?>? dioResponse;
     try {
@@ -131,6 +129,7 @@ class SturdyHttp {
         data: request.data.when(
           empty: () => null,
           json: (json) => json,
+          raw: (data) => data,
         ),
         queryParameters: request.queryParams,
         options: request.options != null
@@ -189,16 +188,14 @@ class SturdyHttp {
           break;
         default:
           resolvedResponse = NetworkResponse.genericError(
-            message:
-                'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
+            message: 'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
             isConnectionIssue: error.isConnectionIssue(),
             error: error,
           );
       }
     }
     if (resolvedResponse.isSuccess && request.shouldTriggerDataMutation) {
-      await _onEvent(
-          SturdyHttpEvent.mutativeRequestSuccess(dioResponse!.requestOptions));
+      await _onEvent(SturdyHttpEvent.mutativeRequestSuccess(dioResponse!.requestOptions));
     }
     return _ResponsePayload<R>(
       request: request,
@@ -229,9 +226,7 @@ Dio _configureDio({
 }) {
   return Dio()
     // Instruct Dio to use the same Isolate approach as requested of SturdyHttp
-    ..transformer = deserializer is MainIsolateDeserializer
-        ? SyncTransformer()
-        : BackgroundTransformer()
+    ..transformer = deserializer is MainIsolateDeserializer ? SyncTransformer() : BackgroundTransformer()
     ..options.baseUrl = baseUrl
     ..options.listFormat = ListFormat.multiCompatible
     ..interceptors.addAll(interceptors)
