@@ -42,12 +42,13 @@ void main() {
       bool inferContentType = false,
     }) {
       return SturdyHttp(
-          baseUrl: baseUrl,
-          customAdapter: charlatan.toFakeHttpClientAdapter(),
-          eventListener: eventListener,
-          interceptors: interceptors,
-          proxy: proxy,
-          inferContentType: inferContentType);
+        baseUrl: baseUrl,
+        customAdapter: charlatan.toFakeHttpClientAdapter(),
+        eventListener: eventListener,
+        interceptors: interceptors,
+        proxy: proxy,
+        inferContentType: inferContentType,
+      );
     }
 
     group('interceptors', () {
