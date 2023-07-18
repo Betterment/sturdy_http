@@ -64,7 +64,7 @@ void main() {
     });
 
     group('inferContentType', () {
-      test('it does not infer when false', () async {
+      test('it does not infer content-type when false', () async {
         String? contentType;
         final subject = buildSubject(
           inferContentType: false,
@@ -88,7 +88,7 @@ void main() {
         expect(contentType, isNull);
       });
 
-      test('it infers when true', () async {
+      test('it infers content-type when true', () async {
         String? contentType;
         final subject = buildSubject(
           inferContentType: true,
