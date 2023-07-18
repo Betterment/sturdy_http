@@ -156,7 +156,7 @@ class RawRequest extends NetworkRequest {
   const RawRequest(
     String path, {
     required super.type,
-    super.data = const NetworkRequestBody.raw(null),
+    super.data = const NetworkRequestBody.empty(),
     Map<String, dynamic>? queryParameters,
     super.shouldTriggerDataMutation = true,
     super.options,
