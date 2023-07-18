@@ -72,6 +72,7 @@ class GetRequest extends NetworkRequest {
     super.data = const NetworkRequestBody.empty(),
     Map<String, dynamic>? queryParameters,
     super.options,
+    super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
   }) : super(
@@ -93,6 +94,7 @@ class PostRequest extends NetworkRequest {
     Map<String, dynamic>? queryParameters,
     super.shouldTriggerDataMutation = true,
     super.options,
+    super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
   }) : super(
@@ -113,6 +115,7 @@ class PutRequest extends NetworkRequest {
     Map<String, dynamic>? queryParameters,
     super.shouldTriggerDataMutation = true,
     super.options,
+    super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
   }) : super(
@@ -133,6 +136,7 @@ class DeleteRequest extends NetworkRequest {
     Map<String, dynamic>? queryParameters,
     super.shouldTriggerDataMutation = true,
     super.options,
+    super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
   }) : super(
