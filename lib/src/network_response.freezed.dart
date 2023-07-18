@@ -20,14 +20,15 @@ mixin _$NetworkResponse<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) =>
       throw _privateConstructorUsedError;
@@ -35,13 +36,14 @@ mixin _$NetworkResponse<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) =>
       throw _privateConstructorUsedError;
@@ -49,13 +51,14 @@ mixin _$NetworkResponse<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) =>
@@ -186,14 +189,15 @@ class _$_Ok<R> implements _Ok<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) {
     return ok(response);
@@ -204,13 +208,14 @@ class _$_Ok<R> implements _Ok<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) {
     return ok?.call(response);
@@ -221,13 +226,14 @@ class _$_Ok<R> implements _Ok<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) {
@@ -340,14 +346,15 @@ class _$_OkNoContent<R> implements _OkNoContent<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) {
     return okNoContent();
@@ -358,13 +365,14 @@ class _$_OkNoContent<R> implements _OkNoContent<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) {
     return okNoContent?.call();
@@ -375,13 +383,14 @@ class _$_OkNoContent<R> implements _OkNoContent<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) {
@@ -455,7 +464,7 @@ abstract class _$$_UnauthorizedCopyWith<R, $Res> {
           _$_Unauthorized<R> value, $Res Function(_$_Unauthorized<R>) then) =
       __$$_UnauthorizedCopyWithImpl<R, $Res>;
   @useResult
-  $Res call({DioError error});
+  $Res call({DioException error});
 }
 
 /// @nodoc
@@ -475,7 +484,7 @@ class __$$_UnauthorizedCopyWithImpl<R, $Res>
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
-              as DioError,
+              as DioException,
     ));
   }
 }
@@ -486,7 +495,7 @@ class _$_Unauthorized<R> implements _Unauthorized<R> {
   const _$_Unauthorized(this.error);
 
   @override
-  final DioError error;
+  final DioException error;
 
   @override
   String toString() {
@@ -515,14 +524,15 @@ class _$_Unauthorized<R> implements _Unauthorized<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) {
     return unauthorized(error);
@@ -533,13 +543,14 @@ class _$_Unauthorized<R> implements _Unauthorized<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) {
     return unauthorized?.call(error);
@@ -550,13 +561,14 @@ class _$_Unauthorized<R> implements _Unauthorized<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) {
@@ -621,9 +633,9 @@ class _$_Unauthorized<R> implements _Unauthorized<R> {
 }
 
 abstract class _Unauthorized<R> implements NetworkResponse<R> {
-  const factory _Unauthorized(final DioError error) = _$_Unauthorized<R>;
+  const factory _Unauthorized(final DioException error) = _$_Unauthorized<R>;
 
-  DioError get error;
+  DioException get error;
   @JsonKey(ignore: true)
   _$$_UnauthorizedCopyWith<R, _$_Unauthorized<R>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -635,7 +647,7 @@ abstract class _$$_ForbiddenCopyWith<R, $Res> {
           _$_Forbidden<R> value, $Res Function(_$_Forbidden<R>) then) =
       __$$_ForbiddenCopyWithImpl<R, $Res>;
   @useResult
-  $Res call({DioError error});
+  $Res call({DioException error});
 }
 
 /// @nodoc
@@ -655,7 +667,7 @@ class __$$_ForbiddenCopyWithImpl<R, $Res>
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
-              as DioError,
+              as DioException,
     ));
   }
 }
@@ -666,7 +678,7 @@ class _$_Forbidden<R> implements _Forbidden<R> {
   const _$_Forbidden(this.error);
 
   @override
-  final DioError error;
+  final DioException error;
 
   @override
   String toString() {
@@ -695,14 +707,15 @@ class _$_Forbidden<R> implements _Forbidden<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) {
     return forbidden(error);
@@ -713,13 +726,14 @@ class _$_Forbidden<R> implements _Forbidden<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) {
     return forbidden?.call(error);
@@ -730,13 +744,14 @@ class _$_Forbidden<R> implements _Forbidden<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) {
@@ -801,9 +816,9 @@ class _$_Forbidden<R> implements _Forbidden<R> {
 }
 
 abstract class _Forbidden<R> implements NetworkResponse<R> {
-  const factory _Forbidden(final DioError error) = _$_Forbidden<R>;
+  const factory _Forbidden(final DioException error) = _$_Forbidden<R>;
 
-  DioError get error;
+  DioException get error;
   @JsonKey(ignore: true)
   _$$_ForbiddenCopyWith<R, _$_Forbidden<R>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -815,7 +830,7 @@ abstract class _$$_NotFoundCopyWith<R, $Res> {
           _$_NotFound<R> value, $Res Function(_$_NotFound<R>) then) =
       __$$_NotFoundCopyWithImpl<R, $Res>;
   @useResult
-  $Res call({DioError error});
+  $Res call({DioException error});
 }
 
 /// @nodoc
@@ -835,7 +850,7 @@ class __$$_NotFoundCopyWithImpl<R, $Res>
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
-              as DioError,
+              as DioException,
     ));
   }
 }
@@ -846,7 +861,7 @@ class _$_NotFound<R> implements _NotFound<R> {
   const _$_NotFound(this.error);
 
   @override
-  final DioError error;
+  final DioException error;
 
   @override
   String toString() {
@@ -875,14 +890,15 @@ class _$_NotFound<R> implements _NotFound<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) {
     return notFound(error);
@@ -893,13 +909,14 @@ class _$_NotFound<R> implements _NotFound<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) {
     return notFound?.call(error);
@@ -910,13 +927,14 @@ class _$_NotFound<R> implements _NotFound<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) {
@@ -981,9 +999,9 @@ class _$_NotFound<R> implements _NotFound<R> {
 }
 
 abstract class _NotFound<R> implements NetworkResponse<R> {
-  const factory _NotFound(final DioError error) = _$_NotFound<R>;
+  const factory _NotFound(final DioException error) = _$_NotFound<R>;
 
-  DioError get error;
+  DioException get error;
   @JsonKey(ignore: true)
   _$$_NotFoundCopyWith<R, _$_NotFound<R>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -995,7 +1013,7 @@ abstract class _$$_UnprocessableEntityCopyWith<R, $Res> {
           $Res Function(_$_UnprocessableEntity<R>) then) =
       __$$_UnprocessableEntityCopyWithImpl<R, $Res>;
   @useResult
-  $Res call({DioError error, R response});
+  $Res call({DioException error, R response});
 }
 
 /// @nodoc
@@ -1016,7 +1034,7 @@ class __$$_UnprocessableEntityCopyWithImpl<R, $Res>
       error: null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
-              as DioError,
+              as DioException,
       response: freezed == response
           ? _value.response
           : response // ignore: cast_nullable_to_non_nullable
@@ -1031,7 +1049,7 @@ class _$_UnprocessableEntity<R> implements _UnprocessableEntity<R> {
   const _$_UnprocessableEntity({required this.error, required this.response});
 
   @override
-  final DioError error;
+  final DioException error;
   @override
   final R response;
 
@@ -1065,14 +1083,15 @@ class _$_UnprocessableEntity<R> implements _UnprocessableEntity<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) {
     return unprocessableEntity(error, response);
@@ -1083,13 +1102,14 @@ class _$_UnprocessableEntity<R> implements _UnprocessableEntity<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) {
     return unprocessableEntity?.call(error, response);
@@ -1100,13 +1120,14 @@ class _$_UnprocessableEntity<R> implements _UnprocessableEntity<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) {
@@ -1172,10 +1193,10 @@ class _$_UnprocessableEntity<R> implements _UnprocessableEntity<R> {
 
 abstract class _UnprocessableEntity<R> implements NetworkResponse<R> {
   const factory _UnprocessableEntity(
-      {required final DioError error,
+      {required final DioException error,
       required final R response}) = _$_UnprocessableEntity<R>;
 
-  DioError get error;
+  DioException get error;
   R get response;
   @JsonKey(ignore: true)
   _$$_UnprocessableEntityCopyWith<R, _$_UnprocessableEntity<R>> get copyWith =>
@@ -1188,7 +1209,7 @@ abstract class _$$_ServerErrorCopyWith<R, $Res> {
           _$_ServerError<R> value, $Res Function(_$_ServerError<R>) then) =
       __$$_ServerErrorCopyWithImpl<R, $Res>;
   @useResult
-  $Res call({DioError error});
+  $Res call({DioException error});
 }
 
 /// @nodoc
@@ -1208,7 +1229,7 @@ class __$$_ServerErrorCopyWithImpl<R, $Res>
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
-              as DioError,
+              as DioException,
     ));
   }
 }
@@ -1219,7 +1240,7 @@ class _$_ServerError<R> implements _ServerError<R> {
   const _$_ServerError(this.error);
 
   @override
-  final DioError error;
+  final DioException error;
 
   @override
   String toString() {
@@ -1248,14 +1269,15 @@ class _$_ServerError<R> implements _ServerError<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) {
     return serverError(error);
@@ -1266,13 +1288,14 @@ class _$_ServerError<R> implements _ServerError<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) {
     return serverError?.call(error);
@@ -1283,13 +1306,14 @@ class _$_ServerError<R> implements _ServerError<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) {
@@ -1354,9 +1378,9 @@ class _$_ServerError<R> implements _ServerError<R> {
 }
 
 abstract class _ServerError<R> implements NetworkResponse<R> {
-  const factory _ServerError(final DioError error) = _$_ServerError<R>;
+  const factory _ServerError(final DioException error) = _$_ServerError<R>;
 
-  DioError get error;
+  DioException get error;
   @JsonKey(ignore: true)
   _$$_ServerErrorCopyWith<R, _$_ServerError<R>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -1368,7 +1392,7 @@ abstract class _$$_ServiceUnavailableCopyWith<R, $Res> {
           $Res Function(_$_ServiceUnavailable<R>) then) =
       __$$_ServiceUnavailableCopyWithImpl<R, $Res>;
   @useResult
-  $Res call({DioError error});
+  $Res call({DioException error});
 }
 
 /// @nodoc
@@ -1388,7 +1412,7 @@ class __$$_ServiceUnavailableCopyWithImpl<R, $Res>
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
-              as DioError,
+              as DioException,
     ));
   }
 }
@@ -1399,7 +1423,7 @@ class _$_ServiceUnavailable<R> implements _ServiceUnavailable<R> {
   const _$_ServiceUnavailable(this.error);
 
   @override
-  final DioError error;
+  final DioException error;
 
   @override
   String toString() {
@@ -1429,14 +1453,15 @@ class _$_ServiceUnavailable<R> implements _ServiceUnavailable<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) {
     return serviceUnavailable(error);
@@ -1447,13 +1472,14 @@ class _$_ServiceUnavailable<R> implements _ServiceUnavailable<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) {
     return serviceUnavailable?.call(error);
@@ -1464,13 +1490,14 @@ class _$_ServiceUnavailable<R> implements _ServiceUnavailable<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) {
@@ -1535,10 +1562,10 @@ class _$_ServiceUnavailable<R> implements _ServiceUnavailable<R> {
 }
 
 abstract class _ServiceUnavailable<R> implements NetworkResponse<R> {
-  const factory _ServiceUnavailable(final DioError error) =
+  const factory _ServiceUnavailable(final DioException error) =
       _$_ServiceUnavailable<R>;
 
-  DioError get error;
+  DioException get error;
   @JsonKey(ignore: true)
   _$$_ServiceUnavailableCopyWith<R, _$_ServiceUnavailable<R>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -1550,7 +1577,7 @@ abstract class _$$_GenericErrorCopyWith<R, $Res> {
           _$_GenericError<R> value, $Res Function(_$_GenericError<R>) then) =
       __$$_GenericErrorCopyWithImpl<R, $Res>;
   @useResult
-  $Res call({String message, bool isConnectionIssue, DioError? error});
+  $Res call({String message, bool isConnectionIssue, DioException? error});
 }
 
 /// @nodoc
@@ -1580,7 +1607,7 @@ class __$$_GenericErrorCopyWithImpl<R, $Res>
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
-              as DioError?,
+              as DioException?,
     ));
   }
 }
@@ -1596,7 +1623,7 @@ class _$_GenericError<R> implements _GenericError<R> {
   @override
   final bool isConnectionIssue;
   @override
-  final DioError? error;
+  final DioException? error;
 
   @override
   String toString() {
@@ -1629,14 +1656,15 @@ class _$_GenericError<R> implements _GenericError<R> {
   TResult when<TResult extends Object?>({
     required TResult Function(R response) ok,
     required TResult Function() okNoContent,
-    required TResult Function(DioError error) unauthorized,
-    required TResult Function(DioError error) forbidden,
-    required TResult Function(DioError error) notFound,
-    required TResult Function(DioError error, R response) unprocessableEntity,
-    required TResult Function(DioError error) serverError,
-    required TResult Function(DioError error) serviceUnavailable,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
-            String message, bool isConnectionIssue, DioError? error)
+            String message, bool isConnectionIssue, DioException? error)
         genericError,
   }) {
     return genericError(message, isConnectionIssue, error);
@@ -1647,13 +1675,14 @@ class _$_GenericError<R> implements _GenericError<R> {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(R response)? ok,
     TResult? Function()? okNoContent,
-    TResult? Function(DioError error)? unauthorized,
-    TResult? Function(DioError error)? forbidden,
-    TResult? Function(DioError error)? notFound,
-    TResult? Function(DioError error, R response)? unprocessableEntity,
-    TResult? Function(DioError error)? serverError,
-    TResult? Function(DioError error)? serviceUnavailable,
-    TResult? Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
   }) {
     return genericError?.call(message, isConnectionIssue, error);
@@ -1664,13 +1693,14 @@ class _$_GenericError<R> implements _GenericError<R> {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(R response)? ok,
     TResult Function()? okNoContent,
-    TResult Function(DioError error)? unauthorized,
-    TResult Function(DioError error)? forbidden,
-    TResult Function(DioError error)? notFound,
-    TResult Function(DioError error, R response)? unprocessableEntity,
-    TResult Function(DioError error)? serverError,
-    TResult Function(DioError error)? serviceUnavailable,
-    TResult Function(String message, bool isConnectionIssue, DioError? error)?
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
         genericError,
     required TResult orElse(),
   }) {
@@ -1738,11 +1768,11 @@ abstract class _GenericError<R> implements NetworkResponse<R> {
   const factory _GenericError(
       {required final String message,
       required final bool isConnectionIssue,
-      final DioError? error}) = _$_GenericError<R>;
+      final DioException? error}) = _$_GenericError<R>;
 
   String get message;
   bool get isConnectionIssue;
-  DioError? get error;
+  DioException? get error;
   @JsonKey(ignore: true)
   _$$_GenericErrorCopyWith<R, _$_GenericError<R>> get copyWith =>
       throw _privateConstructorUsedError;
