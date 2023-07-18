@@ -169,17 +169,25 @@ class RawRequest extends NetworkRequest {
         );
 }
 
-/// The body of a [NetworkRequest].
+/// The body of a [NetworkRequest]. Note that this type is aimed at providing
+/// readability and type safety and does not dictate behavior of [SturdyHttp]
+/// with regards to the content-type header. If you want [SturdyHttp] to infer
+/// the content-type header, configure this via the `inferContentType` parameter
+/// when constructing the instance.
 @Freezed(copyWith: false)
 class NetworkRequestBody with _$NetworkRequestBody {
   /// An empty body. Results in `null` being passed to `data` of the request.
   const factory NetworkRequestBody.empty() = _Empty;
 
-  /// A JSON body. Passed directly to `data` of the request.
+  /// A JSON body. Passed directly to `data` of the request. If `inferContentType`
+  /// has been provided as `true` to the [SturdyHttp] instance, will result in
+  /// an `application-json` `content-type`.
   const factory NetworkRequestBody.json(Json data) = _Json;
 
   /// A raw body. Allows for nullable untyped data that is passed directly
   /// to `data` of the request, useful for instances where the data type
-  /// is not known until runtime.
+  /// is not known until runtime. If `inferContentType` has been provided as
+  /// `true` to the [SturdyHttp] instance *and* the [data] can be used to infer
+  /// the `content-type` header, it will be inferred.
   const factory NetworkRequestBody.raw(Object? data) = _Raw;
 }

@@ -39,22 +39,74 @@ void main() {
       String baseUrl = 'http://example.com',
       List<Interceptor> interceptors = const [],
       Map<String, String>? proxy,
+      bool inferContentType = false,
     }) {
       return SturdyHttp(
-        baseUrl: baseUrl,
-        customAdapter: charlatan.toFakeHttpClientAdapter(),
-        eventListener: eventListener,
-        interceptors: interceptors,
-        proxy: proxy,
-      );
+          baseUrl: baseUrl,
+          customAdapter: charlatan.toFakeHttpClientAdapter(),
+          eventListener: eventListener,
+          interceptors: interceptors,
+          proxy: proxy,
+          inferContentType: inferContentType);
     }
 
     group('interceptors', () {
-      test('it returns the correct interceptors', () {
+      test('it returns the provided interceptors', () {
         final interceptors = [_FakeInterceptor()];
-        final subject = buildSubject(interceptors: interceptors);
+        final subject = buildSubject(
+          interceptors: interceptors,
+          inferContentType: false,
+        );
 
         expect(subject.interceptors, interceptors);
+      });
+    });
+
+    group('inferContentType', () {
+      test('it does not infer when false', () async {
+        String? contentType;
+        final subject = buildSubject(
+          inferContentType: false,
+          interceptors: [
+            _FakeInterceptor(
+              onRequestInvoked: (options) {
+                contentType = options.headers[Headers.contentTypeHeader] as String?;
+              },
+            )
+          ],
+        );
+
+        charlatan.whenPost('/infer', (request) => null);
+
+        await subject.execute(
+          PostRequest('/infer', data: NetworkRequestBody.json({'foo': 'bar'})),
+          onResponse: (r) {},
+        );
+
+        expect(contentType, isNull);
+      });
+
+      test('it infers when true', () async {
+        String? contentType;
+        final subject = buildSubject(
+          inferContentType: true,
+          interceptors: [
+            _FakeInterceptor(
+              onRequestInvoked: (options) {
+                contentType = options.headers[Headers.contentTypeHeader] as String?;
+              },
+            )
+          ],
+        );
+
+        charlatan.whenPost('/infer', (request) => null);
+
+        await subject.execute(
+          PostRequest('/infer', data: NetworkRequestBody.json({'foo': 'bar'})),
+          onResponse: (r) {},
+        );
+
+        expect(contentType, 'application/json');
       });
     });
 
@@ -76,9 +128,7 @@ void main() {
     });
 
     group('withBaseUrl', () {
-      test(
-          'it returns a new instance with correct baseUrl and pre-configured settings',
-          () {
+      test('it returns a new instance with correct baseUrl and pre-configured settings', () {
         final oldInstance = buildSubject(
           interceptors: [_FakeInterceptor()],
         );
@@ -229,8 +279,7 @@ void main() {
                   )
                   ..whenGet(
                     '/not-foo',
-                    (request) =>
-                        const NotFoo(notMessage: 'Hello world').toJson(),
+                    (request) => const NotFoo(notMessage: 'Hello world').toJson(),
                   )
                   ..whenGet(
                     '/bar',
@@ -240,14 +289,12 @@ void main() {
 
               group('when deserialization succeeds', () {
                 test('it returns parsed model', () async {
-                  final response =
-                      await buildSubject().execute<Json, Result<Foo, String>>(
+                  final response = await buildSubject().execute<Json, Result<Foo, String>>(
                     const GetRequest('/foo'),
                     onResponse: (response) {
                       return response.maybeWhen(
                         ok: (json) => Result.success(Foo.fromJson(json)),
-                        orElse: () =>
-                            const Result.failure('Not expected: orElse'),
+                        orElse: () => const Result.failure('Not expected: orElse'),
                       );
                     },
                   );
@@ -260,17 +307,13 @@ void main() {
               });
 
               group('when deserialization fails', () {
-                test(
-                    'it emits a decodingError event and rethrows the Exception',
-                    () async {
-                  final request =
-                      buildSubject().execute<Json, Result<Foo, String>>(
+                test('it emits a decodingError event and rethrows the Exception', () async {
+                  final request = buildSubject().execute<Json, Result<Foo, String>>(
                     const GetRequest('/not-foo'),
                     onResponse: (response) {
                       return response.maybeWhen(
                         ok: (json) => Result.success(Foo.fromJson(json)),
-                        orElse: () =>
-                            const Result.failure('Not expected: orElse'),
+                        orElse: () => const Result.failure('Not expected: orElse'),
                       );
                     },
                   );
@@ -300,8 +343,7 @@ void main() {
                   );
                 });
                 test('it returns okNoContent', () async {
-                  final response =
-                      await buildSubject().execute<void, Result<bool, String>>(
+                  final response = await buildSubject().execute<void, Result<bool, String>>(
                     const PostRequest(
                       '/foo',
                       data: NetworkRequestBody.empty(),
@@ -309,8 +351,7 @@ void main() {
                     onResponse: (response) {
                       return response.maybeWhen(
                         okNoContent: () => const Result.success(true),
-                        orElse: () =>
-                            const Result.failure('Not expected: orElse'),
+                        orElse: () => const Result.failure('Not expected: orElse'),
                       );
                     },
                   );
@@ -335,8 +376,7 @@ void main() {
                 test(
                   'it returns genericError and isConnectionIssue is false',
                   () async {
-                    final response = await buildSubject()
-                        .execute<void, Result<bool, String>>(
+                    final response = await buildSubject().execute<void, Result<bool, String>>(
                       const PostRequest(
                         '/foo',
                         data: NetworkRequestBody.empty(),
@@ -347,8 +387,7 @@ void main() {
                             expect(isConnectionIssue, isFalse);
                             return const Result.success(true);
                           },
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
+                          orElse: () => const Result.failure('Not expected: orElse'),
                         );
                       },
                     );
@@ -385,9 +424,7 @@ void main() {
                     );
                 });
 
-                test(
-                    'it emits a MutativeRequestSuccess event with correct path',
-                    () async {
+                test('it emits a MutativeRequestSuccess event with correct path', () async {
                   final subject = buildSubject();
                   await Future.wait([
                     subject.execute<Json, Result<String, String>>(
@@ -398,8 +435,7 @@ void main() {
                       onResponse: (response) {
                         return response.maybeWhen(
                           ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
+                          orElse: () => const Result.failure('Not expected: orElse'),
                         );
                       },
                     ),
@@ -411,8 +447,7 @@ void main() {
                       onResponse: (response) {
                         return response.maybeWhen(
                           ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
+                          orElse: () => const Result.failure('Not expected: orElse'),
                         );
                       },
                     ),
@@ -424,8 +459,7 @@ void main() {
                       onResponse: (response) {
                         return response.maybeWhen(
                           ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
+                          orElse: () => const Result.failure('Not expected: orElse'),
                         );
                       },
                     )
@@ -446,8 +480,7 @@ void main() {
                 });
               });
 
-              group('and the response has status codes other than 200 or 204',
-                  () {
+              group('and the response has status codes other than 200 or 204', () {
                 setUp(() {
                   charlatan
                     ..whenPost(
@@ -467,8 +500,7 @@ void main() {
                     );
                 });
 
-                test('it does not emit a MutativeRequestSuccess event',
-                    () async {
+                test('it does not emit a MutativeRequestSuccess event', () async {
                   final subject = buildSubject();
                   await Future.wait([
                     subject.execute<Json, Result<String, String>>(
@@ -479,8 +511,7 @@ void main() {
                       onResponse: (response) {
                         return response.maybeWhen(
                           ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
+                          orElse: () => const Result.failure('Not expected: orElse'),
                         );
                       },
                     ),
@@ -492,8 +523,7 @@ void main() {
                       onResponse: (response) {
                         return response.maybeWhen(
                           ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
+                          orElse: () => const Result.failure('Not expected: orElse'),
                         );
                       },
                     ),
@@ -505,8 +535,7 @@ void main() {
                       onResponse: (response) {
                         return response.maybeWhen(
                           ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
+                          orElse: () => const Result.failure('Not expected: orElse'),
                         );
                       },
                     )
@@ -540,10 +569,8 @@ void main() {
               setupErrorResponse(statusCode: 401);
             });
 
-            test('it emits an authFailure event and invokes unauthorized',
-                () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
+            test('it emits an authFailure event and invokes unauthorized', () async {
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return response.maybeMap(
@@ -568,8 +595,7 @@ void main() {
             });
 
             test('it returns forbidden', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return response.maybeWhen(
@@ -592,8 +618,7 @@ void main() {
             });
 
             test('it returns notFound', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return response.maybeWhen(
@@ -619,13 +644,11 @@ void main() {
             });
 
             test('it returns unprocessableEntity', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return response.maybeWhen(
-                    unprocessableEntity: (error, response) =>
-                        const Result.success(true),
+                    unprocessableEntity: (error, response) => const Result.success(true),
                     orElse: () => const Result.failure('Not expected: orElse'),
                   );
                 },
@@ -644,8 +667,7 @@ void main() {
             });
 
             test('it returns serverError', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return response.maybeWhen(
@@ -668,8 +690,7 @@ void main() {
             });
 
             test('it returns service unavailable', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return response.maybeWhen(
@@ -692,13 +713,11 @@ void main() {
             });
 
             test('it returns genericError', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return response.maybeWhen(
-                    genericError: (message, _, error) =>
-                        const Result.success(true),
+                    genericError: (message, _, error) => const Result.success(true),
                     orElse: () => const Result.failure('Not expected: orElse'),
                   );
                 },
@@ -719,10 +738,8 @@ void main() {
               );
             });
 
-            test('it returns genericError and isConnectionIssue is true',
-                () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
+            test('it returns genericError and isConnectionIssue is true', () async {
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return response.maybeWhen(
@@ -756,7 +773,17 @@ class Result<S, F> with _$Result<S, F> {
   const factory Result.failure(F failure) = _Failure;
 }
 
-class _FakeInterceptor extends Interceptor {}
+class _FakeInterceptor extends Interceptor {
+  final Function(RequestOptions options)? onRequestInvoked;
+
+  _FakeInterceptor({this.onRequestInvoked});
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    onRequestInvoked?.call(options);
+    super.onRequest(options, handler);
+  }
+}
 
 class _SturdyHttpEventListener extends SturdyHttpEventListener {
   final void Function(RequestOptions) onAuthFailure;
