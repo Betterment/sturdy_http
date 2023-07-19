@@ -39,6 +39,7 @@ void main() {
       String baseUrl = 'http://example.com',
       List<Interceptor> interceptors = const [],
       Map<String, String>? proxy,
+      bool inferContentType = false,
     }) {
       return SturdyHttp(
         baseUrl: baseUrl,
@@ -46,15 +47,69 @@ void main() {
         eventListener: eventListener,
         interceptors: interceptors,
         proxy: proxy,
+        inferContentType: inferContentType,
       );
     }
 
     group('interceptors', () {
-      test('it returns the correct interceptors', () {
+      test('it returns the provided interceptors', () {
         final interceptors = [_FakeInterceptor()];
-        final subject = buildSubject(interceptors: interceptors);
+        final subject = buildSubject(
+          interceptors: interceptors,
+          inferContentType: false,
+        );
 
         expect(subject.interceptors, interceptors);
+      });
+    });
+
+    group('inferContentType', () {
+      test('it does not infer content-type when false', () async {
+        String? contentType;
+        final subject = buildSubject(
+          inferContentType: false,
+          interceptors: [
+            _FakeInterceptor(
+              onRequestInvoked: (options) {
+                contentType =
+                    options.headers[Headers.contentTypeHeader] as String?;
+              },
+            )
+          ],
+        );
+
+        charlatan.whenPost('/infer', (request) => null);
+
+        await subject.execute(
+          PostRequest('/infer', data: NetworkRequestBody.json({'foo': 'bar'})),
+          onResponse: (r) {},
+        );
+
+        expect(contentType, isNull);
+      });
+
+      test('it infers content-type when true', () async {
+        String? contentType;
+        final subject = buildSubject(
+          inferContentType: true,
+          interceptors: [
+            _FakeInterceptor(
+              onRequestInvoked: (options) {
+                contentType =
+                    options.headers[Headers.contentTypeHeader] as String?;
+              },
+            )
+          ],
+        );
+
+        charlatan.whenPost('/infer', (request) => null);
+
+        await subject.execute(
+          PostRequest('/infer', data: NetworkRequestBody.json({'foo': 'bar'})),
+          onResponse: (r) {},
+        );
+
+        expect(contentType, 'application/json');
       });
     });
 
@@ -756,7 +811,17 @@ class Result<S, F> with _$Result<S, F> {
   const factory Result.failure(F failure) = _Failure;
 }
 
-class _FakeInterceptor extends Interceptor {}
+class _FakeInterceptor extends Interceptor {
+  final Function(RequestOptions options)? onRequestInvoked;
+
+  _FakeInterceptor({this.onRequestInvoked});
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    onRequestInvoked?.call(options);
+    super.onRequest(options, handler);
+  }
+}
 
 class _SturdyHttpEventListener extends SturdyHttpEventListener {
   final void Function(RequestOptions) onAuthFailure;

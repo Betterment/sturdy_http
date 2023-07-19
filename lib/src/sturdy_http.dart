@@ -47,6 +47,7 @@ class SturdyHttp {
     SturdyHttpEventListener? eventListener,
     HttpClientAdapter? customAdapter,
     Map<String, String>? proxy,
+    bool inferContentType = true,
   }) : this._(
           dio: _configureDio(
             baseUrl: baseUrl,
@@ -54,6 +55,7 @@ class SturdyHttp {
             interceptors: interceptors,
             customAdapter: customAdapter,
             proxy: proxy,
+            inferContentType: inferContentType,
           ),
           deserializer: deserializer,
           eventListener: eventListener,
@@ -227,6 +229,7 @@ Dio _configureDio({
   required Deserializer deserializer,
   required HttpClientAdapter? customAdapter,
   required Map<String, String>? proxy,
+  required bool inferContentType,
 }) {
   return Dio()
     // Instruct Dio to use the same Isolate approach as requested of SturdyHttp
@@ -236,10 +239,12 @@ Dio _configureDio({
     ..options.baseUrl = baseUrl
     ..options.listFormat = ListFormat.multiCompatible
     ..interceptors.addAll(interceptors)
-    ..interceptors.removeImplyContentTypeInterceptor()
     ..map((dio) {
       if (customAdapter != null) {
-        return dio..httpClientAdapter = customAdapter;
+        dio.httpClientAdapter = customAdapter;
+      }
+      if (!inferContentType) {
+        dio.interceptors.removeImplyContentTypeInterceptor();
       }
       return dio;
     });
