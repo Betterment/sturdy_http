@@ -78,7 +78,7 @@ void main() {
           ],
         );
 
-        charlatan.whenPost('/infer', (request) => null);
+        charlatan.whenPost('/infer', (request) => CharlatanHttpResponse());
 
         await subject.execute(
           PostRequest('/infer', data: NetworkRequestBody.json({'foo': 'bar'})),
@@ -102,7 +102,7 @@ void main() {
           ],
         );
 
-        charlatan.whenPost('/infer', (request) => null);
+        charlatan.whenPost('/infer', (request) => CharlatanHttpResponse());
 
         await subject.execute(
           PostRequest('/infer', data: NetworkRequestBody.json({'foo': 'bar'})),
@@ -155,11 +155,11 @@ void main() {
           charlatan
             ..whenGet('/foo', (request) {
               options = request.requestOptions;
-              return null;
+              return CharlatanHttpResponse();
             })
             ..whenPost('/bar', (request) {
               options = request.requestOptions;
-              return null;
+              return CharlatanHttpResponse();
             });
         });
 
@@ -280,12 +280,15 @@ void main() {
                 charlatan
                   ..whenGet(
                     '/foo',
-                    (request) => const Foo(message: 'Hello world').toJson(),
+                    (request) => CharlatanHttpResponse(
+                      body: Foo(message: 'Hello world').toJson(),
+                    ),
                   )
                   ..whenGet(
                     '/not-foo',
-                    (request) =>
-                        const NotFoo(notMessage: 'Hello world').toJson(),
+                    (request) => CharlatanHttpResponse(
+                      body: NotFoo(notMessage: 'Hello world').toJson(),
+                    ),
                   )
                   ..whenGet(
                     '/bar',
@@ -425,18 +428,24 @@ void main() {
                   charlatan
                     ..whenPost(
                       '/foo',
-                      (request) => <String, dynamic>{'foo': 'bar'},
-                      statusCode: 200,
+                      (request) => CharlatanHttpResponse(
+                        body: <String, dynamic>{'foo': 'bar'},
+                        statusCode: 200,
+                      ),
                     )
                     ..whenPut(
                       '/bar',
-                      (request) => <String, dynamic>{'foo': 'bar'},
-                      statusCode: 204,
+                      (request) => CharlatanHttpResponse(
+                        body: <String, dynamic>{'foo': 'bar'},
+                        statusCode: 204,
+                      ),
                     )
                     ..whenDelete(
                       '/baz',
-                      (request) => <String, dynamic>{'foo': 'bar'},
-                      statusCode: 200,
+                      (request) => CharlatanHttpResponse(
+                        body: <String, dynamic>{'foo': 'bar'},
+                        statusCode: 200,
+                      ),
                     );
                 });
 
@@ -507,18 +516,24 @@ void main() {
                   charlatan
                     ..whenPost(
                       '/foo',
-                      (request) => <String, dynamic>{},
-                      statusCode: 404,
+                      (request) => CharlatanHttpResponse(
+                        body: <String, dynamic>{},
+                        statusCode: 404,
+                      ),
                     )
                     ..whenPut(
                       '/bar',
-                      (request) => <String, dynamic>{},
-                      statusCode: 422,
+                      (request) => CharlatanHttpResponse(
+                        body: <String, dynamic>{},
+                        statusCode: 422,
+                      ),
                     )
                     ..whenDelete(
                       '/baz',
-                      (request) => <String, dynamic>{},
-                      statusCode: 500,
+                      (request) => CharlatanHttpResponse(
+                        body: <String, dynamic>{},
+                        statusCode: 500,
+                      ),
                     );
                 });
 
