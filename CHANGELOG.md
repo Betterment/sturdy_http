@@ -1,6 +1,12 @@
 ## 0.2.0
 
-- chore: update outdated dependencies (#6)[https://github.com/Betterment/sturdy_http/pull/6]
+## What's Changed
+* chore: update outdated dependencies by @ClaireDavis in https://github.com/Betterment/sturdy_http/pull/6
+
+## New Contributors
+* @ClaireDavis made their first contribution in https://github.com/Betterment/sturdy_http/pull/6
+
+**Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.1.0...v0.2.0
 
 ## 0.1.0
 
