@@ -1,3 +1,7 @@
+## 0.2.0
+
+- chore: update outdated dependencies (#6)[https://github.com/Betterment/sturdy_http/pull/6]
+
 ## 0.1.0
 
 - Add ability to provide `CancelToken` as well as send and receive progress callbacks to `NetworkRequest`s
