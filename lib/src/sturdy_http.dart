@@ -120,7 +120,8 @@ class SturdyHttp {
   }
 
   Future<_ResponsePayload<R>> _handleRequest<R, M>(
-      NetworkRequest request) async {
+    NetworkRequest request,
+  ) async {
     late final NetworkResponse<R> resolvedResponse;
     Response<Object?>? dioResponse;
     try {
@@ -201,7 +202,8 @@ class SturdyHttp {
     }
     if (resolvedResponse.isSuccess && request.shouldTriggerDataMutation) {
       await _onEvent(
-          SturdyHttpEvent.mutativeRequestSuccess(dioResponse!.requestOptions));
+        SturdyHttpEvent.mutativeRequestSuccess(dioResponse!.requestOptions),
+      );
     }
     return _ResponsePayload<R>(
       request: request,
