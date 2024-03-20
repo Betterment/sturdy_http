@@ -12,7 +12,7 @@ part of 'network_request.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$NetworkRequestBody {
@@ -64,8 +64,8 @@ mixin _$NetworkRequestBody {
 
 /// @nodoc
 
-class _$_Empty implements _Empty {
-  const _$_Empty();
+class _$EmptyImpl implements _Empty {
+  const _$EmptyImpl();
 
   @override
   String toString() {
@@ -73,9 +73,9 @@ class _$_Empty implements _Empty {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_Empty);
+        (other.runtimeType == runtimeType && other is _$EmptyImpl);
   }
 
   @override
@@ -151,13 +151,13 @@ class _$_Empty implements _Empty {
 }
 
 abstract class _Empty implements NetworkRequestBody {
-  const factory _Empty() = _$_Empty;
+  const factory _Empty() = _$EmptyImpl;
 }
 
 /// @nodoc
 
-class _$_Json implements _Json {
-  const _$_Json(final Map<String, dynamic> data) : _data = data;
+class _$JsonImpl implements _Json {
+  const _$JsonImpl(final Map<String, dynamic> data) : _data = data;
 
   final Map<String, dynamic> _data;
   @override
@@ -173,10 +173,10 @@ class _$_Json implements _Json {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Json &&
+            other is _$JsonImpl &&
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
@@ -254,15 +254,15 @@ class _$_Json implements _Json {
 }
 
 abstract class _Json implements NetworkRequestBody {
-  const factory _Json(final Map<String, dynamic> data) = _$_Json;
+  const factory _Json(final Map<String, dynamic> data) = _$JsonImpl;
 
   Map<String, dynamic> get data;
 }
 
 /// @nodoc
 
-class _$_Raw implements _Raw {
-  const _$_Raw(this.data);
+class _$RawImpl implements _Raw {
+  const _$RawImpl(this.data);
 
   @override
   final Object? data;
@@ -273,10 +273,10 @@ class _$_Raw implements _Raw {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Raw &&
+            other is _$RawImpl &&
             const DeepCollectionEquality().equals(other.data, data));
   }
 
@@ -354,7 +354,7 @@ class _$_Raw implements _Raw {
 }
 
 abstract class _Raw implements NetworkRequestBody {
-  const factory _Raw(final Object? data) = _$_Raw;
+  const factory _Raw(final Object? data) = _$RawImpl;
 
   Object? get data;
 }
