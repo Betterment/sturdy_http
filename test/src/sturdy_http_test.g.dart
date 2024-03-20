@@ -6,26 +6,26 @@ part of 'sturdy_http_test.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_Foo _$$_FooFromJson(Map<String, dynamic> json) => $checkedCreate(
-      r'_$_Foo',
+_$FooImpl _$$FooImplFromJson(Map<String, dynamic> json) => $checkedCreate(
+      r'_$FooImpl',
       json,
       ($checkedConvert) {
-        final val = _$_Foo(
+        final val = _$FooImpl(
           message: $checkedConvert('message', (v) => v as String),
         );
         return val;
       },
     );
 
-Map<String, dynamic> _$$_FooToJson(_$_Foo instance) => <String, dynamic>{
+Map<String, dynamic> _$$FooImplToJson(_$FooImpl instance) => <String, dynamic>{
       'message': instance.message,
     };
 
-_$_NotFoo _$$_NotFooFromJson(Map<String, dynamic> json) => $checkedCreate(
-      r'_$_NotFoo',
+_$NotFooImpl _$$NotFooImplFromJson(Map<String, dynamic> json) => $checkedCreate(
+      r'_$NotFooImpl',
       json,
       ($checkedConvert) {
-        final val = _$_NotFoo(
+        final val = _$NotFooImpl(
           notMessage: $checkedConvert('not_message', (v) => v as String),
         );
         return val;
@@ -33,6 +33,7 @@ _$_NotFoo _$$_NotFooFromJson(Map<String, dynamic> json) => $checkedCreate(
       fieldKeyMap: const {'notMessage': 'not_message'},
     );
 
-Map<String, dynamic> _$$_NotFooToJson(_$_NotFoo instance) => <String, dynamic>{
+Map<String, dynamic> _$$NotFooImplToJson(_$NotFooImpl instance) =>
+    <String, dynamic>{
       'not_message': instance.notMessage,
     };

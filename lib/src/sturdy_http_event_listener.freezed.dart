@@ -12,7 +12,7 @@ part of 'sturdy_http_event_listener.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$SturdyHttpEvent {
@@ -108,11 +108,11 @@ class _$SturdyHttpEventCopyWithImpl<$Res, $Val extends SturdyHttpEvent>
 }
 
 /// @nodoc
-abstract class _$$_JsonDecodingErrorCopyWith<$Res>
+abstract class _$$JsonDecodingErrorImplCopyWith<$Res>
     implements $SturdyHttpEventCopyWith<$Res> {
-  factory _$$_JsonDecodingErrorCopyWith(_$_JsonDecodingError value,
-          $Res Function(_$_JsonDecodingError) then) =
-      __$$_JsonDecodingErrorCopyWithImpl<$Res>;
+  factory _$$JsonDecodingErrorImplCopyWith(_$JsonDecodingErrorImpl value,
+          $Res Function(_$JsonDecodingErrorImpl) then) =
+      __$$JsonDecodingErrorImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -120,11 +120,11 @@ abstract class _$$_JsonDecodingErrorCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$_JsonDecodingErrorCopyWithImpl<$Res>
-    extends _$SturdyHttpEventCopyWithImpl<$Res, _$_JsonDecodingError>
-    implements _$$_JsonDecodingErrorCopyWith<$Res> {
-  __$$_JsonDecodingErrorCopyWithImpl(
-      _$_JsonDecodingError _value, $Res Function(_$_JsonDecodingError) _then)
+class __$$JsonDecodingErrorImplCopyWithImpl<$Res>
+    extends _$SturdyHttpEventCopyWithImpl<$Res, _$JsonDecodingErrorImpl>
+    implements _$$JsonDecodingErrorImplCopyWith<$Res> {
+  __$$JsonDecodingErrorImplCopyWithImpl(_$JsonDecodingErrorImpl _value,
+      $Res Function(_$JsonDecodingErrorImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -134,7 +134,7 @@ class __$$_JsonDecodingErrorCopyWithImpl<$Res>
     Object? exception = null,
     Object? stackTrace = freezed,
   }) {
-    return _then(_$_JsonDecodingError(
+    return _then(_$JsonDecodingErrorImpl(
       null == request
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
@@ -153,8 +153,8 @@ class __$$_JsonDecodingErrorCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_JsonDecodingError implements _JsonDecodingError {
-  const _$_JsonDecodingError(this.request, this.exception, this.stackTrace);
+class _$JsonDecodingErrorImpl implements _JsonDecodingError {
+  const _$JsonDecodingErrorImpl(this.request, this.exception, this.stackTrace);
 
   @override
   final RequestOptions request;
@@ -169,10 +169,10 @@ class _$_JsonDecodingError implements _JsonDecodingError {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_JsonDecodingError &&
+            other is _$JsonDecodingErrorImpl &&
             (identical(other.request, request) || other.request == request) &&
             (identical(other.exception, exception) ||
                 other.exception == exception) &&
@@ -186,8 +186,8 @@ class _$_JsonDecodingError implements _JsonDecodingError {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_JsonDecodingErrorCopyWith<_$_JsonDecodingError> get copyWith =>
-      __$$_JsonDecodingErrorCopyWithImpl<_$_JsonDecodingError>(
+  _$$JsonDecodingErrorImplCopyWith<_$JsonDecodingErrorImpl> get copyWith =>
+      __$$JsonDecodingErrorImplCopyWithImpl<_$JsonDecodingErrorImpl>(
           this, _$identity);
 
   @override
@@ -270,7 +270,7 @@ abstract class _JsonDecodingError implements SturdyHttpEvent {
   const factory _JsonDecodingError(
       final RequestOptions request,
       final Exception exception,
-      final StackTrace? stackTrace) = _$_JsonDecodingError;
+      final StackTrace? stackTrace) = _$JsonDecodingErrorImpl;
 
   @override
   RequestOptions get request;
@@ -278,27 +278,27 @@ abstract class _JsonDecodingError implements SturdyHttpEvent {
   StackTrace? get stackTrace;
   @override
   @JsonKey(ignore: true)
-  _$$_JsonDecodingErrorCopyWith<_$_JsonDecodingError> get copyWith =>
+  _$$JsonDecodingErrorImplCopyWith<_$JsonDecodingErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_AuthFailureCopyWith<$Res>
+abstract class _$$AuthFailureImplCopyWith<$Res>
     implements $SturdyHttpEventCopyWith<$Res> {
-  factory _$$_AuthFailureCopyWith(
-          _$_AuthFailure value, $Res Function(_$_AuthFailure) then) =
-      __$$_AuthFailureCopyWithImpl<$Res>;
+  factory _$$AuthFailureImplCopyWith(
+          _$AuthFailureImpl value, $Res Function(_$AuthFailureImpl) then) =
+      __$$AuthFailureImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({RequestOptions request});
 }
 
 /// @nodoc
-class __$$_AuthFailureCopyWithImpl<$Res>
-    extends _$SturdyHttpEventCopyWithImpl<$Res, _$_AuthFailure>
-    implements _$$_AuthFailureCopyWith<$Res> {
-  __$$_AuthFailureCopyWithImpl(
-      _$_AuthFailure _value, $Res Function(_$_AuthFailure) _then)
+class __$$AuthFailureImplCopyWithImpl<$Res>
+    extends _$SturdyHttpEventCopyWithImpl<$Res, _$AuthFailureImpl>
+    implements _$$AuthFailureImplCopyWith<$Res> {
+  __$$AuthFailureImplCopyWithImpl(
+      _$AuthFailureImpl _value, $Res Function(_$AuthFailureImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -306,7 +306,7 @@ class __$$_AuthFailureCopyWithImpl<$Res>
   $Res call({
     Object? request = null,
   }) {
-    return _then(_$_AuthFailure(
+    return _then(_$AuthFailureImpl(
       null == request
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
@@ -317,8 +317,8 @@ class __$$_AuthFailureCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_AuthFailure implements _AuthFailure {
-  const _$_AuthFailure(this.request);
+class _$AuthFailureImpl implements _AuthFailure {
+  const _$AuthFailureImpl(this.request);
 
   @override
   final RequestOptions request;
@@ -329,10 +329,10 @@ class _$_AuthFailure implements _AuthFailure {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AuthFailure &&
+            other is _$AuthFailureImpl &&
             (identical(other.request, request) || other.request == request));
   }
 
@@ -342,8 +342,8 @@ class _$_AuthFailure implements _AuthFailure {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AuthFailureCopyWith<_$_AuthFailure> get copyWith =>
-      __$$_AuthFailureCopyWithImpl<_$_AuthFailure>(this, _$identity);
+  _$$AuthFailureImplCopyWith<_$AuthFailureImpl> get copyWith =>
+      __$$AuthFailureImplCopyWithImpl<_$AuthFailureImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -422,34 +422,35 @@ class _$_AuthFailure implements _AuthFailure {
 }
 
 abstract class _AuthFailure implements SturdyHttpEvent {
-  const factory _AuthFailure(final RequestOptions request) = _$_AuthFailure;
+  const factory _AuthFailure(final RequestOptions request) = _$AuthFailureImpl;
 
   @override
   RequestOptions get request;
   @override
   @JsonKey(ignore: true)
-  _$$_AuthFailureCopyWith<_$_AuthFailure> get copyWith =>
+  _$$AuthFailureImplCopyWith<_$AuthFailureImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_OnMutativeRequestSuccessCopyWith<$Res>
+abstract class _$$OnMutativeRequestSuccessImplCopyWith<$Res>
     implements $SturdyHttpEventCopyWith<$Res> {
-  factory _$$_OnMutativeRequestSuccessCopyWith(
-          _$_OnMutativeRequestSuccess value,
-          $Res Function(_$_OnMutativeRequestSuccess) then) =
-      __$$_OnMutativeRequestSuccessCopyWithImpl<$Res>;
+  factory _$$OnMutativeRequestSuccessImplCopyWith(
+          _$OnMutativeRequestSuccessImpl value,
+          $Res Function(_$OnMutativeRequestSuccessImpl) then) =
+      __$$OnMutativeRequestSuccessImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({RequestOptions request});
 }
 
 /// @nodoc
-class __$$_OnMutativeRequestSuccessCopyWithImpl<$Res>
-    extends _$SturdyHttpEventCopyWithImpl<$Res, _$_OnMutativeRequestSuccess>
-    implements _$$_OnMutativeRequestSuccessCopyWith<$Res> {
-  __$$_OnMutativeRequestSuccessCopyWithImpl(_$_OnMutativeRequestSuccess _value,
-      $Res Function(_$_OnMutativeRequestSuccess) _then)
+class __$$OnMutativeRequestSuccessImplCopyWithImpl<$Res>
+    extends _$SturdyHttpEventCopyWithImpl<$Res, _$OnMutativeRequestSuccessImpl>
+    implements _$$OnMutativeRequestSuccessImplCopyWith<$Res> {
+  __$$OnMutativeRequestSuccessImplCopyWithImpl(
+      _$OnMutativeRequestSuccessImpl _value,
+      $Res Function(_$OnMutativeRequestSuccessImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -457,7 +458,7 @@ class __$$_OnMutativeRequestSuccessCopyWithImpl<$Res>
   $Res call({
     Object? request = null,
   }) {
-    return _then(_$_OnMutativeRequestSuccess(
+    return _then(_$OnMutativeRequestSuccessImpl(
       null == request
           ? _value.request
           : request // ignore: cast_nullable_to_non_nullable
@@ -468,8 +469,8 @@ class __$$_OnMutativeRequestSuccessCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_OnMutativeRequestSuccess implements _OnMutativeRequestSuccess {
-  const _$_OnMutativeRequestSuccess(this.request);
+class _$OnMutativeRequestSuccessImpl implements _OnMutativeRequestSuccess {
+  const _$OnMutativeRequestSuccessImpl(this.request);
 
   @override
   final RequestOptions request;
@@ -480,10 +481,10 @@ class _$_OnMutativeRequestSuccess implements _OnMutativeRequestSuccess {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_OnMutativeRequestSuccess &&
+            other is _$OnMutativeRequestSuccessImpl &&
             (identical(other.request, request) || other.request == request));
   }
 
@@ -493,9 +494,9 @@ class _$_OnMutativeRequestSuccess implements _OnMutativeRequestSuccess {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OnMutativeRequestSuccessCopyWith<_$_OnMutativeRequestSuccess>
-      get copyWith => __$$_OnMutativeRequestSuccessCopyWithImpl<
-          _$_OnMutativeRequestSuccess>(this, _$identity);
+  _$$OnMutativeRequestSuccessImplCopyWith<_$OnMutativeRequestSuccessImpl>
+      get copyWith => __$$OnMutativeRequestSuccessImplCopyWithImpl<
+          _$OnMutativeRequestSuccessImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -575,12 +576,12 @@ class _$_OnMutativeRequestSuccess implements _OnMutativeRequestSuccess {
 
 abstract class _OnMutativeRequestSuccess implements SturdyHttpEvent {
   const factory _OnMutativeRequestSuccess(final RequestOptions request) =
-      _$_OnMutativeRequestSuccess;
+      _$OnMutativeRequestSuccessImpl;
 
   @override
   RequestOptions get request;
   @override
   @JsonKey(ignore: true)
-  _$$_OnMutativeRequestSuccessCopyWith<_$_OnMutativeRequestSuccess>
+  _$$OnMutativeRequestSuccessImplCopyWith<_$OnMutativeRequestSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
