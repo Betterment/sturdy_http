@@ -4,7 +4,6 @@ import 'dart:isolate';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sturdy_http/src/retry_behavior.dart';
 import 'package:sturdy_http/sturdy_http.dart';
 import 'package:uuid/uuid.dart';
 
