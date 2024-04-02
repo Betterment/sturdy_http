@@ -3,10 +3,8 @@ import 'dart:io';
 import 'package:charlatan/charlatan.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sturdy_http/src/retry_behavior.dart' as rb;
-import 'package:sturdy_http/src/retry_behavior.dart';
 import 'package:sturdy_http/sturdy_http.dart';
-import 'package:test/test.dart';
+import 'package:test/test.dart' hide Retry;
 
 part 'sturdy_http_test.freezed.dart';
 part 'sturdy_http_test.g.dart';
@@ -42,7 +40,7 @@ void main() {
       List<Interceptor> interceptors = const [],
       Map<String, String>? proxy,
       bool inferContentType = false,
-      rb.RetryBehavior retryBehavior = const rb.NeverRetry(),
+      RetryBehavior retryBehavior = const NeverRetry(),
     }) {
       return SturdyHttp(
         baseUrl: baseUrl,
@@ -832,7 +830,7 @@ void main() {
                     await buildSubject().execute<Json, Result<bool, String>>(
                   const GetRequest(
                     defaultPath,
-                    retryBehavior: rb.Retry(
+                    retryBehavior: Retry(
                       maxRetries: 3,
                       retryInterval: Duration(milliseconds: 100),
                     ),
@@ -875,7 +873,7 @@ void main() {
                     await buildSubject().execute<Json, Result<bool, String>>(
                   const GetRequest(
                     defaultPath,
-                    retryBehavior: rb.NeverRetry(),
+                    retryBehavior: NeverRetry(),
                   ),
                   onResponse: (response) {
                     return response.maybeWhen(
@@ -911,11 +909,11 @@ void main() {
                 );
 
                 final response = await buildSubject(
-                  retryBehavior: rb.NeverRetry(),
+                  retryBehavior: NeverRetry(),
                 ).execute<Json, Result<bool, String>>(
                   const GetRequest(
                     defaultPath,
-                    retryBehavior: rb.Retry(
+                    retryBehavior: Retry(
                       maxRetries: 2,
                       retryInterval: Duration(milliseconds: 100),
                     ),
@@ -955,11 +953,11 @@ void main() {
                 );
 
                 final response = await buildSubject(
-                  retryBehavior: rb.NeverRetry(),
+                  retryBehavior: NeverRetry(),
                 ).execute<Json, Result<bool, String>>(
                   GetRequest(
                     defaultPath,
-                    retryBehavior: rb.Retry(
+                    retryBehavior: Retry(
                       maxRetries: 2,
                       retryInterval: Duration(milliseconds: 100),
                       retryClause: (r) {
