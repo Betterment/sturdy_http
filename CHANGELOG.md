@@ -1,3 +1,10 @@
+## 0.3.1
+
+## What's Changed
+* fix: export retry_behavior by @btrautmann in https://github.com/Betterment/sturdy_http/pull/10
+
+**Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.3.0...v0.3.1
+
 ## 0.3.0
 
 ## What's Changed
