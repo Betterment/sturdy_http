@@ -1,3 +1,10 @@
+## 0.3.0
+
+## What's Changed
+* feat: support retrying failed requests by @btrautmann in https://github.com/Betterment/sturdy_http/pull/8
+
+**Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.2.0...v0.3.0
+
 ## 0.2.0
 
 ## What's Changed
