@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:sturdy_http/src/retry_behavior.dart';
 import 'package:sturdy_http/sturdy_http.dart';
 import 'package:uuid/uuid.dart';
 
@@ -28,6 +29,7 @@ class SturdyHttp {
   final Dio _dio;
   final Deserializer _deserializer;
   final SturdyHttpEventListener? _eventListener;
+  final RetryBehavior _retryBehavior;
 
   /// The interceptors provided when this [SturdyHttp] was constructed.
   UnmodifiableListView<Interceptor> get interceptors =>
@@ -48,6 +50,7 @@ class SturdyHttp {
     HttpClientAdapter? customAdapter,
     Map<String, String>? proxy,
     bool inferContentType = true,
+    RetryBehavior retryBehavior = const NeverRetry(),
   }) : this._(
           dio: _configureDio(
             baseUrl: baseUrl,
@@ -59,6 +62,7 @@ class SturdyHttp {
           ),
           deserializer: deserializer,
           eventListener: eventListener,
+          retryBehavior: retryBehavior,
         );
 
   /// {@macro http_client}
@@ -66,9 +70,11 @@ class SturdyHttp {
     required Dio dio,
     required Deserializer deserializer,
     required SturdyHttpEventListener? eventListener,
+    required RetryBehavior retryBehavior,
   })  : _dio = dio,
         _deserializer = deserializer,
-        _eventListener = eventListener;
+        _eventListener = eventListener,
+        _retryBehavior = retryBehavior;
 
   /// {@macro http_client}
   SturdyHttp withBaseUrl(String baseUrl) {
@@ -81,6 +87,7 @@ class SturdyHttp {
         ..httpClientAdapter = _dio.httpClientAdapter,
       deserializer: _deserializer,
       eventListener: _eventListener,
+      retryBehavior: _retryBehavior,
     );
   }
 
@@ -120,93 +127,122 @@ class SturdyHttp {
   }
 
   Future<_ResponsePayload<R>> _handleRequest<R, M>(
-      NetworkRequest request) async {
-    late final NetworkResponse<R> resolvedResponse;
-    Response<Object?>? dioResponse;
-    try {
-      // By expecting `Object?` we allow for cases where an API will return
-      // nothing in success cases (e.g 204), but JSON in failure cases such as
-      // 422. If we specify `Json` here, Dio will map the null/empty case to
-      // an empty String, which is not a subtype of Json.
-      dioResponse = await _dio.request<Object?>(
-        request.path,
-        data: request.data.when(
-          empty: () => null,
-          json: (json) => json,
-          raw: (data) => data,
-        ),
-        queryParameters: request.queryParams,
-        options: request.options != null
-            ? request.options!.copyWith(method: request.type.name)
-            : Options(method: request.type.name),
-        cancelToken: request.cancelToken,
-        onReceiveProgress: request.onReceiveProgress,
-        onSendProgress: request.onSendProgress,
-      );
-      if (dioResponse.statusCode == 204) {
-        resolvedResponse = const NetworkResponse.okNoContent();
-      } else {
-        final data = dioResponse.data;
-        if (data == null || data is! R) {
-          String buildErrorMessage() {
-            final messageSuffix = data == null
-                // Disallow empty responses when status code is non-204
-                ? 'was null and status code was ${dioResponse!.statusCode}'
-                // Enforce that response data matches expected, otherwise we'll run into casting
-                // issues below
-                : 'was of type ${data.runtimeType} when it should have been of type $R';
-            return 'Request to ${request.path} was successful but response data $messageSuffix';
-          }
-
-          resolvedResponse = NetworkResponse.genericError(
-            message: buildErrorMessage(),
-            isConnectionIssue: false,
-          );
+    NetworkRequest request,
+  ) async {
+    Future<(Response<Object?>?, NetworkResponse<R>)> send(
+      NetworkRequest request,
+    ) async {
+      late final NetworkResponse<R> resolvedResponse;
+      Response<Object?>? dioResponse;
+      try {
+        // By expecting `Object?` we allow for cases where an API will return
+        // nothing in success cases (e.g 204), but JSON in failure cases such as
+        // 422. If we specify `Json` here, Dio will map the null/empty case to
+        // an empty String, which is not a subtype of Json.
+        dioResponse = await _dio.request<Object?>(
+          request.path,
+          data: request.data.when(
+            empty: () => null,
+            json: (json) => json,
+            raw: (data) => data,
+          ),
+          queryParameters: request.queryParams,
+          options: request.options != null
+              ? request.options!.copyWith(method: request.type.name)
+              : Options(method: request.type.name),
+          cancelToken: request.cancelToken,
+          onReceiveProgress: request.onReceiveProgress,
+          onSendProgress: request.onSendProgress,
+        );
+        if (dioResponse.statusCode == 204) {
+          resolvedResponse = const NetworkResponse.okNoContent();
         } else {
-          resolvedResponse = NetworkResponse.ok(data as R);
+          final data = dioResponse.data;
+          if (data == null || data is! R) {
+            String buildErrorMessage() {
+              final messageSuffix = data == null
+                  // Disallow empty responses when status code is non-204
+                  ? 'was null and status code was ${dioResponse!.statusCode}'
+                  // Enforce that response data matches expected, otherwise we'll run into casting
+                  // issues below
+                  : 'was of type ${data.runtimeType} when it should have been of type $R';
+              return 'Request to ${request.path} was successful but response data $messageSuffix';
+            }
+
+            resolvedResponse = NetworkResponse.genericError(
+              message: buildErrorMessage(),
+              isConnectionIssue: false,
+            );
+          } else {
+            resolvedResponse = NetworkResponse.ok(data as R);
+          }
+        }
+      } on DioException catch (error) {
+        switch (error.response?.statusCode) {
+          case 401:
+            await _onEvent(SturdyHttpEvent.authFailure(error.requestOptions));
+            resolvedResponse = NetworkResponse.unauthorized(error);
+            break;
+          case 403:
+            resolvedResponse = NetworkResponse.forbidden(error);
+            break;
+          case 404:
+            resolvedResponse = NetworkResponse.notFound(error);
+            break;
+          case 422:
+            resolvedResponse = NetworkResponse.unprocessableEntity(
+              error: error,
+              response: error.response?.data as R,
+            );
+            break;
+          case 500:
+            resolvedResponse = NetworkResponse.serverError(error);
+            break;
+          case 503:
+            resolvedResponse = NetworkResponse.serviceUnavailable(error);
+            break;
+          default:
+            resolvedResponse = NetworkResponse.genericError(
+              message:
+                  'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
+              isConnectionIssue: error.isConnectionIssue(),
+              error: error,
+            );
         }
       }
-    } on DioException catch (error) {
-      switch (error.response?.statusCode) {
-        case 401:
-          await _onEvent(SturdyHttpEvent.authFailure(error.requestOptions));
-          resolvedResponse = NetworkResponse.unauthorized(error);
-          break;
-        case 403:
-          resolvedResponse = NetworkResponse.forbidden(error);
-          break;
-        case 404:
-          resolvedResponse = NetworkResponse.notFound(error);
-          break;
-        case 422:
-          resolvedResponse = NetworkResponse.unprocessableEntity(
-            error: error,
-            response: error.response?.data as R,
-          );
-          break;
-        case 500:
-          resolvedResponse = NetworkResponse.serverError(error);
-          break;
-        case 503:
-          resolvedResponse = NetworkResponse.serviceUnavailable(error);
-          break;
-        default:
-          resolvedResponse = NetworkResponse.genericError(
-            message:
-                'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
-            isConnectionIssue: error.isConnectionIssue(),
-            error: error,
-          );
-      }
+      return (dioResponse, resolvedResponse);
     }
-    if (resolvedResponse.isSuccess && request.shouldTriggerDataMutation) {
+
+    RetryBehavior determineRetryBehavior() {
+      // The request's retry behavior takes precedence over the client's
+      final priority = [request.retryBehavior, _retryBehavior];
+      return priority.firstWhere(
+        (b) => b is! Unspecified,
+        orElse: () => NeverRetry(),
+      );
+    }
+
+    final retryBehavior = determineRetryBehavior();
+    var response = await send(request);
+    var retryCount = 0;
+    while (!response.$2.isSuccess &&
+        retryBehavior.shouldRetry(response.$1, retryCount)) {
+      // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
+      await Future.delayed((retryBehavior as Retry).retryInterval);
+      retryCount++;
+      response = await send(request);
+    }
+
+    if (response.$2.isSuccess && request.shouldTriggerDataMutation) {
       await _onEvent(
-          SturdyHttpEvent.mutativeRequestSuccess(dioResponse!.requestOptions));
+        SturdyHttpEvent.mutativeRequestSuccess(response.$1!.requestOptions),
+      );
     }
+
     return _ResponsePayload<R>(
       request: request,
-      dioResponse: dioResponse,
-      resolvedResponse: resolvedResponse,
+      dioResponse: response.$1,
+      resolvedResponse: response.$2,
     );
   }
 }

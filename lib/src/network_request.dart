@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:sturdy_http/src/retry_behavior.dart';
 import 'package:sturdy_http/sturdy_http.dart';
 
 part 'network_request.freezed.dart';
@@ -30,6 +31,7 @@ abstract class NetworkRequest {
     this.cancelToken,
     this.onReceiveProgress,
     this.onSendProgress,
+    this.retryBehavior = const Unspecified(),
   });
 
   /// {@macro network_request_type}
@@ -38,7 +40,7 @@ abstract class NetworkRequest {
   /// The path of the requested resource
   final String path;
 
-  ///
+  /// The body of the network request
   final NetworkRequestBody data;
 
   /// Whether this request should be considered as mutative. If false,
@@ -60,6 +62,10 @@ abstract class NetworkRequest {
 
   /// [ProgressCallback] for send progress for this request
   final ProgressCallback? onSendProgress;
+
+  /// The [RetryBehavior] for this request. Defaults to [Unspecified]. If not
+  /// overridden, the [SturdyHttp] instance's [RetryBehavior] will be used.
+  final RetryBehavior retryBehavior;
 }
 
 /// {@template get_request}
@@ -75,6 +81,7 @@ class GetRequest extends NetworkRequest {
     super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
+    super.retryBehavior,
   }) : super(
           type: NetworkRequestType.Get,
           path: path,
@@ -97,6 +104,7 @@ class PostRequest extends NetworkRequest {
     super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
+    super.retryBehavior,
   }) : super(
           type: NetworkRequestType.Post,
           path: path,
@@ -118,6 +126,7 @@ class PutRequest extends NetworkRequest {
     super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
+    super.retryBehavior,
   }) : super(
           type: NetworkRequestType.Put,
           path: path,
@@ -139,6 +148,7 @@ class DeleteRequest extends NetworkRequest {
     super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
+    super.retryBehavior,
   }) : super(
           type: NetworkRequestType.Delete,
           path: path,
@@ -163,6 +173,7 @@ class RawRequest extends NetworkRequest {
     super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
+    super.retryBehavior,
   }) : super(
           path: path,
           queryParams: queryParameters,

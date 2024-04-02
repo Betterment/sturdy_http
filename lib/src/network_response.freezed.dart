@@ -12,7 +12,7 @@ part of 'network_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$NetworkResponse<R> {
@@ -125,18 +125,19 @@ class _$NetworkResponseCopyWithImpl<R, $Res, $Val extends NetworkResponse<R>>
 }
 
 /// @nodoc
-abstract class _$$_OkCopyWith<R, $Res> {
-  factory _$$_OkCopyWith(_$_Ok<R> value, $Res Function(_$_Ok<R>) then) =
-      __$$_OkCopyWithImpl<R, $Res>;
+abstract class _$$OkImplCopyWith<R, $Res> {
+  factory _$$OkImplCopyWith(
+          _$OkImpl<R> value, $Res Function(_$OkImpl<R>) then) =
+      __$$OkImplCopyWithImpl<R, $Res>;
   @useResult
   $Res call({R response});
 }
 
 /// @nodoc
-class __$$_OkCopyWithImpl<R, $Res>
-    extends _$NetworkResponseCopyWithImpl<R, $Res, _$_Ok<R>>
-    implements _$$_OkCopyWith<R, $Res> {
-  __$$_OkCopyWithImpl(_$_Ok<R> _value, $Res Function(_$_Ok<R>) _then)
+class __$$OkImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$OkImpl<R>>
+    implements _$$OkImplCopyWith<R, $Res> {
+  __$$OkImplCopyWithImpl(_$OkImpl<R> _value, $Res Function(_$OkImpl<R>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -144,7 +145,7 @@ class __$$_OkCopyWithImpl<R, $Res>
   $Res call({
     Object? response = freezed,
   }) {
-    return _then(_$_Ok<R>(
+    return _then(_$OkImpl<R>(
       freezed == response
           ? _value.response
           : response // ignore: cast_nullable_to_non_nullable
@@ -155,8 +156,8 @@ class __$$_OkCopyWithImpl<R, $Res>
 
 /// @nodoc
 
-class _$_Ok<R> implements _Ok<R> {
-  const _$_Ok(this.response);
+class _$OkImpl<R> implements _Ok<R> {
+  const _$OkImpl(this.response);
 
   @override
   final R response;
@@ -167,10 +168,10 @@ class _$_Ok<R> implements _Ok<R> {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Ok<R> &&
+            other is _$OkImpl<R> &&
             const DeepCollectionEquality().equals(other.response, response));
   }
 
@@ -181,8 +182,8 @@ class _$_Ok<R> implements _Ok<R> {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_OkCopyWith<R, _$_Ok<R>> get copyWith =>
-      __$$_OkCopyWithImpl<R, _$_Ok<R>>(this, _$identity);
+  _$$OkImplCopyWith<R, _$OkImpl<R>> get copyWith =>
+      __$$OkImplCopyWithImpl<R, _$OkImpl<R>>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -298,34 +299,34 @@ class _$_Ok<R> implements _Ok<R> {
 }
 
 abstract class _Ok<R> implements NetworkResponse<R> {
-  const factory _Ok(final R response) = _$_Ok<R>;
+  const factory _Ok(final R response) = _$OkImpl<R>;
 
   R get response;
   @JsonKey(ignore: true)
-  _$$_OkCopyWith<R, _$_Ok<R>> get copyWith =>
+  _$$OkImplCopyWith<R, _$OkImpl<R>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_OkNoContentCopyWith<R, $Res> {
-  factory _$$_OkNoContentCopyWith(
-          _$_OkNoContent<R> value, $Res Function(_$_OkNoContent<R>) then) =
-      __$$_OkNoContentCopyWithImpl<R, $Res>;
+abstract class _$$OkNoContentImplCopyWith<R, $Res> {
+  factory _$$OkNoContentImplCopyWith(_$OkNoContentImpl<R> value,
+          $Res Function(_$OkNoContentImpl<R>) then) =
+      __$$OkNoContentImplCopyWithImpl<R, $Res>;
 }
 
 /// @nodoc
-class __$$_OkNoContentCopyWithImpl<R, $Res>
-    extends _$NetworkResponseCopyWithImpl<R, $Res, _$_OkNoContent<R>>
-    implements _$$_OkNoContentCopyWith<R, $Res> {
-  __$$_OkNoContentCopyWithImpl(
-      _$_OkNoContent<R> _value, $Res Function(_$_OkNoContent<R>) _then)
+class __$$OkNoContentImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$OkNoContentImpl<R>>
+    implements _$$OkNoContentImplCopyWith<R, $Res> {
+  __$$OkNoContentImplCopyWithImpl(
+      _$OkNoContentImpl<R> _value, $Res Function(_$OkNoContentImpl<R>) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$_OkNoContent<R> implements _OkNoContent<R> {
-  const _$_OkNoContent();
+class _$OkNoContentImpl<R> implements _OkNoContent<R> {
+  const _$OkNoContentImpl();
 
   @override
   String toString() {
@@ -333,9 +334,9 @@ class _$_OkNoContent<R> implements _OkNoContent<R> {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_OkNoContent<R>);
+        (other.runtimeType == runtimeType && other is _$OkNoContentImpl<R>);
   }
 
   @override
@@ -455,24 +456,24 @@ class _$_OkNoContent<R> implements _OkNoContent<R> {
 }
 
 abstract class _OkNoContent<R> implements NetworkResponse<R> {
-  const factory _OkNoContent() = _$_OkNoContent<R>;
+  const factory _OkNoContent() = _$OkNoContentImpl<R>;
 }
 
 /// @nodoc
-abstract class _$$_UnauthorizedCopyWith<R, $Res> {
-  factory _$$_UnauthorizedCopyWith(
-          _$_Unauthorized<R> value, $Res Function(_$_Unauthorized<R>) then) =
-      __$$_UnauthorizedCopyWithImpl<R, $Res>;
+abstract class _$$UnauthorizedImplCopyWith<R, $Res> {
+  factory _$$UnauthorizedImplCopyWith(_$UnauthorizedImpl<R> value,
+          $Res Function(_$UnauthorizedImpl<R>) then) =
+      __$$UnauthorizedImplCopyWithImpl<R, $Res>;
   @useResult
   $Res call({DioException error});
 }
 
 /// @nodoc
-class __$$_UnauthorizedCopyWithImpl<R, $Res>
-    extends _$NetworkResponseCopyWithImpl<R, $Res, _$_Unauthorized<R>>
-    implements _$$_UnauthorizedCopyWith<R, $Res> {
-  __$$_UnauthorizedCopyWithImpl(
-      _$_Unauthorized<R> _value, $Res Function(_$_Unauthorized<R>) _then)
+class __$$UnauthorizedImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$UnauthorizedImpl<R>>
+    implements _$$UnauthorizedImplCopyWith<R, $Res> {
+  __$$UnauthorizedImplCopyWithImpl(
+      _$UnauthorizedImpl<R> _value, $Res Function(_$UnauthorizedImpl<R>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -480,7 +481,7 @@ class __$$_UnauthorizedCopyWithImpl<R, $Res>
   $Res call({
     Object? error = null,
   }) {
-    return _then(_$_Unauthorized<R>(
+    return _then(_$UnauthorizedImpl<R>(
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -491,8 +492,8 @@ class __$$_UnauthorizedCopyWithImpl<R, $Res>
 
 /// @nodoc
 
-class _$_Unauthorized<R> implements _Unauthorized<R> {
-  const _$_Unauthorized(this.error);
+class _$UnauthorizedImpl<R> implements _Unauthorized<R> {
+  const _$UnauthorizedImpl(this.error);
 
   @override
   final DioException error;
@@ -503,10 +504,10 @@ class _$_Unauthorized<R> implements _Unauthorized<R> {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Unauthorized<R> &&
+            other is _$UnauthorizedImpl<R> &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -516,8 +517,9 @@ class _$_Unauthorized<R> implements _Unauthorized<R> {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_UnauthorizedCopyWith<R, _$_Unauthorized<R>> get copyWith =>
-      __$$_UnauthorizedCopyWithImpl<R, _$_Unauthorized<R>>(this, _$identity);
+  _$$UnauthorizedImplCopyWith<R, _$UnauthorizedImpl<R>> get copyWith =>
+      __$$UnauthorizedImplCopyWithImpl<R, _$UnauthorizedImpl<R>>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -633,29 +635,29 @@ class _$_Unauthorized<R> implements _Unauthorized<R> {
 }
 
 abstract class _Unauthorized<R> implements NetworkResponse<R> {
-  const factory _Unauthorized(final DioException error) = _$_Unauthorized<R>;
+  const factory _Unauthorized(final DioException error) = _$UnauthorizedImpl<R>;
 
   DioException get error;
   @JsonKey(ignore: true)
-  _$$_UnauthorizedCopyWith<R, _$_Unauthorized<R>> get copyWith =>
+  _$$UnauthorizedImplCopyWith<R, _$UnauthorizedImpl<R>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ForbiddenCopyWith<R, $Res> {
-  factory _$$_ForbiddenCopyWith(
-          _$_Forbidden<R> value, $Res Function(_$_Forbidden<R>) then) =
-      __$$_ForbiddenCopyWithImpl<R, $Res>;
+abstract class _$$ForbiddenImplCopyWith<R, $Res> {
+  factory _$$ForbiddenImplCopyWith(
+          _$ForbiddenImpl<R> value, $Res Function(_$ForbiddenImpl<R>) then) =
+      __$$ForbiddenImplCopyWithImpl<R, $Res>;
   @useResult
   $Res call({DioException error});
 }
 
 /// @nodoc
-class __$$_ForbiddenCopyWithImpl<R, $Res>
-    extends _$NetworkResponseCopyWithImpl<R, $Res, _$_Forbidden<R>>
-    implements _$$_ForbiddenCopyWith<R, $Res> {
-  __$$_ForbiddenCopyWithImpl(
-      _$_Forbidden<R> _value, $Res Function(_$_Forbidden<R>) _then)
+class __$$ForbiddenImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$ForbiddenImpl<R>>
+    implements _$$ForbiddenImplCopyWith<R, $Res> {
+  __$$ForbiddenImplCopyWithImpl(
+      _$ForbiddenImpl<R> _value, $Res Function(_$ForbiddenImpl<R>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -663,7 +665,7 @@ class __$$_ForbiddenCopyWithImpl<R, $Res>
   $Res call({
     Object? error = null,
   }) {
-    return _then(_$_Forbidden<R>(
+    return _then(_$ForbiddenImpl<R>(
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -674,8 +676,8 @@ class __$$_ForbiddenCopyWithImpl<R, $Res>
 
 /// @nodoc
 
-class _$_Forbidden<R> implements _Forbidden<R> {
-  const _$_Forbidden(this.error);
+class _$ForbiddenImpl<R> implements _Forbidden<R> {
+  const _$ForbiddenImpl(this.error);
 
   @override
   final DioException error;
@@ -686,10 +688,10 @@ class _$_Forbidden<R> implements _Forbidden<R> {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Forbidden<R> &&
+            other is _$ForbiddenImpl<R> &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -699,8 +701,8 @@ class _$_Forbidden<R> implements _Forbidden<R> {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ForbiddenCopyWith<R, _$_Forbidden<R>> get copyWith =>
-      __$$_ForbiddenCopyWithImpl<R, _$_Forbidden<R>>(this, _$identity);
+  _$$ForbiddenImplCopyWith<R, _$ForbiddenImpl<R>> get copyWith =>
+      __$$ForbiddenImplCopyWithImpl<R, _$ForbiddenImpl<R>>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -816,29 +818,29 @@ class _$_Forbidden<R> implements _Forbidden<R> {
 }
 
 abstract class _Forbidden<R> implements NetworkResponse<R> {
-  const factory _Forbidden(final DioException error) = _$_Forbidden<R>;
+  const factory _Forbidden(final DioException error) = _$ForbiddenImpl<R>;
 
   DioException get error;
   @JsonKey(ignore: true)
-  _$$_ForbiddenCopyWith<R, _$_Forbidden<R>> get copyWith =>
+  _$$ForbiddenImplCopyWith<R, _$ForbiddenImpl<R>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_NotFoundCopyWith<R, $Res> {
-  factory _$$_NotFoundCopyWith(
-          _$_NotFound<R> value, $Res Function(_$_NotFound<R>) then) =
-      __$$_NotFoundCopyWithImpl<R, $Res>;
+abstract class _$$NotFoundImplCopyWith<R, $Res> {
+  factory _$$NotFoundImplCopyWith(
+          _$NotFoundImpl<R> value, $Res Function(_$NotFoundImpl<R>) then) =
+      __$$NotFoundImplCopyWithImpl<R, $Res>;
   @useResult
   $Res call({DioException error});
 }
 
 /// @nodoc
-class __$$_NotFoundCopyWithImpl<R, $Res>
-    extends _$NetworkResponseCopyWithImpl<R, $Res, _$_NotFound<R>>
-    implements _$$_NotFoundCopyWith<R, $Res> {
-  __$$_NotFoundCopyWithImpl(
-      _$_NotFound<R> _value, $Res Function(_$_NotFound<R>) _then)
+class __$$NotFoundImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$NotFoundImpl<R>>
+    implements _$$NotFoundImplCopyWith<R, $Res> {
+  __$$NotFoundImplCopyWithImpl(
+      _$NotFoundImpl<R> _value, $Res Function(_$NotFoundImpl<R>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -846,7 +848,7 @@ class __$$_NotFoundCopyWithImpl<R, $Res>
   $Res call({
     Object? error = null,
   }) {
-    return _then(_$_NotFound<R>(
+    return _then(_$NotFoundImpl<R>(
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -857,8 +859,8 @@ class __$$_NotFoundCopyWithImpl<R, $Res>
 
 /// @nodoc
 
-class _$_NotFound<R> implements _NotFound<R> {
-  const _$_NotFound(this.error);
+class _$NotFoundImpl<R> implements _NotFound<R> {
+  const _$NotFoundImpl(this.error);
 
   @override
   final DioException error;
@@ -869,10 +871,10 @@ class _$_NotFound<R> implements _NotFound<R> {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_NotFound<R> &&
+            other is _$NotFoundImpl<R> &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -882,8 +884,8 @@ class _$_NotFound<R> implements _NotFound<R> {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_NotFoundCopyWith<R, _$_NotFound<R>> get copyWith =>
-      __$$_NotFoundCopyWithImpl<R, _$_NotFound<R>>(this, _$identity);
+  _$$NotFoundImplCopyWith<R, _$NotFoundImpl<R>> get copyWith =>
+      __$$NotFoundImplCopyWithImpl<R, _$NotFoundImpl<R>>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -999,29 +1001,29 @@ class _$_NotFound<R> implements _NotFound<R> {
 }
 
 abstract class _NotFound<R> implements NetworkResponse<R> {
-  const factory _NotFound(final DioException error) = _$_NotFound<R>;
+  const factory _NotFound(final DioException error) = _$NotFoundImpl<R>;
 
   DioException get error;
   @JsonKey(ignore: true)
-  _$$_NotFoundCopyWith<R, _$_NotFound<R>> get copyWith =>
+  _$$NotFoundImplCopyWith<R, _$NotFoundImpl<R>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_UnprocessableEntityCopyWith<R, $Res> {
-  factory _$$_UnprocessableEntityCopyWith(_$_UnprocessableEntity<R> value,
-          $Res Function(_$_UnprocessableEntity<R>) then) =
-      __$$_UnprocessableEntityCopyWithImpl<R, $Res>;
+abstract class _$$UnprocessableEntityImplCopyWith<R, $Res> {
+  factory _$$UnprocessableEntityImplCopyWith(_$UnprocessableEntityImpl<R> value,
+          $Res Function(_$UnprocessableEntityImpl<R>) then) =
+      __$$UnprocessableEntityImplCopyWithImpl<R, $Res>;
   @useResult
   $Res call({DioException error, R response});
 }
 
 /// @nodoc
-class __$$_UnprocessableEntityCopyWithImpl<R, $Res>
-    extends _$NetworkResponseCopyWithImpl<R, $Res, _$_UnprocessableEntity<R>>
-    implements _$$_UnprocessableEntityCopyWith<R, $Res> {
-  __$$_UnprocessableEntityCopyWithImpl(_$_UnprocessableEntity<R> _value,
-      $Res Function(_$_UnprocessableEntity<R>) _then)
+class __$$UnprocessableEntityImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$UnprocessableEntityImpl<R>>
+    implements _$$UnprocessableEntityImplCopyWith<R, $Res> {
+  __$$UnprocessableEntityImplCopyWithImpl(_$UnprocessableEntityImpl<R> _value,
+      $Res Function(_$UnprocessableEntityImpl<R>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1030,7 +1032,7 @@ class __$$_UnprocessableEntityCopyWithImpl<R, $Res>
     Object? error = null,
     Object? response = freezed,
   }) {
-    return _then(_$_UnprocessableEntity<R>(
+    return _then(_$UnprocessableEntityImpl<R>(
       error: null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -1045,8 +1047,9 @@ class __$$_UnprocessableEntityCopyWithImpl<R, $Res>
 
 /// @nodoc
 
-class _$_UnprocessableEntity<R> implements _UnprocessableEntity<R> {
-  const _$_UnprocessableEntity({required this.error, required this.response});
+class _$UnprocessableEntityImpl<R> implements _UnprocessableEntity<R> {
+  const _$UnprocessableEntityImpl(
+      {required this.error, required this.response});
 
   @override
   final DioException error;
@@ -1059,10 +1062,10 @@ class _$_UnprocessableEntity<R> implements _UnprocessableEntity<R> {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_UnprocessableEntity<R> &&
+            other is _$UnprocessableEntityImpl<R> &&
             (identical(other.error, error) || other.error == error) &&
             const DeepCollectionEquality().equals(other.response, response));
   }
@@ -1074,9 +1077,9 @@ class _$_UnprocessableEntity<R> implements _UnprocessableEntity<R> {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_UnprocessableEntityCopyWith<R, _$_UnprocessableEntity<R>> get copyWith =>
-      __$$_UnprocessableEntityCopyWithImpl<R, _$_UnprocessableEntity<R>>(
-          this, _$identity);
+  _$$UnprocessableEntityImplCopyWith<R, _$UnprocessableEntityImpl<R>>
+      get copyWith => __$$UnprocessableEntityImplCopyWithImpl<R,
+          _$UnprocessableEntityImpl<R>>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1194,30 +1197,30 @@ class _$_UnprocessableEntity<R> implements _UnprocessableEntity<R> {
 abstract class _UnprocessableEntity<R> implements NetworkResponse<R> {
   const factory _UnprocessableEntity(
       {required final DioException error,
-      required final R response}) = _$_UnprocessableEntity<R>;
+      required final R response}) = _$UnprocessableEntityImpl<R>;
 
   DioException get error;
   R get response;
   @JsonKey(ignore: true)
-  _$$_UnprocessableEntityCopyWith<R, _$_UnprocessableEntity<R>> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$UnprocessableEntityImplCopyWith<R, _$UnprocessableEntityImpl<R>>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ServerErrorCopyWith<R, $Res> {
-  factory _$$_ServerErrorCopyWith(
-          _$_ServerError<R> value, $Res Function(_$_ServerError<R>) then) =
-      __$$_ServerErrorCopyWithImpl<R, $Res>;
+abstract class _$$ServerErrorImplCopyWith<R, $Res> {
+  factory _$$ServerErrorImplCopyWith(_$ServerErrorImpl<R> value,
+          $Res Function(_$ServerErrorImpl<R>) then) =
+      __$$ServerErrorImplCopyWithImpl<R, $Res>;
   @useResult
   $Res call({DioException error});
 }
 
 /// @nodoc
-class __$$_ServerErrorCopyWithImpl<R, $Res>
-    extends _$NetworkResponseCopyWithImpl<R, $Res, _$_ServerError<R>>
-    implements _$$_ServerErrorCopyWith<R, $Res> {
-  __$$_ServerErrorCopyWithImpl(
-      _$_ServerError<R> _value, $Res Function(_$_ServerError<R>) _then)
+class __$$ServerErrorImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$ServerErrorImpl<R>>
+    implements _$$ServerErrorImplCopyWith<R, $Res> {
+  __$$ServerErrorImplCopyWithImpl(
+      _$ServerErrorImpl<R> _value, $Res Function(_$ServerErrorImpl<R>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1225,7 +1228,7 @@ class __$$_ServerErrorCopyWithImpl<R, $Res>
   $Res call({
     Object? error = null,
   }) {
-    return _then(_$_ServerError<R>(
+    return _then(_$ServerErrorImpl<R>(
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -1236,8 +1239,8 @@ class __$$_ServerErrorCopyWithImpl<R, $Res>
 
 /// @nodoc
 
-class _$_ServerError<R> implements _ServerError<R> {
-  const _$_ServerError(this.error);
+class _$ServerErrorImpl<R> implements _ServerError<R> {
+  const _$ServerErrorImpl(this.error);
 
   @override
   final DioException error;
@@ -1248,10 +1251,10 @@ class _$_ServerError<R> implements _ServerError<R> {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ServerError<R> &&
+            other is _$ServerErrorImpl<R> &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -1261,8 +1264,9 @@ class _$_ServerError<R> implements _ServerError<R> {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ServerErrorCopyWith<R, _$_ServerError<R>> get copyWith =>
-      __$$_ServerErrorCopyWithImpl<R, _$_ServerError<R>>(this, _$identity);
+  _$$ServerErrorImplCopyWith<R, _$ServerErrorImpl<R>> get copyWith =>
+      __$$ServerErrorImplCopyWithImpl<R, _$ServerErrorImpl<R>>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1378,29 +1382,29 @@ class _$_ServerError<R> implements _ServerError<R> {
 }
 
 abstract class _ServerError<R> implements NetworkResponse<R> {
-  const factory _ServerError(final DioException error) = _$_ServerError<R>;
+  const factory _ServerError(final DioException error) = _$ServerErrorImpl<R>;
 
   DioException get error;
   @JsonKey(ignore: true)
-  _$$_ServerErrorCopyWith<R, _$_ServerError<R>> get copyWith =>
+  _$$ServerErrorImplCopyWith<R, _$ServerErrorImpl<R>> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_ServiceUnavailableCopyWith<R, $Res> {
-  factory _$$_ServiceUnavailableCopyWith(_$_ServiceUnavailable<R> value,
-          $Res Function(_$_ServiceUnavailable<R>) then) =
-      __$$_ServiceUnavailableCopyWithImpl<R, $Res>;
+abstract class _$$ServiceUnavailableImplCopyWith<R, $Res> {
+  factory _$$ServiceUnavailableImplCopyWith(_$ServiceUnavailableImpl<R> value,
+          $Res Function(_$ServiceUnavailableImpl<R>) then) =
+      __$$ServiceUnavailableImplCopyWithImpl<R, $Res>;
   @useResult
   $Res call({DioException error});
 }
 
 /// @nodoc
-class __$$_ServiceUnavailableCopyWithImpl<R, $Res>
-    extends _$NetworkResponseCopyWithImpl<R, $Res, _$_ServiceUnavailable<R>>
-    implements _$$_ServiceUnavailableCopyWith<R, $Res> {
-  __$$_ServiceUnavailableCopyWithImpl(_$_ServiceUnavailable<R> _value,
-      $Res Function(_$_ServiceUnavailable<R>) _then)
+class __$$ServiceUnavailableImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$ServiceUnavailableImpl<R>>
+    implements _$$ServiceUnavailableImplCopyWith<R, $Res> {
+  __$$ServiceUnavailableImplCopyWithImpl(_$ServiceUnavailableImpl<R> _value,
+      $Res Function(_$ServiceUnavailableImpl<R>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1408,7 +1412,7 @@ class __$$_ServiceUnavailableCopyWithImpl<R, $Res>
   $Res call({
     Object? error = null,
   }) {
-    return _then(_$_ServiceUnavailable<R>(
+    return _then(_$ServiceUnavailableImpl<R>(
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -1419,8 +1423,8 @@ class __$$_ServiceUnavailableCopyWithImpl<R, $Res>
 
 /// @nodoc
 
-class _$_ServiceUnavailable<R> implements _ServiceUnavailable<R> {
-  const _$_ServiceUnavailable(this.error);
+class _$ServiceUnavailableImpl<R> implements _ServiceUnavailable<R> {
+  const _$ServiceUnavailableImpl(this.error);
 
   @override
   final DioException error;
@@ -1431,10 +1435,10 @@ class _$_ServiceUnavailable<R> implements _ServiceUnavailable<R> {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ServiceUnavailable<R> &&
+            other is _$ServiceUnavailableImpl<R> &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -1444,9 +1448,9 @@ class _$_ServiceUnavailable<R> implements _ServiceUnavailable<R> {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ServiceUnavailableCopyWith<R, _$_ServiceUnavailable<R>> get copyWith =>
-      __$$_ServiceUnavailableCopyWithImpl<R, _$_ServiceUnavailable<R>>(
-          this, _$identity);
+  _$$ServiceUnavailableImplCopyWith<R, _$ServiceUnavailableImpl<R>>
+      get copyWith => __$$ServiceUnavailableImplCopyWithImpl<R,
+          _$ServiceUnavailableImpl<R>>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1563,29 +1567,29 @@ class _$_ServiceUnavailable<R> implements _ServiceUnavailable<R> {
 
 abstract class _ServiceUnavailable<R> implements NetworkResponse<R> {
   const factory _ServiceUnavailable(final DioException error) =
-      _$_ServiceUnavailable<R>;
+      _$ServiceUnavailableImpl<R>;
 
   DioException get error;
   @JsonKey(ignore: true)
-  _$$_ServiceUnavailableCopyWith<R, _$_ServiceUnavailable<R>> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$ServiceUnavailableImplCopyWith<R, _$ServiceUnavailableImpl<R>>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$_GenericErrorCopyWith<R, $Res> {
-  factory _$$_GenericErrorCopyWith(
-          _$_GenericError<R> value, $Res Function(_$_GenericError<R>) then) =
-      __$$_GenericErrorCopyWithImpl<R, $Res>;
+abstract class _$$GenericErrorImplCopyWith<R, $Res> {
+  factory _$$GenericErrorImplCopyWith(_$GenericErrorImpl<R> value,
+          $Res Function(_$GenericErrorImpl<R>) then) =
+      __$$GenericErrorImplCopyWithImpl<R, $Res>;
   @useResult
   $Res call({String message, bool isConnectionIssue, DioException? error});
 }
 
 /// @nodoc
-class __$$_GenericErrorCopyWithImpl<R, $Res>
-    extends _$NetworkResponseCopyWithImpl<R, $Res, _$_GenericError<R>>
-    implements _$$_GenericErrorCopyWith<R, $Res> {
-  __$$_GenericErrorCopyWithImpl(
-      _$_GenericError<R> _value, $Res Function(_$_GenericError<R>) _then)
+class __$$GenericErrorImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$GenericErrorImpl<R>>
+    implements _$$GenericErrorImplCopyWith<R, $Res> {
+  __$$GenericErrorImplCopyWithImpl(
+      _$GenericErrorImpl<R> _value, $Res Function(_$GenericErrorImpl<R>) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -1595,7 +1599,7 @@ class __$$_GenericErrorCopyWithImpl<R, $Res>
     Object? isConnectionIssue = null,
     Object? error = freezed,
   }) {
-    return _then(_$_GenericError<R>(
+    return _then(_$GenericErrorImpl<R>(
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -1614,8 +1618,8 @@ class __$$_GenericErrorCopyWithImpl<R, $Res>
 
 /// @nodoc
 
-class _$_GenericError<R> implements _GenericError<R> {
-  const _$_GenericError(
+class _$GenericErrorImpl<R> implements _GenericError<R> {
+  const _$GenericErrorImpl(
       {required this.message, required this.isConnectionIssue, this.error});
 
   @override
@@ -1631,10 +1635,10 @@ class _$_GenericError<R> implements _GenericError<R> {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_GenericError<R> &&
+            other is _$GenericErrorImpl<R> &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.isConnectionIssue, isConnectionIssue) ||
                 other.isConnectionIssue == isConnectionIssue) &&
@@ -1648,8 +1652,9 @@ class _$_GenericError<R> implements _GenericError<R> {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_GenericErrorCopyWith<R, _$_GenericError<R>> get copyWith =>
-      __$$_GenericErrorCopyWithImpl<R, _$_GenericError<R>>(this, _$identity);
+  _$$GenericErrorImplCopyWith<R, _$GenericErrorImpl<R>> get copyWith =>
+      __$$GenericErrorImplCopyWithImpl<R, _$GenericErrorImpl<R>>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1768,12 +1773,12 @@ abstract class _GenericError<R> implements NetworkResponse<R> {
   const factory _GenericError(
       {required final String message,
       required final bool isConnectionIssue,
-      final DioException? error}) = _$_GenericError<R>;
+      final DioException? error}) = _$GenericErrorImpl<R>;
 
   String get message;
   bool get isConnectionIssue;
   DioException? get error;
   @JsonKey(ignore: true)
-  _$$_GenericErrorCopyWith<R, _$_GenericError<R>> get copyWith =>
+  _$$GenericErrorImplCopyWith<R, _$GenericErrorImpl<R>> get copyWith =>
       throw _privateConstructorUsedError;
 }

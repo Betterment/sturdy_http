@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:charlatan/charlatan.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:sturdy_http/src/retry_behavior.dart' as rb;
+import 'package:sturdy_http/src/retry_behavior.dart';
 import 'package:sturdy_http/sturdy_http.dart';
 import 'package:test/test.dart';
 
@@ -40,6 +42,7 @@ void main() {
       List<Interceptor> interceptors = const [],
       Map<String, String>? proxy,
       bool inferContentType = false,
+      rb.RetryBehavior retryBehavior = const rb.NeverRetry(),
     }) {
       return SturdyHttp(
         baseUrl: baseUrl,
@@ -48,6 +51,7 @@ void main() {
         interceptors: interceptors,
         proxy: proxy,
         inferContentType: inferContentType,
+        retryBehavior: retryBehavior,
       );
     }
 
@@ -74,7 +78,7 @@ void main() {
                 contentType =
                     options.headers[Headers.contentTypeHeader] as String?;
               },
-            )
+            ),
           ],
         );
 
@@ -98,7 +102,7 @@ void main() {
                 contentType =
                     options.headers[Headers.contentTypeHeader] as String?;
               },
-            )
+            ),
           ],
         );
 
@@ -492,7 +496,7 @@ void main() {
                               const Result.failure('Not expected: orElse'),
                         );
                       },
-                    )
+                    ),
                   ]);
 
                   expect(
@@ -579,7 +583,7 @@ void main() {
                               const Result.failure('Not expected: orElse'),
                         );
                       },
-                    )
+                    ),
                   ]);
 
                   expect(mutativeRequestSuccessRequests.isEmpty, true);
@@ -809,6 +813,181 @@ void main() {
                 success: (s) => expect(s, isTrue),
                 failure: fail,
               );
+            });
+          });
+
+          group('RetryBehavior', () {
+            group('when retry behavior is Retry', () {
+              test('it retries maxRetries times', () async {
+                var requestCount = 0;
+                charlatan.whenGet(
+                  '/foo',
+                  (request) {
+                    requestCount++;
+                    return CharlatanHttpResponse(statusCode: 522);
+                  },
+                );
+
+                final response =
+                    await buildSubject().execute<Json, Result<bool, String>>(
+                  const GetRequest(
+                    defaultPath,
+                    retryBehavior: rb.Retry(
+                      maxRetries: 3,
+                      retryInterval: Duration(milliseconds: 100),
+                    ),
+                  ),
+                  onResponse: (response) {
+                    return response.maybeWhen(
+                      genericError: (_, __, ___) {
+                        return const Result.success(true);
+                      },
+                      orElse: () =>
+                          const Result.failure('Not expected: orElse'),
+                    );
+                  },
+                );
+
+                expect(
+                  response.when(
+                    success: (s) => s,
+                    failure: fail,
+                  ),
+                  isTrue,
+                );
+                // maxRetries + 1
+                expect(requestCount, 4);
+              });
+            });
+
+            group('when retry behavior is NeverRetry', () {
+              test('it does not retry', () async {
+                var requestCount = 0;
+                charlatan.whenGet(
+                  '/foo',
+                  (request) {
+                    requestCount++;
+                    return CharlatanHttpResponse(statusCode: 522);
+                  },
+                );
+
+                final response =
+                    await buildSubject().execute<Json, Result<bool, String>>(
+                  const GetRequest(
+                    defaultPath,
+                    retryBehavior: rb.NeverRetry(),
+                  ),
+                  onResponse: (response) {
+                    return response.maybeWhen(
+                      genericError: (_, __, ___) {
+                        return const Result.success(true);
+                      },
+                      orElse: () =>
+                          const Result.failure('Not expected: orElse'),
+                    );
+                  },
+                );
+
+                expect(
+                  response.when(
+                    success: (s) => s,
+                    failure: fail,
+                  ),
+                  isTrue,
+                );
+                expect(requestCount, 1);
+              });
+            });
+
+            group('RetryBehavior priority', () {
+              test('it prefers local RetryBehavior to global', () async {
+                var requestCount = 0;
+                charlatan.whenGet(
+                  '/foo',
+                  (request) {
+                    requestCount++;
+                    return CharlatanHttpResponse(statusCode: 522);
+                  },
+                );
+
+                final response = await buildSubject(
+                  retryBehavior: rb.NeverRetry(),
+                ).execute<Json, Result<bool, String>>(
+                  const GetRequest(
+                    defaultPath,
+                    retryBehavior: rb.Retry(
+                      maxRetries: 2,
+                      retryInterval: Duration(milliseconds: 100),
+                    ),
+                  ),
+                  onResponse: (response) {
+                    return response.maybeWhen(
+                      genericError: (_, __, ___) {
+                        return const Result.success(true);
+                      },
+                      orElse: () =>
+                          const Result.failure('Not expected: orElse'),
+                    );
+                  },
+                );
+
+                expect(
+                  response.when(
+                    success: (s) => s,
+                    failure: fail,
+                  ),
+                  isTrue,
+                );
+                expect(requestCount, 3);
+              });
+            });
+
+            group('RetryBehavior priority', () {
+              test('it allows overriding retryClause', () async {
+                var requestCount = 0;
+                final statusCode = defaultRetryStatusCodes.first;
+                charlatan.whenGet(
+                  '/foo',
+                  (request) {
+                    requestCount++;
+                    return CharlatanHttpResponse(statusCode: statusCode);
+                  },
+                );
+
+                final response = await buildSubject(
+                  retryBehavior: rb.NeverRetry(),
+                ).execute<Json, Result<bool, String>>(
+                  GetRequest(
+                    defaultPath,
+                    retryBehavior: rb.Retry(
+                      maxRetries: 2,
+                      retryInterval: Duration(milliseconds: 100),
+                      retryClause: (r) {
+                        // Body will be `null`; essentially disallow retrying
+                        return r != null;
+                      },
+                    ),
+                  ),
+                  onResponse: (response) {
+                    return response.maybeWhen(
+                      genericError: (_, __, ___) {
+                        return const Result.success(true);
+                      },
+                      orElse: () =>
+                          const Result.failure('Not expected: orElse'),
+                    );
+                  },
+                );
+
+                expect(
+                  response.when(
+                    success: (s) => s,
+                    failure: fail,
+                  ),
+                  isTrue,
+                );
+                expect(requestCount, 1);
+              });
             });
           });
         });
