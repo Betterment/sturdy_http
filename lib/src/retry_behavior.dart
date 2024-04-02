@@ -85,13 +85,13 @@ extension RetryBehaviorX on RetryBehavior {
 const defaultRetryStatusCodes = [
   408, // Request Timeout
   429, // Too Many Requests
+  440, // Login Timeout
+  460, // ClientClosedRequest (AWS Elastic Load Balancer)
+  499, // Client Closed Request (Nginx)
   500, // Internal Server Error
   502, // Bad Gateway
   503, // Service Unavailable
   504, // Gateway Timeout
-  440, // Login Timeout
-  460, // ClientClosedRequest (AWS Elastic Load Balancer)
-  499, // Client Closed Request (Nginx)
   520, // Unknown Error
   521, // Web Server Is Down
   522, // Connection Timed Out
