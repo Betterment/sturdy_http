@@ -1,3 +1,13 @@
+## 0.4.0
+
+## What's Changed
+* feat: Add support for `426: Upgrade Required` by @willlockwood in https://github.com/Betterment/sturdy_http/pull/12
+
+## New Contributors
+* @willlockwood made their first contribution in https://github.com/Betterment/sturdy_http/pull/12
+
+**Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.3.1...v0.4.0
+
 ## 0.3.1
 
 ## What's Changed
