@@ -25,6 +25,7 @@ mixin _$NetworkResponse<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -40,6 +41,7 @@ mixin _$NetworkResponse<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -55,6 +57,7 @@ mixin _$NetworkResponse<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -72,6 +75,7 @@ mixin _$NetworkResponse<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -85,6 +89,7 @@ mixin _$NetworkResponse<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -98,6 +103,7 @@ mixin _$NetworkResponse<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
@@ -195,6 +201,7 @@ class _$OkImpl<R> implements _Ok<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -213,6 +220,7 @@ class _$OkImpl<R> implements _Ok<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -231,6 +239,7 @@ class _$OkImpl<R> implements _Ok<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -254,6 +263,7 @@ class _$OkImpl<R> implements _Ok<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -270,6 +280,7 @@ class _$OkImpl<R> implements _Ok<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -286,6 +297,7 @@ class _$OkImpl<R> implements _Ok<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
@@ -352,6 +364,7 @@ class _$OkNoContentImpl<R> implements _OkNoContent<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -370,6 +383,7 @@ class _$OkNoContentImpl<R> implements _OkNoContent<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -388,6 +402,7 @@ class _$OkNoContentImpl<R> implements _OkNoContent<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -411,6 +426,7 @@ class _$OkNoContentImpl<R> implements _OkNoContent<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -427,6 +443,7 @@ class _$OkNoContentImpl<R> implements _OkNoContent<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -443,6 +460,7 @@ class _$OkNoContentImpl<R> implements _OkNoContent<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
@@ -531,6 +549,7 @@ class _$UnauthorizedImpl<R> implements _Unauthorized<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -549,6 +568,7 @@ class _$UnauthorizedImpl<R> implements _Unauthorized<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -567,6 +587,7 @@ class _$UnauthorizedImpl<R> implements _Unauthorized<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -590,6 +611,7 @@ class _$UnauthorizedImpl<R> implements _Unauthorized<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -606,6 +628,7 @@ class _$UnauthorizedImpl<R> implements _Unauthorized<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -622,6 +645,7 @@ class _$UnauthorizedImpl<R> implements _Unauthorized<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
@@ -714,6 +738,7 @@ class _$ForbiddenImpl<R> implements _Forbidden<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -732,6 +757,7 @@ class _$ForbiddenImpl<R> implements _Forbidden<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -750,6 +776,7 @@ class _$ForbiddenImpl<R> implements _Forbidden<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -773,6 +800,7 @@ class _$ForbiddenImpl<R> implements _Forbidden<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -789,6 +817,7 @@ class _$ForbiddenImpl<R> implements _Forbidden<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -805,6 +834,7 @@ class _$ForbiddenImpl<R> implements _Forbidden<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
@@ -897,6 +927,7 @@ class _$NotFoundImpl<R> implements _NotFound<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -915,6 +946,7 @@ class _$NotFoundImpl<R> implements _NotFound<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -933,6 +965,7 @@ class _$NotFoundImpl<R> implements _NotFound<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -956,6 +989,7 @@ class _$NotFoundImpl<R> implements _NotFound<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -972,6 +1006,7 @@ class _$NotFoundImpl<R> implements _NotFound<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -988,6 +1023,7 @@ class _$NotFoundImpl<R> implements _NotFound<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
@@ -1091,6 +1127,7 @@ class _$UnprocessableEntityImpl<R> implements _UnprocessableEntity<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -1109,6 +1146,7 @@ class _$UnprocessableEntityImpl<R> implements _UnprocessableEntity<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -1127,6 +1165,7 @@ class _$UnprocessableEntityImpl<R> implements _UnprocessableEntity<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -1150,6 +1189,7 @@ class _$UnprocessableEntityImpl<R> implements _UnprocessableEntity<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -1166,6 +1206,7 @@ class _$UnprocessableEntityImpl<R> implements _UnprocessableEntity<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -1182,6 +1223,7 @@ class _$UnprocessableEntityImpl<R> implements _UnprocessableEntity<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
@@ -1204,6 +1246,197 @@ abstract class _UnprocessableEntity<R> implements NetworkResponse<R> {
   @JsonKey(ignore: true)
   _$$UnprocessableEntityImplCopyWith<R, _$UnprocessableEntityImpl<R>>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UpgradeRequiredImplCopyWith<R, $Res> {
+  factory _$$UpgradeRequiredImplCopyWith(_$UpgradeRequiredImpl<R> value,
+          $Res Function(_$UpgradeRequiredImpl<R>) then) =
+      __$$UpgradeRequiredImplCopyWithImpl<R, $Res>;
+  @useResult
+  $Res call({DioException error});
+}
+
+/// @nodoc
+class __$$UpgradeRequiredImplCopyWithImpl<R, $Res>
+    extends _$NetworkResponseCopyWithImpl<R, $Res, _$UpgradeRequiredImpl<R>>
+    implements _$$UpgradeRequiredImplCopyWith<R, $Res> {
+  __$$UpgradeRequiredImplCopyWithImpl(_$UpgradeRequiredImpl<R> _value,
+      $Res Function(_$UpgradeRequiredImpl<R>) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? error = null,
+  }) {
+    return _then(_$UpgradeRequiredImpl<R>(
+      null == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as DioException,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UpgradeRequiredImpl<R> implements _UpgradeRequired<R> {
+  const _$UpgradeRequiredImpl(this.error);
+
+  @override
+  final DioException error;
+
+  @override
+  String toString() {
+    return 'NetworkResponse<$R>.upgradeRequired(error: $error)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpgradeRequiredImpl<R> &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, error);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpgradeRequiredImplCopyWith<R, _$UpgradeRequiredImpl<R>> get copyWith =>
+      __$$UpgradeRequiredImplCopyWithImpl<R, _$UpgradeRequiredImpl<R>>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(R response) ok,
+    required TResult Function() okNoContent,
+    required TResult Function(DioException error) unauthorized,
+    required TResult Function(DioException error) forbidden,
+    required TResult Function(DioException error) notFound,
+    required TResult Function(DioException error, R response)
+        unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
+    required TResult Function(DioException error) serverError,
+    required TResult Function(DioException error) serviceUnavailable,
+    required TResult Function(
+            String message, bool isConnectionIssue, DioException? error)
+        genericError,
+  }) {
+    return upgradeRequired(error);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(R response)? ok,
+    TResult? Function()? okNoContent,
+    TResult? Function(DioException error)? unauthorized,
+    TResult? Function(DioException error)? forbidden,
+    TResult? Function(DioException error)? notFound,
+    TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
+    TResult? Function(DioException error)? serverError,
+    TResult? Function(DioException error)? serviceUnavailable,
+    TResult? Function(
+            String message, bool isConnectionIssue, DioException? error)?
+        genericError,
+  }) {
+    return upgradeRequired?.call(error);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(R response)? ok,
+    TResult Function()? okNoContent,
+    TResult Function(DioException error)? unauthorized,
+    TResult Function(DioException error)? forbidden,
+    TResult Function(DioException error)? notFound,
+    TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
+    TResult Function(DioException error)? serverError,
+    TResult Function(DioException error)? serviceUnavailable,
+    TResult Function(
+            String message, bool isConnectionIssue, DioException? error)?
+        genericError,
+    required TResult orElse(),
+  }) {
+    if (upgradeRequired != null) {
+      return upgradeRequired(error);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Ok<R> value) ok,
+    required TResult Function(_OkNoContent<R> value) okNoContent,
+    required TResult Function(_Unauthorized<R> value) unauthorized,
+    required TResult Function(_Forbidden<R> value) forbidden,
+    required TResult Function(_NotFound<R> value) notFound,
+    required TResult Function(_UnprocessableEntity<R> value)
+        unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
+    required TResult Function(_ServerError<R> value) serverError,
+    required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
+    required TResult Function(_GenericError<R> value) genericError,
+  }) {
+    return upgradeRequired(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Ok<R> value)? ok,
+    TResult? Function(_OkNoContent<R> value)? okNoContent,
+    TResult? Function(_Unauthorized<R> value)? unauthorized,
+    TResult? Function(_Forbidden<R> value)? forbidden,
+    TResult? Function(_NotFound<R> value)? notFound,
+    TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
+    TResult? Function(_ServerError<R> value)? serverError,
+    TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
+    TResult? Function(_GenericError<R> value)? genericError,
+  }) {
+    return upgradeRequired?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Ok<R> value)? ok,
+    TResult Function(_OkNoContent<R> value)? okNoContent,
+    TResult Function(_Unauthorized<R> value)? unauthorized,
+    TResult Function(_Forbidden<R> value)? forbidden,
+    TResult Function(_NotFound<R> value)? notFound,
+    TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
+    TResult Function(_ServerError<R> value)? serverError,
+    TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
+    TResult Function(_GenericError<R> value)? genericError,
+    required TResult orElse(),
+  }) {
+    if (upgradeRequired != null) {
+      return upgradeRequired(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _UpgradeRequired<R> implements NetworkResponse<R> {
+  const factory _UpgradeRequired(final DioException error) =
+      _$UpgradeRequiredImpl<R>;
+
+  DioException get error;
+  @JsonKey(ignore: true)
+  _$$UpgradeRequiredImplCopyWith<R, _$UpgradeRequiredImpl<R>> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1278,6 +1511,7 @@ class _$ServerErrorImpl<R> implements _ServerError<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -1296,6 +1530,7 @@ class _$ServerErrorImpl<R> implements _ServerError<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -1314,6 +1549,7 @@ class _$ServerErrorImpl<R> implements _ServerError<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -1337,6 +1573,7 @@ class _$ServerErrorImpl<R> implements _ServerError<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -1353,6 +1590,7 @@ class _$ServerErrorImpl<R> implements _ServerError<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -1369,6 +1607,7 @@ class _$ServerErrorImpl<R> implements _ServerError<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
@@ -1462,6 +1701,7 @@ class _$ServiceUnavailableImpl<R> implements _ServiceUnavailable<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -1480,6 +1720,7 @@ class _$ServiceUnavailableImpl<R> implements _ServiceUnavailable<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -1498,6 +1739,7 @@ class _$ServiceUnavailableImpl<R> implements _ServiceUnavailable<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -1521,6 +1763,7 @@ class _$ServiceUnavailableImpl<R> implements _ServiceUnavailable<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -1537,6 +1780,7 @@ class _$ServiceUnavailableImpl<R> implements _ServiceUnavailable<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -1553,6 +1797,7 @@ class _$ServiceUnavailableImpl<R> implements _ServiceUnavailable<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
@@ -1666,6 +1911,7 @@ class _$GenericErrorImpl<R> implements _GenericError<R> {
     required TResult Function(DioException error) notFound,
     required TResult Function(DioException error, R response)
         unprocessableEntity,
+    required TResult Function(DioException error) upgradeRequired,
     required TResult Function(DioException error) serverError,
     required TResult Function(DioException error) serviceUnavailable,
     required TResult Function(
@@ -1684,6 +1930,7 @@ class _$GenericErrorImpl<R> implements _GenericError<R> {
     TResult? Function(DioException error)? forbidden,
     TResult? Function(DioException error)? notFound,
     TResult? Function(DioException error, R response)? unprocessableEntity,
+    TResult? Function(DioException error)? upgradeRequired,
     TResult? Function(DioException error)? serverError,
     TResult? Function(DioException error)? serviceUnavailable,
     TResult? Function(
@@ -1702,6 +1949,7 @@ class _$GenericErrorImpl<R> implements _GenericError<R> {
     TResult Function(DioException error)? forbidden,
     TResult Function(DioException error)? notFound,
     TResult Function(DioException error, R response)? unprocessableEntity,
+    TResult Function(DioException error)? upgradeRequired,
     TResult Function(DioException error)? serverError,
     TResult Function(DioException error)? serviceUnavailable,
     TResult Function(
@@ -1725,6 +1973,7 @@ class _$GenericErrorImpl<R> implements _GenericError<R> {
     required TResult Function(_NotFound<R> value) notFound,
     required TResult Function(_UnprocessableEntity<R> value)
         unprocessableEntity,
+    required TResult Function(_UpgradeRequired<R> value) upgradeRequired,
     required TResult Function(_ServerError<R> value) serverError,
     required TResult Function(_ServiceUnavailable<R> value) serviceUnavailable,
     required TResult Function(_GenericError<R> value) genericError,
@@ -1741,6 +1990,7 @@ class _$GenericErrorImpl<R> implements _GenericError<R> {
     TResult? Function(_Forbidden<R> value)? forbidden,
     TResult? Function(_NotFound<R> value)? notFound,
     TResult? Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult? Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult? Function(_ServerError<R> value)? serverError,
     TResult? Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult? Function(_GenericError<R> value)? genericError,
@@ -1757,6 +2007,7 @@ class _$GenericErrorImpl<R> implements _GenericError<R> {
     TResult Function(_Forbidden<R> value)? forbidden,
     TResult Function(_NotFound<R> value)? notFound,
     TResult Function(_UnprocessableEntity<R> value)? unprocessableEntity,
+    TResult Function(_UpgradeRequired<R> value)? upgradeRequired,
     TResult Function(_ServerError<R> value)? serverError,
     TResult Function(_ServiceUnavailable<R> value)? serviceUnavailable,
     TResult Function(_GenericError<R> value)? genericError,
