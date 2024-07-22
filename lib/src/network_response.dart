@@ -38,6 +38,10 @@ class NetworkResponse<R> with _$NetworkResponse<R> {
     required R response,
   }) = _UnprocessableEntity;
 
+  /// 426 - for responses when access to a resource requires a client upgrade.
+  const factory NetworkResponse.upgradeRequired(DioException error) =
+      _UpgradeRequired;
+
   /// 500 - for responses where the service had an error while processing
   /// the request.
   const factory NetworkResponse.serverError(DioException error) = _ServerError;

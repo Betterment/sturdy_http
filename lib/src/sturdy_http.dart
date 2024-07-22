@@ -194,6 +194,9 @@ class SturdyHttp {
               response: error.response?.data as R,
             );
             break;
+          case 426:
+            resolvedResponse = NetworkResponse.upgradeRequired(error);
+            break;
           case 500:
             resolvedResponse = NetworkResponse.serverError(error);
             break;

@@ -710,6 +710,33 @@ void main() {
             });
           });
 
+          group('when status code is 426', () {
+            setUp(() {
+              setupErrorResponse(
+                statusCode: 426,
+                body: const Foo(message: 'error').toJson(),
+              );
+            });
+
+            test('it returns upgradeRequired', () async {
+              final response =
+                  await buildSubject().execute<Json, Result<bool, String>>(
+                const GetRequest(defaultPath),
+                onResponse: (response) {
+                  return response.maybeWhen(
+                    upgradeRequired: (error) => const Result.success(true),
+                    orElse: () => const Result.failure('Not expected: orElse'),
+                  );
+                },
+              );
+
+              response.when(
+                success: (s) => expect(s, isTrue),
+                failure: fail,
+              );
+            });
+          });
+
           group('when status code is 500', () {
             setUp(() {
               setupErrorResponse(statusCode: 500);
