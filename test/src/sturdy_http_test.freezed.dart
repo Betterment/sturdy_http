@@ -72,6 +72,9 @@ class _$ResultCopyWithImpl<S, F, $Res, $Val extends Result<S, F>>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -91,6 +94,8 @@ class __$$SuccessImplCopyWithImpl<S, F, $Res>
       _$SuccessImpl<S, F> _value, $Res Function(_$SuccessImpl<S, F>) _then)
       : super(_value, _then);
 
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -130,7 +135,9 @@ class _$SuccessImpl<S, F> implements _Success<S, F> {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(success));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SuccessImplCopyWith<S, F, _$SuccessImpl<S, F>> get copyWith =>
@@ -203,7 +210,10 @@ abstract class _Success<S, F> implements Result<S, F> {
   const factory _Success(final S success) = _$SuccessImpl<S, F>;
 
   S get success;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SuccessImplCopyWith<S, F, _$SuccessImpl<S, F>> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -225,6 +235,8 @@ class __$$FailureImplCopyWithImpl<S, F, $Res>
       _$FailureImpl<S, F> _value, $Res Function(_$FailureImpl<S, F>) _then)
       : super(_value, _then);
 
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -264,7 +276,9 @@ class _$FailureImpl<S, F> implements _Failure<S, F> {
   int get hashCode =>
       Object.hash(runtimeType, const DeepCollectionEquality().hash(failure));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$FailureImplCopyWith<S, F, _$FailureImpl<S, F>> get copyWith =>
@@ -337,7 +351,10 @@ abstract class _Failure<S, F> implements Result<S, F> {
   const factory _Failure(final F failure) = _$FailureImpl<S, F>;
 
   F get failure;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Result
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$FailureImplCopyWith<S, F, _$FailureImpl<S, F>> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -350,8 +367,12 @@ Foo _$FooFromJson(Map<String, dynamic> json) {
 mixin _$Foo {
   String get message => throw _privateConstructorUsedError;
 
+  /// Serializes this Foo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Foo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $FooCopyWith<Foo> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -372,6 +393,8 @@ class _$FooCopyWithImpl<$Res, $Val extends Foo> implements $FooCopyWith<$Res> {
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Foo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -401,6 +424,8 @@ class __$$FooImplCopyWithImpl<$Res> extends _$FooCopyWithImpl<$Res, _$FooImpl>
   __$$FooImplCopyWithImpl(_$FooImpl _value, $Res Function(_$FooImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Foo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -439,11 +464,13 @@ class _$FooImpl implements _Foo {
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Foo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$FooImplCopyWith<_$FooImpl> get copyWith =>
@@ -464,8 +491,11 @@ abstract class _Foo implements Foo {
 
   @override
   String get message;
+
+  /// Create a copy of Foo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$FooImplCopyWith<_$FooImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -478,8 +508,12 @@ NotFoo _$NotFooFromJson(Map<String, dynamic> json) {
 mixin _$NotFoo {
   String get notMessage => throw _privateConstructorUsedError;
 
+  /// Serializes this NotFoo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of NotFoo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $NotFooCopyWith<NotFoo> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -501,6 +535,8 @@ class _$NotFooCopyWithImpl<$Res, $Val extends NotFoo>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of NotFoo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -533,6 +569,8 @@ class __$$NotFooImplCopyWithImpl<$Res>
       _$NotFooImpl _value, $Res Function(_$NotFooImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of NotFoo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -572,11 +610,13 @@ class _$NotFooImpl implements _NotFoo {
                 other.notMessage == notMessage));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, notMessage);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of NotFoo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$NotFooImplCopyWith<_$NotFooImpl> get copyWith =>
@@ -597,8 +637,11 @@ abstract class _NotFoo implements NotFoo {
 
   @override
   String get notMessage;
+
+  /// Create a copy of NotFoo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NotFooImplCopyWith<_$NotFooImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

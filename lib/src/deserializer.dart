@@ -9,9 +9,9 @@ part of 'sturdy_http.dart';
 /// {@endtemplate}
 abstract class Deserializer {
   /// {@macro deserializer}
-  Future<M> deserialize<R, M>({
-    required NetworkResponse<R> response,
-    required M Function(NetworkResponse<R>) onResponse,
+  Future<M> deserialize<M>({
+    required NetworkResponse response,
+    required M Function(NetworkResponse) onResponse,
   });
 }
 
@@ -25,9 +25,9 @@ class MainIsolateDeserializer implements Deserializer {
   /// {@macro main_isolate_deserializer}
   const MainIsolateDeserializer();
   @override
-  Future<M> deserialize<R, M>({
-    required NetworkResponse<R> response,
-    required M Function(NetworkResponse<R> response) onResponse,
+  Future<M> deserialize<M>({
+    required NetworkResponse response,
+    required M Function(NetworkResponse response) onResponse,
   }) async {
     return onResponse(response);
   }
@@ -57,9 +57,9 @@ class BackgroundDeserializer implements Deserializer {
   Stream<dynamic>? _results;
 
   @override
-  Future<M> deserialize<R, M>({
-    required NetworkResponse<R> response,
-    required M Function(NetworkResponse<R> response) onResponse,
+  Future<M> deserialize<M>({
+    required NetworkResponse response,
+    required M Function(NetworkResponse response) onResponse,
   }) async {
     await _initializeOnFirstRequest();
     onResponseFunction() => onResponse(response);

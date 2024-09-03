@@ -10,9 +10,8 @@ import 'sturdy_http_test.dart';
 
 void main() {
   group('BackgroundDeserializer', () {
-    test('it invokes onResponse on a non-main Isolate and sends result back',
-        () async {
-      onResponse(NetworkResponse<Json> response) {
+    test('it invokes onResponse on a non-main Isolate and sends result back', () async {
+      onResponse(NetworkResponse response) {
         final isolateName = Isolate.current.debugName;
         // Hijack `Foo` to send over the `IsolateName` since
         // isolates don't share memory (so we can't set a late
@@ -21,7 +20,7 @@ void main() {
         return Foo(message: isolateName!);
       }
 
-      final response = NetworkResponse.ok(const Foo(message: '--').toJson());
+      final response = Ok(const Foo(message: '--').toJson());
       final subject = BackgroundDeserializer();
       final result = await subject.deserialize(
         response: response,
@@ -31,15 +30,15 @@ void main() {
     });
 
     test('it handles multiple requests for deserialization', () async {
-      onResponse(NetworkResponse<Json> response) {
-        return response.maybeWhen(
-          ok: Foo.fromJson,
-          orElse: () => fail('orElse not expected'),
-        );
+      Foo onResponse(NetworkResponse response) {
+        return switch (response) {
+          Ok<Json>(:final response) => Foo.fromJson(response),
+          _ => fail('Not expected: orElse'),
+        };
       }
 
-      final responseOne = NetworkResponse.ok(const Foo(message: '1').toJson());
-      final responseTwo = NetworkResponse.ok(const Foo(message: '2').toJson());
+      final responseOne = Ok(const Foo(message: '1').toJson());
+      final responseTwo = Ok(const Foo(message: '2').toJson());
       final subject = BackgroundDeserializer();
       final resultOne = await subject.deserialize(
         response: responseOne,
@@ -53,19 +52,15 @@ void main() {
       expect(resultTwo.message, '2');
     });
 
-    test(
-        'it throws CheckedFromJsonExceptions when deserialization issues occur',
-        () async {
-      onResponse(NetworkResponse<Json> response) {
-        return response.maybeWhen(
-          // Attempt to deserialize will fail because the response
-          // payload is a `Foo`, not a `NotFoo`
-          ok: NotFoo.fromJson,
-          orElse: () => fail('orElse not expected'),
-        );
+    test('it throws CheckedFromJsonExceptions when deserialization issues occur', () async {
+      onResponse(NetworkResponse response) {
+        return switch (response) {
+          Ok<Json>(:final response) => NotFoo.fromJson(response),
+          _ => fail('orElse not expected'),
+        };
       }
 
-      final response = NetworkResponse.ok(const Foo(message: 'Nope').toJson());
+      final response = Ok(const Foo(message: 'Nope').toJson());
       final subject = BackgroundDeserializer();
       try {
         await subject.deserialize(

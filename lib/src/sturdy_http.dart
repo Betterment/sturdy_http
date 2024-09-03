@@ -31,8 +31,7 @@ class SturdyHttp {
   final RetryBehavior _retryBehavior;
 
   /// The interceptors provided when this [SturdyHttp] was constructed.
-  UnmodifiableListView<Interceptor> get interceptors =>
-      UnmodifiableListView<Interceptor>(_dio.interceptors);
+  UnmodifiableListView<Interceptor> get interceptors => UnmodifiableListView<Interceptor>(_dio.interceptors);
 
   /// The base URL of the underlying [Dio] instance.
   String get baseUrl => _dio.options.baseUrl;
@@ -100,11 +99,11 @@ class SturdyHttp {
   /// If [onResponse] fails to produce an [M] and instead throws an [Exception],
   /// some known failure reasons are emitted via [SturdyHttpEvent]s and the
   /// [Exception] is re-thrown.
-  Future<M> execute<R, M>(
+  Future<M> execute<M>(
     NetworkRequest request, {
-    required M Function(NetworkResponse<R> response) onResponse,
+    required M Function(NetworkResponse response) onResponse,
   }) async {
-    final responsePayload = await _handleRequest<R, M>(request);
+    final responsePayload = await _handleRequest<M>(request);
 
     try {
       return await _deserializer.deserialize(
@@ -125,13 +124,13 @@ class SturdyHttp {
     }
   }
 
-  Future<_ResponsePayload<R>> _handleRequest<R, M>(
+  Future<_ResponsePayload> _handleRequest<M>(
     NetworkRequest request,
   ) async {
-    Future<(Response<Object?>?, NetworkResponse<R>)> send(
+    Future<(Response<Object?>?, NetworkResponse)> send(
       NetworkRequest request,
     ) async {
-      late final NetworkResponse<R> resolvedResponse;
+      late final NetworkResponse resolvedResponse;
       Response<Object?>? dioResponse;
       try {
         // By expecting `Object?` we allow for cases where an API will return
@@ -154,59 +153,48 @@ class SturdyHttp {
           onSendProgress: request.onSendProgress,
         );
         if (dioResponse.statusCode == 204) {
-          resolvedResponse = const NetworkResponse.okNoContent();
+          resolvedResponse = const NoContent();
         } else {
           final data = dioResponse.data;
-          if (data == null || data is! R) {
-            String buildErrorMessage() {
-              final messageSuffix = data == null
-                  // Disallow empty responses when status code is non-204
-                  ? 'was null and status code was ${dioResponse!.statusCode}'
-                  // Enforce that response data matches expected, otherwise we'll run into casting
-                  // issues below
-                  : 'was of type ${data.runtimeType} when it should have been of type $R';
-              return 'Request to ${request.path} was successful but response data $messageSuffix';
-            }
-
-            resolvedResponse = NetworkResponse.genericError(
-              message: buildErrorMessage(),
+          if (data == null) {
+            resolvedResponse = GenericError(
+              message: 'Request to ${request.path} was successful but response data was null',
               isConnectionIssue: false,
             );
           } else {
-            resolvedResponse = NetworkResponse.ok(data as R);
+            resolvedResponse = Ok<dynamic>(data);
           }
         }
       } on DioException catch (error) {
         switch (error.response?.statusCode) {
           case 401:
             await _onEvent(SturdyHttpEvent.authFailure(error.requestOptions));
-            resolvedResponse = NetworkResponse.unauthorized(error);
+            resolvedResponse = Unauthorized(error: error);
             break;
           case 403:
-            resolvedResponse = NetworkResponse.forbidden(error);
+            resolvedResponse = Forbidden(error: error);
             break;
           case 404:
-            resolvedResponse = NetworkResponse.notFound(error);
+            resolvedResponse = NotFound(error: error);
             break;
           case 422:
-            resolvedResponse = NetworkResponse.unprocessableEntity(
+            resolvedResponse = UnprocessableEntity<dynamic>(
               error: error,
-              response: error.response?.data as R,
+              response: error.response?.data,
             );
             break;
           case 426:
-            resolvedResponse = NetworkResponse.upgradeRequired(error);
+            resolvedResponse = UpgradeRequired(error: error);
             break;
           case 500:
-            resolvedResponse = NetworkResponse.serverError(error);
+            resolvedResponse = ServerError(error: error);
             break;
           case 503:
-            resolvedResponse = NetworkResponse.serviceUnavailable(error);
+            resolvedResponse = ServiceUnavailable(error: error);
             break;
           default:
-            resolvedResponse = NetworkResponse.genericError(
-              message:
-                  'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
+            resolvedResponse = GenericError(
+              message: 'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
               isConnectionIssue: error.isConnectionIssue(),
               error: error,
             );
@@ -227,8 +215,7 @@ class SturdyHttp {
     final retryBehavior = determineRetryBehavior();
     var response = await send(request);
     var retryCount = 0;
-    while (!response.$2.isSuccess &&
-        retryBehavior.shouldRetry(response.$1, retryCount)) {
+    while (!response.$2.isSuccess && retryBehavior.shouldRetry(response.$1, retryCount)) {
       // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
       await Future.delayed((retryBehavior as Retry).retryInterval);
       retryCount++;
@@ -241,7 +228,7 @@ class SturdyHttp {
       );
     }
 
-    return _ResponsePayload<R>(
+    return _ResponsePayload(
       request: request,
       dioResponse: response.$1,
       resolvedResponse: response.$2,
@@ -249,10 +236,10 @@ class SturdyHttp {
   }
 }
 
-class _ResponsePayload<T> {
+class _ResponsePayload {
   final NetworkRequest request;
   final Response<dynamic>? dioResponse;
-  final NetworkResponse<T> resolvedResponse;
+  final NetworkResponse resolvedResponse;
 
   _ResponsePayload({
     required this.request,
@@ -271,9 +258,7 @@ Dio _configureDio({
 }) {
   return Dio()
     // Instruct Dio to use the same Isolate approach as requested of SturdyHttp
-    ..transformer = deserializer is MainIsolateDeserializer
-        ? SyncTransformer()
-        : BackgroundTransformer()
+    ..transformer = deserializer is MainIsolateDeserializer ? SyncTransformer() : BackgroundTransformer()
     ..options.baseUrl = baseUrl
     ..options.listFormat = ListFormat.multiCompatible
     ..interceptors.addAll(interceptors)

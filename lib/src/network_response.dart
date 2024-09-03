@@ -1,8 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sturdy_http/sturdy_http.dart';
-
-part 'network_response.freezed.dart';
 
 /// The produced object after [SturdyHttp] processes a [NetworkRequest].
 ///
@@ -12,58 +8,106 @@ part 'network_response.freezed.dart';
 /// Most often the call sites executing a [NetworkRequest] will only be interested
 /// in a select few of these, and will resolve their error cases via a `maybeWhen`
 /// using the `orElse` clause.
-@freezed
-class NetworkResponse<R> with _$NetworkResponse<R> {
-  /// 200 - for successful responses that include a body.
-  const factory NetworkResponse.ok(R response) = _Ok;
+sealed class NetworkResponse {
+  const NetworkResponse();
+}
 
-  /// 204 - for successful responses that don't include a body.
-  const factory NetworkResponse.okNoContent() = _OkNoContent;
+sealed class NetworkResponseSuccess extends NetworkResponse {
+  const NetworkResponseSuccess();
+}
 
-  /// 401 - for responses when the request was missing required authentication.
-  const factory NetworkResponse.unauthorized(DioException error) =
-      _Unauthorized;
+final class NoContent extends NetworkResponseSuccess {
+  const NoContent();
+}
 
-  /// 403 - for responses when the request was authenticated but the
-  /// action is not authorized/allowed.
-  const factory NetworkResponse.forbidden(DioException error) = _Forbidden;
+final class Ok<T> extends NetworkResponseSuccess {
+  final T response;
 
-  /// 404 - for responses when we could not locate a resource, or when
-  /// someone would attempt to access a forbidden resource due to a bug.
-  const factory NetworkResponse.notFound(DioException error) = _NotFound;
+  const Ok(this.response);
+}
 
-  /// 422 - for responses when the request inputs failed our validations.
-  const factory NetworkResponse.unprocessableEntity({
-    required DioException error,
-    required R response,
-  }) = _UnprocessableEntity;
+sealed class NetworkResponseFailure extends NetworkResponse {
+  final DioException? error;
 
-  /// 426 - for responses when access to a resource requires a client upgrade.
-  const factory NetworkResponse.upgradeRequired(DioException error) =
-      _UpgradeRequired;
+  const NetworkResponseFailure({this.error});
+}
 
-  /// 500 - for responses where the service had an error while processing
-  /// the request.
-  const factory NetworkResponse.serverError(DioException error) = _ServerError;
+/// 401 - for responses when the request was missing required authentication.
+final class Unauthorized extends NetworkResponseFailure {
+  const Unauthorized({super.error});
+}
 
-  /// 503 - for responses when an underlying service issue prevents us from
-  /// fulfilling the request.
-  const factory NetworkResponse.serviceUnavailable(DioException error) =
-      _ServiceUnavailable;
+/// 403 - for responses when the request was authenticated but the
+/// action is not authorized/allowed.
+final class Forbidden extends NetworkResponseFailure {
+  const Forbidden({super.error});
+}
 
-  /// An error designated as a fallback in the event that we receive a status code
-  /// we don't explicitly handle *or* a request or response otherwise fails to meet
-  /// our expectations as "valid". The [message] will describe the condition and a
-  /// [DioException] will be present if it was available as a result of the request.
-  const factory NetworkResponse.genericError({
-    required String message,
-    required bool isConnectionIssue,
-    DioException? error,
-  }) = _GenericError;
+/// 404 - for responses when we could not locate a resource, or when
+/// someone would attempt to access a forbidden resource due to a bug.
+final class NotFound extends NetworkResponseFailure {
+  const NotFound({super.error});
+}
+
+/// 422 - for responses when the request inputs failed our validations.
+final class UnprocessableEntity<R> extends NetworkResponseFailure {
+  final R response;
+
+  const UnprocessableEntity({super.error, required this.response});
+}
+
+/// 426 - for responses when a client version upgrade is required
+final class UpgradeRequired extends NetworkResponseFailure {
+  const UpgradeRequired({super.error});
+}
+
+/// 500 - for responses where the service had an error while processing
+/// the request.
+final class ServerError extends NetworkResponseFailure {
+  const ServerError({super.error});
+}
+
+/// 503 - for responses when an underlying service issue prevents us from
+/// fulfilling the request.
+final class ServiceUnavailable extends NetworkResponseFailure {
+  const ServiceUnavailable({super.error});
+}
+
+final class GenericError extends NetworkResponseFailure {
+  const GenericError({
+    super.error,
+    required this.message,
+    required this.isConnectionIssue,
+  });
+
+  final String message;
+  final bool isConnectionIssue;
+}
+
+NetworkResponseSuccess? getSuccess(NetworkResponse response) {
+  return switch (response) {
+    NoContent() => NoContent(),
+    Ok(:final response) => Ok(response),
+    _ => null,
+  };
+}
+
+NetworkResponseFailure? getFail(NetworkResponse response) {
+  return switch (response) {
+    Unauthorized(:final error) => Unauthorized(error: error),
+    Forbidden(:final error) => Forbidden(error: error),
+    NotFound(:final error) => NotFound(error: error),
+    UnprocessableEntity(:final error, :final response) =>
+      UnprocessableEntity<dynamic>(error: error, response: response),
+    UpgradeRequired(:final error) => UpgradeRequired(error: error),
+    ServerError(:final error) => ServerError(error: error),
+    ServiceUnavailable(:final error) => ServiceUnavailable(error: error),
+    _ => null,
+  };
 }
 
 /// Extensions on the [NetworkResponse] type
-extension NetworkResponseX<M> on NetworkResponse<M> {
+extension NetworkResponseX<M> on NetworkResponse {
   /// Whether this [NetworkResponse] should be considered successful
-  bool get isSuccess => this is _Ok || this is _OkNoContent;
+  bool get isSuccess => this is NetworkResponseSuccess;
 }

@@ -69,7 +69,9 @@ mixin _$SturdyHttpEvent {
   }) =>
       throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SturdyHttpEventCopyWith<SturdyHttpEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -93,6 +95,8 @@ class _$SturdyHttpEventCopyWithImpl<$Res, $Val extends SturdyHttpEvent>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -127,6 +131,8 @@ class __$$JsonDecodingErrorImplCopyWithImpl<$Res>
       $Res Function(_$JsonDecodingErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -183,7 +189,9 @@ class _$JsonDecodingErrorImpl implements _JsonDecodingError {
   @override
   int get hashCode => Object.hash(runtimeType, request, exception, stackTrace);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$JsonDecodingErrorImplCopyWith<_$JsonDecodingErrorImpl> get copyWith =>
@@ -276,8 +284,11 @@ abstract class _JsonDecodingError implements SturdyHttpEvent {
   RequestOptions get request;
   Exception get exception;
   StackTrace? get stackTrace;
+
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$JsonDecodingErrorImplCopyWith<_$JsonDecodingErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -301,6 +312,8 @@ class __$$AuthFailureImplCopyWithImpl<$Res>
       _$AuthFailureImpl _value, $Res Function(_$AuthFailureImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -339,7 +352,9 @@ class _$AuthFailureImpl implements _AuthFailure {
   @override
   int get hashCode => Object.hash(runtimeType, request);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AuthFailureImplCopyWith<_$AuthFailureImpl> get copyWith =>
@@ -426,8 +441,11 @@ abstract class _AuthFailure implements SturdyHttpEvent {
 
   @override
   RequestOptions get request;
+
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AuthFailureImplCopyWith<_$AuthFailureImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -453,6 +471,8 @@ class __$$OnMutativeRequestSuccessImplCopyWithImpl<$Res>
       $Res Function(_$OnMutativeRequestSuccessImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -491,7 +511,9 @@ class _$OnMutativeRequestSuccessImpl implements _OnMutativeRequestSuccess {
   @override
   int get hashCode => Object.hash(runtimeType, request);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$OnMutativeRequestSuccessImplCopyWith<_$OnMutativeRequestSuccessImpl>
@@ -580,8 +602,11 @@ abstract class _OnMutativeRequestSuccess implements SturdyHttpEvent {
 
   @override
   RequestOptions get request;
+
+  /// Create a copy of SturdyHttpEvent
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$OnMutativeRequestSuccessImplCopyWith<_$OnMutativeRequestSuccessImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
