@@ -99,11 +99,11 @@ class SturdyHttp {
   /// If [onResponse] fails to produce an [M] and instead throws an [Exception],
   /// some known failure reasons are emitted via [SturdyHttpEvent]s and the
   /// [Exception] is re-thrown.
-  Future<M> execute<M>(
+  Future<M> execute<R, M>(
     NetworkRequest request, {
-    required M Function(NetworkResponse response) onResponse,
+    required M Function(NetworkResponse<R> response) onResponse,
   }) async {
-    final responsePayload = await _handleRequest<M>(request);
+    final responsePayload = await _handleRequest<R, M>(request);
 
     try {
       return await _deserializer.deserialize(
@@ -124,13 +124,13 @@ class SturdyHttp {
     }
   }
 
-  Future<_ResponsePayload> _handleRequest<M>(
+  Future<_ResponsePayload<R>> _handleRequest<R, M>(
     NetworkRequest request,
   ) async {
-    Future<(Response<Object?>?, NetworkResponse)> send(
+    Future<(Response<Object?>?, NetworkResponse<R>)> send(
       NetworkRequest request,
     ) async {
-      late final NetworkResponse resolvedResponse;
+      late final NetworkResponse<R> resolvedResponse;
       Response<Object?>? dioResponse;
       try {
         // By expecting `Object?` we allow for cases where an API will return
@@ -156,13 +156,23 @@ class SturdyHttp {
           resolvedResponse = const NoContent();
         } else {
           final data = dioResponse.data;
-          if (data == null) {
+          if (data == null || data is! R) {
+            String buildErrorMessage() {
+              final messageSuffix = data == null
+                  // Disallow empty responses when status code is non-204
+                  ? 'was null and status code was ${dioResponse!.statusCode}'
+                  // Enforce that response data matches expected, otherwise we'll run into casting
+                  // issues below
+                  : 'was of type ${data.runtimeType} when it should have been of type $R';
+              return 'Request to ${request.path} was successful but response data $messageSuffix';
+            }
+
             resolvedResponse = GenericError(
-              message: 'Request to ${request.path} was successful but response data was null',
+              message: buildErrorMessage(),
               isConnectionIssue: false,
             );
           } else {
-            resolvedResponse = Ok<dynamic>(data);
+            resolvedResponse = Ok(data as R);
           }
         }
       } on DioException catch (error) {
@@ -178,9 +188,9 @@ class SturdyHttp {
             resolvedResponse = NotFound(error: error);
             break;
           case 422:
-            resolvedResponse = UnprocessableEntity<dynamic>(
+            resolvedResponse = UnprocessableEntity<R>(
               error: error,
-              response: error.response?.data,
+              response: error.response?.data as R,
             );
             break;
           case 426:
@@ -236,10 +246,10 @@ class SturdyHttp {
   }
 }
 
-class _ResponsePayload {
+class _ResponsePayload<R> {
   final NetworkRequest request;
   final Response<dynamic>? dioResponse;
-  final NetworkResponse resolvedResponse;
+  final NetworkResponse<R> resolvedResponse;
 
   _ResponsePayload({
     required this.request,

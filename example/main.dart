@@ -23,7 +23,7 @@ void main(List<String> args) async {
   );
 
   // A GetRequest. Prints 'Hello World!'.
-  await client.execute<void>(
+  await client.execute<Json, void>(
     GetRequest('/foo'),
     onResponse: (r) {
       return switch (r) {
@@ -38,7 +38,7 @@ void main(List<String> args) async {
   // Prints:
   // 'mutative request success' <-- From ExampleEventListener
   // 'success!'
-  await client.execute<void>(
+  await client.execute<void, void>(
     PostRequest('/foo', data: NetworkRequestBody.empty()),
     onResponse: (r) {
       return switch (r) {

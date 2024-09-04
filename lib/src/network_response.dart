@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+
 import 'package:dio/dio.dart';
 
 /// The produced object after [SturdyHttp] processes a [NetworkRequest].
@@ -8,72 +10,72 @@ import 'package:dio/dio.dart';
 /// Most often the call sites executing a [NetworkRequest] will only be interested
 /// in a select few of these, and will resolve their error cases via a `maybeWhen`
 /// using the `orElse` clause.
-sealed class NetworkResponse {
+sealed class NetworkResponse<R> {
   const NetworkResponse();
 }
 
-sealed class NetworkResponseSuccess extends NetworkResponse {
+sealed class NetworkResponseSuccess<R> extends NetworkResponse<R> {
   const NetworkResponseSuccess();
 }
 
-final class NoContent extends NetworkResponseSuccess {
+final class NoContent<R> extends NetworkResponseSuccess<R> {
   const NoContent();
 }
 
-final class Ok<T> extends NetworkResponseSuccess {
+final class Ok<T> extends NetworkResponseSuccess<T> {
   final T response;
 
   const Ok(this.response);
 }
 
-sealed class NetworkResponseFailure extends NetworkResponse {
+sealed class NetworkResponseFailure<R> extends NetworkResponse<R> {
   final DioException? error;
 
   const NetworkResponseFailure({this.error});
 }
 
 /// 401 - for responses when the request was missing required authentication.
-final class Unauthorized extends NetworkResponseFailure {
+final class Unauthorized<R> extends NetworkResponseFailure<R> {
   const Unauthorized({super.error});
 }
 
 /// 403 - for responses when the request was authenticated but the
 /// action is not authorized/allowed.
-final class Forbidden extends NetworkResponseFailure {
+final class Forbidden<R> extends NetworkResponseFailure<R> {
   const Forbidden({super.error});
 }
 
 /// 404 - for responses when we could not locate a resource, or when
 /// someone would attempt to access a forbidden resource due to a bug.
-final class NotFound extends NetworkResponseFailure {
+final class NotFound<R> extends NetworkResponseFailure<R> {
   const NotFound({super.error});
 }
 
 /// 422 - for responses when the request inputs failed our validations.
-final class UnprocessableEntity<R> extends NetworkResponseFailure {
+final class UnprocessableEntity<R> extends NetworkResponseFailure<R> {
   final R response;
 
   const UnprocessableEntity({super.error, required this.response});
 }
 
 /// 426 - for responses when a client version upgrade is required
-final class UpgradeRequired extends NetworkResponseFailure {
+final class UpgradeRequired<R> extends NetworkResponseFailure<R> {
   const UpgradeRequired({super.error});
 }
 
 /// 500 - for responses where the service had an error while processing
 /// the request.
-final class ServerError extends NetworkResponseFailure {
+final class ServerError<R> extends NetworkResponseFailure<R> {
   const ServerError({super.error});
 }
 
 /// 503 - for responses when an underlying service issue prevents us from
 /// fulfilling the request.
-final class ServiceUnavailable extends NetworkResponseFailure {
+final class ServiceUnavailable<R> extends NetworkResponseFailure<R> {
   const ServiceUnavailable({super.error});
 }
 
-final class GenericError extends NetworkResponseFailure {
+final class GenericError<R> extends NetworkResponseFailure<R> {
   const GenericError({
     super.error,
     required this.message,
@@ -84,21 +86,20 @@ final class GenericError extends NetworkResponseFailure {
   final bool isConnectionIssue;
 }
 
-NetworkResponseSuccess? getSuccess(NetworkResponse response) {
+NetworkResponseSuccess<R>? getSuccess<R>(NetworkResponse<R> response) {
   return switch (response) {
     NoContent() => NoContent(),
-    Ok(:final response) => Ok(response),
+    Ok<R>(:final response) => Ok<R>(response),
     _ => null,
   };
 }
 
-NetworkResponseFailure? getFail(NetworkResponse response) {
+NetworkResponseFailure<R>? getFail<R>(NetworkResponse<R> response) {
   return switch (response) {
     Unauthorized(:final error) => Unauthorized(error: error),
     Forbidden(:final error) => Forbidden(error: error),
     NotFound(:final error) => NotFound(error: error),
-    UnprocessableEntity(:final error, :final response) =>
-      UnprocessableEntity<dynamic>(error: error, response: response),
+    UnprocessableEntity(:final error, :final response) => UnprocessableEntity<R>(error: error, response: response),
     UpgradeRequired(:final error) => UpgradeRequired(error: error),
     ServerError(:final error) => ServerError(error: error),
     ServiceUnavailable(:final error) => ServiceUnavailable(error: error),
@@ -107,7 +108,7 @@ NetworkResponseFailure? getFail(NetworkResponse response) {
 }
 
 /// Extensions on the [NetworkResponse] type
-extension NetworkResponseX<M> on NetworkResponse {
+extension NetworkResponseX<R> on NetworkResponse<R> {
   /// Whether this [NetworkResponse] should be considered successful
   bool get isSuccess => this is NetworkResponseSuccess;
 }

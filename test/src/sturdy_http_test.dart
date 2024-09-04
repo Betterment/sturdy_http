@@ -164,7 +164,7 @@ void main() {
         group('data', () {
           group('when NetworkRequestBody is empty', () {
             test('request options contain null data', () async {
-              await buildSubject().execute<bool>(
+              await buildSubject().execute<Json, bool>(
                 const GetRequest('/foo'),
                 onResponse: (response) {
                   return switch (response) {
@@ -179,7 +179,7 @@ void main() {
 
           group('when NetworkRequestBody is json', () {
             test('request options contain json data', () async {
-              await buildSubject().execute<Foo?>(
+              await buildSubject().execute<Json, Foo?>(
                 const GetRequest(
                   '/foo',
                   data: NetworkRequestBody.json(
@@ -203,7 +203,7 @@ void main() {
 
           group('when manual options are provided', () {
             test('request options contain manually provided values', () async {
-              await buildSubject().execute<Foo?>(
+              await buildSubject().execute<Json, Foo?>(
                 GetRequest(
                   '/foo',
                   data: NetworkRequestBody.json(
@@ -229,7 +229,7 @@ void main() {
 
         group('queryParameters', () {
           test('request options contain correct query parameters ', () async {
-            await buildSubject().execute<void>(
+            await buildSubject().execute<Json, void>(
               const GetRequest(
                 '/foo',
                 queryParameters: <String, dynamic>{'foo': 'bar'},
@@ -247,12 +247,12 @@ void main() {
 
         group('method', () {
           test('request options contain correct method ', () async {
-            await buildSubject().execute<void>(
+            await buildSubject().execute<Json, void>(
               const GetRequest('/foo'),
               onResponse: (response) {},
             );
             expect(options.method, 'GET');
-            await buildSubject().execute<void>(
+            await buildSubject().execute<void, void>(
               const PostRequest(
                 '/bar',
                 data: NetworkRequestBody.empty(),
@@ -290,7 +290,7 @@ void main() {
 
               group('when deserialization succeeds', () {
                 test('it returns parsed model', () async {
-                  final response = await buildSubject().execute<Result<Foo, String>>(
+                  final response = await buildSubject().execute<Json, Result<Foo, String>>(
                     const GetRequest('/foo'),
                     onResponse: (response) {
                       return switch (response) {
@@ -309,7 +309,7 @@ void main() {
 
               group('when deserialization fails', () {
                 test('it emits a decodingError event and rethrows the Exception', () async {
-                  final request = buildSubject().execute<Result<Foo, String>>(
+                  final request = buildSubject().execute<Json, Result<Foo, String>>(
                     const GetRequest('/not-foo'),
                     onResponse: (response) {
                       return switch (response) {
@@ -344,7 +344,7 @@ void main() {
                   );
                 });
                 test('it returns okNoContent', () async {
-                  final response = await buildSubject().execute<Result<bool, String>>(
+                  final response = await buildSubject().execute<void, Result<bool, String>>(
                     const PostRequest(
                       '/foo',
                       data: NetworkRequestBody.empty(),
@@ -377,7 +377,7 @@ void main() {
                 test(
                   'it returns genericError and isConnectionIssue is false',
                   () async {
-                    final response = await buildSubject().execute<Result<bool, String>>(
+                    final response = await buildSubject().execute<void, Result<bool, String>>(
                       const PostRequest(
                         '/foo',
                         data: NetworkRequestBody.empty(),
@@ -436,7 +436,7 @@ void main() {
                 test('it emits a MutativeRequestSuccess event with correct path', () async {
                   final subject = buildSubject();
                   await Future.wait([
-                    subject.execute<Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const PostRequest(
                         '/foo',
                         data: NetworkRequestBody.empty(),
@@ -448,7 +448,7 @@ void main() {
                         };
                       },
                     ),
-                    subject.execute<Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const PutRequest(
                         '/bar',
                         data: NetworkRequestBody.empty(),
@@ -460,7 +460,7 @@ void main() {
                         };
                       },
                     ),
-                    subject.execute<Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const DeleteRequest(
                         '/baz',
                         data: NetworkRequestBody.empty(),
@@ -518,7 +518,7 @@ void main() {
                 test('it does not emit a MutativeRequestSuccess event', () async {
                   final subject = buildSubject();
                   await Future.wait([
-                    subject.execute<Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const PostRequest(
                         '/foo',
                         data: NetworkRequestBody.empty(),
@@ -530,7 +530,7 @@ void main() {
                         };
                       },
                     ),
-                    subject.execute<Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const PutRequest(
                         '/bar',
                         data: NetworkRequestBody.empty(),
@@ -542,7 +542,7 @@ void main() {
                         };
                       },
                     ),
-                    subject.execute<Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const DeleteRequest(
                         '/baz',
                         data: NetworkRequestBody.empty(),
@@ -585,7 +585,7 @@ void main() {
             });
 
             test('it emits an authFailure event and invokes unauthorized', () async {
-              final response = await buildSubject().execute<Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return switch (response) {
@@ -610,7 +610,7 @@ void main() {
             });
 
             test('it returns forbidden', () async {
-              final response = await buildSubject().execute<Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return switch (response) {
@@ -633,7 +633,7 @@ void main() {
             });
 
             test('it returns notFound', () async {
-              final response = await buildSubject().execute<Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return switch (response) {
@@ -659,7 +659,7 @@ void main() {
             });
 
             test('it returns unprocessableEntity', () async {
-              final response = await buildSubject().execute<Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return switch (response) {
@@ -685,7 +685,7 @@ void main() {
             });
 
             test('it returns upgradeRequired', () async {
-              final response = await buildSubject().execute<Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return switch (response) {
@@ -708,7 +708,7 @@ void main() {
             });
 
             test('it returns serverError', () async {
-              final response = await buildSubject().execute<Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return switch (response) {
@@ -731,7 +731,7 @@ void main() {
             });
 
             test('it returns service unavailable', () async {
-              final response = await buildSubject().execute<Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return switch (response) {
@@ -754,7 +754,7 @@ void main() {
             });
 
             test('it returns genericError', () async {
-              final response = await buildSubject().execute<Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return switch (response) {
@@ -780,7 +780,7 @@ void main() {
             });
 
             test('it returns genericError and isConnectionIssue is true', () async {
-              final response = await buildSubject().execute<Result<bool, String>>(
+              final response = await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
                   return switch (response) {
@@ -814,7 +814,7 @@ void main() {
                   },
                 );
 
-                final response = await buildSubject().execute<Result<bool, String>>(
+                final response = await buildSubject().execute<Json, Result<bool, String>>(
                   const GetRequest(
                     defaultPath,
                     retryBehavior: Retry(
@@ -853,7 +853,7 @@ void main() {
                   },
                 );
 
-                final response = await buildSubject().execute<Result<bool, String>>(
+                final response = await buildSubject().execute<Json, Result<bool, String>>(
                   const GetRequest(
                     defaultPath,
                     retryBehavior: NeverRetry(),
@@ -890,7 +890,7 @@ void main() {
 
                 final response = await buildSubject(
                   retryBehavior: NeverRetry(),
-                ).execute<Result<bool, String>>(
+                ).execute<Json, Result<bool, String>>(
                   const GetRequest(
                     defaultPath,
                     retryBehavior: Retry(
@@ -931,7 +931,7 @@ void main() {
 
                 final response = await buildSubject(
                   retryBehavior: NeverRetry(),
-                ).execute<Result<bool, String>>(
+                ).execute<Json, Result<bool, String>>(
                   GetRequest(
                     defaultPath,
                     retryBehavior: Retry(
