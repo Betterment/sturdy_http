@@ -29,59 +29,71 @@ final class Ok<T> extends NetworkResponseSuccess<T> {
 }
 
 sealed class NetworkResponseFailure<R> extends NetworkResponse<R> {
-  final DioException? error;
-
-  const NetworkResponseFailure({this.error});
+  const NetworkResponseFailure();
 }
 
 /// 401 - for responses when the request was missing required authentication.
 final class Unauthorized<R> extends NetworkResponseFailure<R> {
-  const Unauthorized({super.error});
+  final DioException error;
+
+  const Unauthorized({required this.error});
 }
 
 /// 403 - for responses when the request was authenticated but the
 /// action is not authorized/allowed.
 final class Forbidden<R> extends NetworkResponseFailure<R> {
-  const Forbidden({super.error});
+  final DioException error;
+
+  const Forbidden({required this.error});
 }
 
 /// 404 - for responses when we could not locate a resource, or when
 /// someone would attempt to access a forbidden resource due to a bug.
 final class NotFound<R> extends NetworkResponseFailure<R> {
-  const NotFound({super.error});
+  final DioException error;
+
+  const NotFound({required this.error});
 }
 
 /// 422 - for responses when the request inputs failed our validations.
 final class UnprocessableEntity<R> extends NetworkResponseFailure<R> {
+  final DioException error;
   final R response;
 
-  const UnprocessableEntity({super.error, required this.response});
+  const UnprocessableEntity({required this.error, required this.response});
 }
 
 /// 426 - for responses when a client version upgrade is required
 final class UpgradeRequired<R> extends NetworkResponseFailure<R> {
-  const UpgradeRequired({super.error});
+  final DioException error;
+
+  const UpgradeRequired({required this.error});
 }
 
 /// 500 - for responses where the service had an error while processing
 /// the request.
 final class ServerError<R> extends NetworkResponseFailure<R> {
-  const ServerError({super.error});
+  final DioException error;
+
+  const ServerError({required this.error});
 }
 
 /// 503 - for responses when an underlying service issue prevents us from
 /// fulfilling the request.
 final class ServiceUnavailable<R> extends NetworkResponseFailure<R> {
-  const ServiceUnavailable({super.error});
+  final DioException error;
+
+  const ServiceUnavailable({required this.error});
 }
 
 final class GenericError<R> extends NetworkResponseFailure<R> {
   const GenericError({
-    super.error,
+    this.error,
     required this.message,
     required this.isConnectionIssue,
   });
 
+  final DioException? error;
   final String message;
   final bool isConnectionIssue;
 }
