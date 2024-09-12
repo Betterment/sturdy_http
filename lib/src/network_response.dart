@@ -18,14 +18,14 @@ sealed class NetworkResponseSuccess<R> extends NetworkResponse<R> {
   const NetworkResponseSuccess();
 }
 
-final class NoContent<R> extends NetworkResponseSuccess<R> {
-  const NoContent();
+final class OkNoContent<R> extends NetworkResponseSuccess<R> {
+  const OkNoContent();
 }
 
-final class Ok<T> extends NetworkResponseSuccess<T> {
+final class OkResponse<T> extends NetworkResponseSuccess<T> {
   final T response;
 
-  const Ok(this.response);
+  const OkResponse(this.response);
 }
 
 sealed class NetworkResponseFailure<R> extends NetworkResponse<R> {
@@ -100,8 +100,8 @@ final class GenericError<R> extends NetworkResponseFailure<R> {
 
 NetworkResponseSuccess<R>? getSuccess<R>(NetworkResponse<R> response) {
   return switch (response) {
-    NoContent() => NoContent(),
-    Ok<R>(:final response) => Ok<R>(response),
+    OkNoContent() => OkNoContent(),
+    OkResponse<R>(:final response) => OkResponse<R>(response),
     _ => null,
   };
 }

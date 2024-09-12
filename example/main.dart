@@ -27,7 +27,7 @@ void main(List<String> args) async {
     GetRequest('/foo'),
     onResponse: (r) {
       return switch (r) {
-        Ok(:final response) => print(response),
+        OkResponse(:final response) => print(response),
         _ => print('GET /foo failed: $r'),
       };
     },
@@ -42,7 +42,7 @@ void main(List<String> args) async {
     PostRequest('/foo', data: NetworkRequestBody.empty()),
     onResponse: (r) {
       return switch (r) {
-        NoContent() => print('success!'),
+        OkNoContent() => print('success!'),
         _ => print('POST /foo failed: $r'),
       };
     },

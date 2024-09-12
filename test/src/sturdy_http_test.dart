@@ -168,7 +168,7 @@ void main() {
                 const GetRequest('/foo'),
                 onResponse: (response) {
                   return switch (response) {
-                    Ok() => true,
+                    OkResponse() => true,
                     _ => false,
                   };
                 },
@@ -294,7 +294,7 @@ void main() {
                     const GetRequest('/foo'),
                     onResponse: (response) {
                       return switch (response) {
-                        Ok<Json>(:final response) => Result.success(Foo.fromJson(response)),
+                        OkResponse<Json>(:final response) => Result.success(Foo.fromJson(response)),
                         _ => const Result.failure('Not expected: orElse'),
                       };
                     },
@@ -313,7 +313,7 @@ void main() {
                     const GetRequest('/not-foo'),
                     onResponse: (response) {
                       return switch (response) {
-                        Ok<Json>(:final response) => Result.success(Foo.fromJson(response)),
+                        OkResponse<Json>(:final response) => Result.success(Foo.fromJson(response)),
                         _ => const Result.failure('Not expected: orElse'),
                       };
                     },
@@ -351,7 +351,7 @@ void main() {
                     ),
                     onResponse: (response) {
                       return switch (response) {
-                        NoContent() => const Result.success(true),
+                        OkNoContent() => const Result.success(true),
                         _ => const Result.failure('Not expected: orElse'),
                       };
                     },
@@ -443,7 +443,7 @@ void main() {
                       ),
                       onResponse: (response) {
                         return switch (response) {
-                          Ok<Json>(:final response) => Result.success(response['foo'] as String),
+                          OkResponse<Json>(:final response) => Result.success(response['foo'] as String),
                           _ => const Result.failure('Not expected: orElse'),
                         };
                       },
@@ -455,7 +455,7 @@ void main() {
                       ),
                       onResponse: (response) {
                         return switch (response) {
-                          Ok<Json>(:final response) => Result.success(response['foo'] as String),
+                          OkResponse<Json>(:final response) => Result.success(response['foo'] as String),
                           _ => const Result.failure('Not expected: orElse'),
                         };
                       },
@@ -467,7 +467,7 @@ void main() {
                       ),
                       onResponse: (response) {
                         return switch (response) {
-                          Ok<Json>(:final response) => Result.success(response['foo'] as String),
+                          OkResponse<Json>(:final response) => Result.success(response['foo'] as String),
                           _ => const Result.failure('Not expected: orElse'),
                         };
                       },
@@ -525,7 +525,7 @@ void main() {
                       ),
                       onResponse: (response) {
                         return switch (response) {
-                          Ok<Json>(:final response) => Result.success(response['foo'] as String),
+                          OkResponse<Json>(:final response) => Result.success(response['foo'] as String),
                           _ => const Result.failure('Not expected: orElse'),
                         };
                       },
@@ -537,7 +537,7 @@ void main() {
                       ),
                       onResponse: (response) {
                         return switch (response) {
-                          Ok<Json>(:final response) => Result.success(response['foo'] as String),
+                          OkResponse<Json>(:final response) => Result.success(response['foo'] as String),
                           _ => const Result.failure('Not expected: orElse'),
                         };
                       },
@@ -549,7 +549,7 @@ void main() {
                       ),
                       onResponse: (response) {
                         return switch (response) {
-                          Ok<Json>(:final response) => Result.success(response['foo'] as String),
+                          OkResponse<Json>(:final response) => Result.success(response['foo'] as String),
                           _ => const Result.failure('Not expected: orElse'),
                         };
                       },

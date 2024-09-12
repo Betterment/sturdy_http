@@ -20,7 +20,7 @@ void main() {
         return Foo(message: isolateName!);
       }
 
-      final response = Ok(const Foo(message: '--').toJson());
+      final response = OkResponse(const Foo(message: '--').toJson());
       final subject = BackgroundDeserializer();
       final result = await subject.deserialize(
         response: response,
@@ -32,13 +32,13 @@ void main() {
     test('it handles multiple requests for deserialization', () async {
       Foo onResponse(NetworkResponse<Json> response) {
         return switch (response) {
-          Ok<Json>(:final response) => Foo.fromJson(response),
+          OkResponse<Json>(:final response) => Foo.fromJson(response),
           _ => fail('Not expected: orElse'),
         };
       }
 
-      final responseOne = Ok(const Foo(message: '1').toJson());
-      final responseTwo = Ok(const Foo(message: '2').toJson());
+      final responseOne = OkResponse(const Foo(message: '1').toJson());
+      final responseTwo = OkResponse(const Foo(message: '2').toJson());
       final subject = BackgroundDeserializer();
       final resultOne = await subject.deserialize(
         response: responseOne,
@@ -55,12 +55,12 @@ void main() {
     test('it throws CheckedFromJsonExceptions when deserialization issues occur', () async {
       onResponse(NetworkResponse<Json> response) {
         return switch (response) {
-          Ok<Json>(:final response) => NotFoo.fromJson(response),
+          OkResponse<Json>(:final response) => NotFoo.fromJson(response),
           _ => fail('orElse not expected'),
         };
       }
 
-      final response = Ok(const Foo(message: 'Nope').toJson());
+      final response = OkResponse(const Foo(message: 'Nope').toJson());
       final subject = BackgroundDeserializer();
       try {
         await subject.deserialize(

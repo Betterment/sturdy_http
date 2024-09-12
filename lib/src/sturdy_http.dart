@@ -153,7 +153,7 @@ class SturdyHttp {
           onSendProgress: request.onSendProgress,
         );
         if (dioResponse.statusCode == 204) {
-          resolvedResponse = const NoContent();
+          resolvedResponse = const OkNoContent();
         } else {
           final data = dioResponse.data;
           if (data == null || data is! R) {
@@ -172,7 +172,7 @@ class SturdyHttp {
               isConnectionIssue: false,
             );
           } else {
-            resolvedResponse = Ok(data as R);
+            resolvedResponse = OkResponse(data as R);
           }
         }
       } on DioException catch (error) {
