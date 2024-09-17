@@ -1,3 +1,11 @@
+## 0.5.0
+
+## What's Changed
+* refactor: make network response a sealed class by @btrautmann in https://github.com/Betterment/sturdy_http/pull/14
+
+
+**Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.4.0...v0.5.0
+
 ## 0.4.0
 
 ## What's Changed
