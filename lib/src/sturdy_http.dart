@@ -31,7 +31,8 @@ class SturdyHttp {
   final RetryBehavior _retryBehavior;
 
   /// The interceptors provided when this [SturdyHttp] was constructed.
-  UnmodifiableListView<Interceptor> get interceptors => UnmodifiableListView<Interceptor>(_dio.interceptors);
+  UnmodifiableListView<Interceptor> get interceptors =>
+      UnmodifiableListView<Interceptor>(_dio.interceptors);
 
   /// The base URL of the underlying [Dio] instance.
   String get baseUrl => _dio.options.baseUrl;
@@ -204,7 +205,8 @@ class SturdyHttp {
             break;
           default:
             resolvedResponse = GenericError(
-              message: 'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
+              message:
+                  'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
               isConnectionIssue: error.isConnectionIssue(),
               error: error,
             );
@@ -225,7 +227,8 @@ class SturdyHttp {
     final retryBehavior = determineRetryBehavior();
     var response = await send(request);
     var retryCount = 0;
-    while (!response.$2.isSuccess && retryBehavior.shouldRetry(response.$1, retryCount)) {
+    while (!response.$2.isSuccess &&
+        retryBehavior.shouldRetry(response.$1, retryCount)) {
       // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
       await Future.delayed((retryBehavior as Retry).retryInterval);
       retryCount++;
@@ -268,7 +271,9 @@ Dio _configureDio({
 }) {
   return Dio()
     // Instruct Dio to use the same Isolate approach as requested of SturdyHttp
-    ..transformer = deserializer is MainIsolateDeserializer ? SyncTransformer() : BackgroundTransformer()
+    ..transformer = deserializer is MainIsolateDeserializer
+        ? SyncTransformer()
+        : BackgroundTransformer()
     ..options.baseUrl = baseUrl
     ..options.listFormat = ListFormat.multiCompatible
     ..interceptors.addAll(interceptors)

@@ -10,7 +10,8 @@ import 'sturdy_http_test.dart';
 
 void main() {
   group('BackgroundDeserializer', () {
-    test('it invokes onResponse on a non-main Isolate and sends result back', () async {
+    test('it invokes onResponse on a non-main Isolate and sends result back',
+        () async {
       onResponse(NetworkResponse<Json> response) {
         final isolateName = Isolate.current.debugName;
         // Hijack `Foo` to send over the `IsolateName` since
@@ -52,7 +53,9 @@ void main() {
       expect(resultTwo.message, '2');
     });
 
-    test('it throws CheckedFromJsonExceptions when deserialization issues occur', () async {
+    test(
+        'it throws CheckedFromJsonExceptions when deserialization issues occur',
+        () async {
       onResponse(NetworkResponse<Json> response) {
         return switch (response) {
           OkResponse<Json>(:final response) => NotFoo.fromJson(response),

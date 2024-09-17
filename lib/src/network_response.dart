@@ -86,6 +86,9 @@ final class ServiceUnavailable<R> extends NetworkResponseFailure<R> {
   const ServiceUnavailable({required this.error});
 }
 
+/// Any "other" error not covered by the above cases. If a [DioException] is present,
+/// it has an error status we don't handle. Often this error will occur when no
+/// response was received from the server.
 final class GenericError<R> extends NetworkResponseFailure<R> {
   const GenericError({
     this.error,
@@ -96,27 +99,6 @@ final class GenericError<R> extends NetworkResponseFailure<R> {
   final DioException? error;
   final String message;
   final bool isConnectionIssue;
-}
-
-NetworkResponseSuccess<R>? getSuccess<R>(NetworkResponse<R> response) {
-  return switch (response) {
-    OkNoContent() => OkNoContent(),
-    OkResponse<R>(:final response) => OkResponse<R>(response),
-    _ => null,
-  };
-}
-
-NetworkResponseFailure<R>? getFail<R>(NetworkResponse<R> response) {
-  return switch (response) {
-    Unauthorized(:final error) => Unauthorized(error: error),
-    Forbidden(:final error) => Forbidden(error: error),
-    NotFound(:final error) => NotFound(error: error),
-    UnprocessableEntity(:final error, :final response) => UnprocessableEntity<R>(error: error, response: response),
-    UpgradeRequired(:final error) => UpgradeRequired(error: error),
-    ServerError(:final error) => ServerError(error: error),
-    ServiceUnavailable(:final error) => ServiceUnavailable(error: error),
-    _ => null,
-  };
 }
 
 /// Extensions on the [NetworkResponse] type
