@@ -171,10 +171,10 @@ void main() {
               await buildSubject().execute<Json, bool>(
                 const GetRequest('/foo'),
                 onResponse: (response) {
-                  return response.maybeWhen(
-                    ok: (response) => true,
-                    orElse: () => false,
-                  );
+                  return switch (response) {
+                    OkResponse() => true,
+                    _ => false,
+                  };
                 },
               );
               expect(options.data, isNull);
@@ -193,7 +193,7 @@ void main() {
                   ),
                 ),
                 onResponse: (response) {
-                  return response.maybeWhen(orElse: () => null);
+                  return null;
                 },
               );
               expect(
@@ -218,7 +218,7 @@ void main() {
                   options: Options(extra: {'foo': 'bar'}),
                 ),
                 onResponse: (response) {
-                  return response.maybeWhen(orElse: () => null);
+                  return null;
                 },
               );
               expect(
@@ -238,9 +238,7 @@ void main() {
                 '/foo',
                 queryParameters: <String, dynamic>{'foo': 'bar'},
               ),
-              onResponse: (response) => response.maybeWhen(
-                orElse: () => null,
-              ),
+              onResponse: (response) {},
             );
             expect(
               options.queryParameters,
@@ -255,19 +253,15 @@ void main() {
           test('request options contain correct method ', () async {
             await buildSubject().execute<Json, void>(
               const GetRequest('/foo'),
-              onResponse: (response) => response.maybeWhen(
-                orElse: () => null,
-              ),
+              onResponse: (response) {},
             );
             expect(options.method, 'GET');
-            await buildSubject().execute<Json, void>(
+            await buildSubject().execute<void, void>(
               const PostRequest(
                 '/bar',
                 data: NetworkRequestBody.empty(),
               ),
-              onResponse: (response) => response.maybeWhen(
-                orElse: () => null,
-              ),
+              onResponse: (response) {},
             );
             expect(options.method, 'POST');
           });
@@ -304,11 +298,11 @@ void main() {
                       await buildSubject().execute<Json, Result<Foo, String>>(
                     const GetRequest('/foo'),
                     onResponse: (response) {
-                      return response.maybeWhen(
-                        ok: (json) => Result.success(Foo.fromJson(json)),
-                        orElse: () =>
-                            const Result.failure('Not expected: orElse'),
-                      );
+                      return switch (response) {
+                        OkResponse<Json>(:final response) =>
+                          Result.success(Foo.fromJson(response)),
+                        _ => const Result.failure('Not expected: orElse'),
+                      };
                     },
                   );
 
@@ -327,11 +321,11 @@ void main() {
                       buildSubject().execute<Json, Result<Foo, String>>(
                     const GetRequest('/not-foo'),
                     onResponse: (response) {
-                      return response.maybeWhen(
-                        ok: (json) => Result.success(Foo.fromJson(json)),
-                        orElse: () =>
-                            const Result.failure('Not expected: orElse'),
-                      );
+                      return switch (response) {
+                        OkResponse<Json>(:final response) =>
+                          Result.success(Foo.fromJson(response)),
+                        _ => const Result.failure('Not expected: orElse'),
+                      };
                     },
                   );
 
@@ -367,11 +361,10 @@ void main() {
                       data: NetworkRequestBody.empty(),
                     ),
                     onResponse: (response) {
-                      return response.maybeWhen(
-                        okNoContent: () => const Result.success(true),
-                        orElse: () =>
-                            const Result.failure('Not expected: orElse'),
-                      );
+                      return switch (response) {
+                        OkNoContent() => const Result.success(true),
+                        _ => const Result.failure('Not expected: orElse'),
+                      };
                     },
                   );
 
@@ -402,14 +395,15 @@ void main() {
                         data: NetworkRequestBody.empty(),
                       ),
                       onResponse: (response) {
-                        return response.maybeWhen(
-                          genericError: (message, isConnectionIssue, error) {
-                            expect(isConnectionIssue, isFalse);
-                            return const Result.success(true);
-                          },
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
-                        );
+                        return switch (response) {
+                          GenericError(:final isConnectionIssue) => () {
+                              {
+                                expect(isConnectionIssue, isFalse);
+                                return const Result<bool, String>.success(true);
+                              }
+                            }(),
+                          _ => const Result.failure('Not expected: orElse'),
+                        };
                       },
                     );
 
@@ -456,43 +450,43 @@ void main() {
                     () async {
                   final subject = buildSubject();
                   await Future.wait([
-                    subject.execute<Json, Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const PostRequest(
                         '/foo',
                         data: NetworkRequestBody.empty(),
                       ),
                       onResponse: (response) {
-                        return response.maybeWhen(
-                          ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
-                        );
+                        return switch (response) {
+                          OkResponse<Json>(:final response) =>
+                            Result.success(response['foo'] as String),
+                          _ => const Result.failure('Not expected: orElse'),
+                        };
                       },
                     ),
-                    subject.execute<Json, Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const PutRequest(
                         '/bar',
                         data: NetworkRequestBody.empty(),
                       ),
                       onResponse: (response) {
-                        return response.maybeWhen(
-                          ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
-                        );
+                        return switch (response) {
+                          OkResponse<Json>(:final response) =>
+                            Result.success(response['foo'] as String),
+                          _ => const Result.failure('Not expected: orElse'),
+                        };
                       },
                     ),
-                    subject.execute<Json, Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const DeleteRequest(
                         '/baz',
                         data: NetworkRequestBody.empty(),
                       ),
                       onResponse: (response) {
-                        return response.maybeWhen(
-                          ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
-                        );
+                        return switch (response) {
+                          OkResponse<Json>(:final response) =>
+                            Result.success(response['foo'] as String),
+                          _ => const Result.failure('Not expected: orElse'),
+                        };
                       },
                     ),
                   ]);
@@ -543,43 +537,43 @@ void main() {
                     () async {
                   final subject = buildSubject();
                   await Future.wait([
-                    subject.execute<Json, Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const PostRequest(
                         '/foo',
                         data: NetworkRequestBody.empty(),
                       ),
                       onResponse: (response) {
-                        return response.maybeWhen(
-                          ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
-                        );
+                        return switch (response) {
+                          OkResponse<Json>(:final response) =>
+                            Result.success(response['foo'] as String),
+                          _ => const Result.failure('Not expected: orElse'),
+                        };
                       },
                     ),
-                    subject.execute<Json, Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const PutRequest(
                         '/bar',
                         data: NetworkRequestBody.empty(),
                       ),
                       onResponse: (response) {
-                        return response.maybeWhen(
-                          ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
-                        );
+                        return switch (response) {
+                          OkResponse<Json>(:final response) =>
+                            Result.success(response['foo'] as String),
+                          _ => const Result.failure('Not expected: orElse'),
+                        };
                       },
                     ),
-                    subject.execute<Json, Result<String, String>>(
+                    subject.execute<void, Result<String, String>>(
                       const DeleteRequest(
                         '/baz',
                         data: NetworkRequestBody.empty(),
                       ),
                       onResponse: (response) {
-                        return response.maybeWhen(
-                          ok: (json) => Result.success(json['foo'] as String),
-                          orElse: () =>
-                              const Result.failure('Not expected: orElse'),
-                        );
+                        return switch (response) {
+                          OkResponse<Json>(:final response) =>
+                            Result.success(response['foo'] as String),
+                          _ => const Result.failure('Not expected: orElse'),
+                        };
                       },
                     ),
                   ]);
@@ -618,10 +612,10 @@ void main() {
                   await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
-                  return response.maybeMap(
-                    unauthorized: (request) => const Result.success(true),
-                    orElse: () => const Result.failure('Not expected: orElse'),
-                  );
+                  return switch (response) {
+                    Unauthorized() => const Result.success(true),
+                    _ => const Result.failure('Not expected: orElse'),
+                  };
                 },
               );
 
@@ -644,10 +638,10 @@ void main() {
                   await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
-                  return response.maybeWhen(
-                    forbidden: (request) => const Result.success(true),
-                    orElse: () => const Result.failure('Not expected: orElse'),
-                  );
+                  return switch (response) {
+                    Forbidden() => const Result.success(true),
+                    _ => const Result.failure('Not expected: orElse'),
+                  };
                 },
               );
 
@@ -668,10 +662,10 @@ void main() {
                   await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
-                  return response.maybeWhen(
-                    notFound: (request) => const Result.success(true),
-                    orElse: () => const Result.failure('Not expected: orElse'),
-                  );
+                  return switch (response) {
+                    NotFound() => const Result.success(true),
+                    _ => const Result.failure('Not expected: orElse'),
+                  };
                 },
               );
 
@@ -695,11 +689,10 @@ void main() {
                   await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
-                  return response.maybeWhen(
-                    unprocessableEntity: (error, response) =>
-                        const Result.success(true),
-                    orElse: () => const Result.failure('Not expected: orElse'),
-                  );
+                  return switch (response) {
+                    UnprocessableEntity() => const Result.success(true),
+                    _ => const Result.failure('Not expected: orElse'),
+                  };
                 },
               );
 
@@ -723,10 +716,10 @@ void main() {
                   await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
-                  return response.maybeWhen(
-                    upgradeRequired: (error) => const Result.success(true),
-                    orElse: () => const Result.failure('Not expected: orElse'),
-                  );
+                  return switch (response) {
+                    UpgradeRequired() => const Result.success(true),
+                    _ => const Result.failure('Not expected: orElse'),
+                  };
                 },
               );
 
@@ -747,10 +740,10 @@ void main() {
                   await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
-                  return response.maybeWhen(
-                    serverError: (request) => const Result.success(true),
-                    orElse: () => const Result.failure('Not expected: orElse'),
-                  );
+                  return switch (response) {
+                    ServerError() => const Result.success(true),
+                    _ => const Result.failure('Not expected: orElse'),
+                  };
                 },
               );
 
@@ -771,10 +764,10 @@ void main() {
                   await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
-                  return response.maybeWhen(
-                    serviceUnavailable: (request) => const Result.success(true),
-                    orElse: () => const Result.failure('Not expected: orElse'),
-                  );
+                  return switch (response) {
+                    ServiceUnavailable() => const Result.success(true),
+                    _ => const Result.failure('Not expected: orElse'),
+                  };
                 },
               );
 
@@ -795,11 +788,10 @@ void main() {
                   await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
-                  return response.maybeWhen(
-                    genericError: (message, _, error) =>
-                        const Result.success(true),
-                    orElse: () => const Result.failure('Not expected: orElse'),
-                  );
+                  return switch (response) {
+                    GenericError() => const Result.success(true),
+                    _ => const Result.failure('Not expected: orElse'),
+                  };
                 },
               );
 
@@ -824,13 +816,15 @@ void main() {
                   await buildSubject().execute<Json, Result<bool, String>>(
                 const GetRequest(defaultPath),
                 onResponse: (response) {
-                  return response.maybeWhen(
-                    genericError: (message, isConnectionIssue, error) {
-                      expect(isConnectionIssue, isTrue);
-                      return const Result.success(true);
-                    },
-                    orElse: () => const Result.failure('Not expected: orElse'),
-                  );
+                  return switch (response) {
+                    GenericError(:final isConnectionIssue) => () {
+                        {
+                          expect(isConnectionIssue, isTrue);
+                          return const Result<bool, String>.success(true);
+                        }
+                      }(),
+                    _ => const Result.failure('Not expected: orElse'),
+                  };
                 },
               );
 
@@ -863,13 +857,10 @@ void main() {
                     ),
                   ),
                   onResponse: (response) {
-                    return response.maybeWhen(
-                      genericError: (_, __, ___) {
-                        return const Result.success(true);
-                      },
-                      orElse: () =>
-                          const Result.failure('Not expected: orElse'),
-                    );
+                    return switch (response) {
+                      GenericError() => const Result.success(true),
+                      _ => const Result.failure('Not expected: orElse'),
+                    };
                   },
                 );
 
@@ -903,13 +894,10 @@ void main() {
                     retryBehavior: NeverRetry(),
                   ),
                   onResponse: (response) {
-                    return response.maybeWhen(
-                      genericError: (_, __, ___) {
-                        return const Result.success(true);
-                      },
-                      orElse: () =>
-                          const Result.failure('Not expected: orElse'),
-                    );
+                    return switch (response) {
+                      GenericError() => const Result.success(true),
+                      _ => const Result.failure('Not expected: orElse'),
+                    };
                   },
                 );
 
@@ -946,13 +934,10 @@ void main() {
                     ),
                   ),
                   onResponse: (response) {
-                    return response.maybeWhen(
-                      genericError: (_, __, ___) {
-                        return const Result.success(true);
-                      },
-                      orElse: () =>
-                          const Result.failure('Not expected: orElse'),
-                    );
+                    return switch (response) {
+                      GenericError() => const Result.success(true),
+                      _ => const Result.failure('Not expected: orElse'),
+                    };
                   },
                 );
 
@@ -994,13 +979,10 @@ void main() {
                     ),
                   ),
                   onResponse: (response) {
-                    return response.maybeWhen(
-                      genericError: (_, __, ___) {
-                        return const Result.success(true);
-                      },
-                      orElse: () =>
-                          const Result.failure('Not expected: orElse'),
-                    );
+                    return switch (response) {
+                      GenericError() => const Result.success(true),
+                      _ => const Result.failure('Not expected: orElse'),
+                    };
                   },
                 );
 

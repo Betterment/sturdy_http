@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:sturdy_http/sturdy_http.dart';
 
 part 'sturdy_http_event_listener.freezed.dart';
 

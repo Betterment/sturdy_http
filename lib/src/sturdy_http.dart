@@ -154,7 +154,7 @@ class SturdyHttp {
           onSendProgress: request.onSendProgress,
         );
         if (dioResponse.statusCode == 204) {
-          resolvedResponse = const NetworkResponse.okNoContent();
+          resolvedResponse = const OkNoContent();
         } else {
           final data = dioResponse.data;
           if (data == null || data is! R) {
@@ -168,43 +168,43 @@ class SturdyHttp {
               return 'Request to ${request.path} was successful but response data $messageSuffix';
             }
 
-            resolvedResponse = NetworkResponse.genericError(
+            resolvedResponse = GenericError(
               message: buildErrorMessage(),
               isConnectionIssue: false,
             );
           } else {
-            resolvedResponse = NetworkResponse.ok(data as R);
+            resolvedResponse = OkResponse(data as R);
           }
         }
       } on DioException catch (error) {
         switch (error.response?.statusCode) {
           case 401:
             await _onEvent(SturdyHttpEvent.authFailure(error.requestOptions));
-            resolvedResponse = NetworkResponse.unauthorized(error);
+            resolvedResponse = Unauthorized(error: error);
             break;
           case 403:
-            resolvedResponse = NetworkResponse.forbidden(error);
+            resolvedResponse = Forbidden(error: error);
             break;
           case 404:
-            resolvedResponse = NetworkResponse.notFound(error);
+            resolvedResponse = NotFound(error: error);
             break;
           case 422:
-            resolvedResponse = NetworkResponse.unprocessableEntity(
+            resolvedResponse = UnprocessableEntity<R>(
               error: error,
               response: error.response?.data as R,
             );
             break;
           case 426:
-            resolvedResponse = NetworkResponse.upgradeRequired(error);
+            resolvedResponse = UpgradeRequired(error: error);
             break;
           case 500:
-            resolvedResponse = NetworkResponse.serverError(error);
+            resolvedResponse = ServerError(error: error);
             break;
           case 503:
-            resolvedResponse = NetworkResponse.serviceUnavailable(error);
+            resolvedResponse = ServiceUnavailable(error: error);
             break;
           default:
-            resolvedResponse = NetworkResponse.genericError(
+            resolvedResponse = GenericError(
               message:
                   'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
               isConnectionIssue: error.isConnectionIssue(),
@@ -241,7 +241,7 @@ class SturdyHttp {
       );
     }
 
-    return _ResponsePayload<R>(
+    return _ResponsePayload(
       request: request,
       dioResponse: response.$1,
       resolvedResponse: response.$2,
@@ -249,10 +249,10 @@ class SturdyHttp {
   }
 }
 
-class _ResponsePayload<T> {
+class _ResponsePayload<R> {
   final NetworkRequest request;
   final Response<dynamic>? dioResponse;
-  final NetworkResponse<T> resolvedResponse;
+  final NetworkResponse<R> resolvedResponse;
 
   _ResponsePayload({
     required this.request,

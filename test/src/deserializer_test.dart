@@ -21,7 +21,7 @@ void main() {
         return Foo(message: isolateName!);
       }
 
-      final response = NetworkResponse.ok(const Foo(message: '--').toJson());
+      final response = OkResponse(const Foo(message: '--').toJson());
       final subject = BackgroundDeserializer();
       final result = await subject.deserialize(
         response: response,
@@ -31,15 +31,15 @@ void main() {
     });
 
     test('it handles multiple requests for deserialization', () async {
-      onResponse(NetworkResponse<Json> response) {
-        return response.maybeWhen(
-          ok: Foo.fromJson,
-          orElse: () => fail('orElse not expected'),
-        );
+      Foo onResponse(NetworkResponse<Json> response) {
+        return switch (response) {
+          OkResponse<Json>(:final response) => Foo.fromJson(response),
+          _ => fail('Not expected: orElse'),
+        };
       }
 
-      final responseOne = NetworkResponse.ok(const Foo(message: '1').toJson());
-      final responseTwo = NetworkResponse.ok(const Foo(message: '2').toJson());
+      final responseOne = OkResponse(const Foo(message: '1').toJson());
+      final responseTwo = OkResponse(const Foo(message: '2').toJson());
       final subject = BackgroundDeserializer();
       final resultOne = await subject.deserialize(
         response: responseOne,
@@ -57,15 +57,13 @@ void main() {
         'it throws CheckedFromJsonExceptions when deserialization issues occur',
         () async {
       onResponse(NetworkResponse<Json> response) {
-        return response.maybeWhen(
-          // Attempt to deserialize will fail because the response
-          // payload is a `Foo`, not a `NotFoo`
-          ok: NotFoo.fromJson,
-          orElse: () => fail('orElse not expected'),
-        );
+        return switch (response) {
+          OkResponse<Json>(:final response) => NotFoo.fromJson(response),
+          _ => fail('orElse not expected'),
+        };
       }
 
-      final response = NetworkResponse.ok(const Foo(message: 'Nope').toJson());
+      final response = OkResponse(const Foo(message: 'Nope').toJson());
       final subject = BackgroundDeserializer();
       try {
         await subject.deserialize(

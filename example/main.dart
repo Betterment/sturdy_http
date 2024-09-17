@@ -1,7 +1,5 @@
 import 'package:charlatan/charlatan.dart';
-import 'package:sturdy_http/src/network_request.dart';
-import 'package:sturdy_http/src/sturdy_http.dart';
-import 'package:sturdy_http/src/sturdy_http_event_listener.dart';
+import 'package:sturdy_http/sturdy_http.dart';
 
 void main(List<String> args) async {
   // Set up some fake HTTP responses using Charlatan
@@ -25,13 +23,13 @@ void main(List<String> args) async {
   );
 
   // A GetRequest. Prints 'Hello World!'.
-  await client.execute<String, void>(
+  await client.execute<Json, void>(
     GetRequest('/foo'),
     onResponse: (r) {
-      r.maybeWhen(
-        ok: (message) => print(message),
-        orElse: () => print('GET /foo failed: $r'),
-      );
+      return switch (r) {
+        OkResponse(:final response) => print(response),
+        _ => print('GET /foo failed: $r'),
+      };
     },
   );
 
@@ -40,13 +38,13 @@ void main(List<String> args) async {
   // Prints:
   // 'mutative request success' <-- From ExampleEventListener
   // 'success!'
-  await client.execute<String, void>(
+  await client.execute<void, void>(
     PostRequest('/foo', data: NetworkRequestBody.empty()),
     onResponse: (r) {
-      r.maybeWhen(
-        okNoContent: () => print('success!'),
-        orElse: () => print('POST /foo failed: $r'),
-      );
+      return switch (r) {
+        OkNoContent() => print('success!'),
+        _ => print('POST /foo failed: $r'),
+      };
     },
   );
 }
