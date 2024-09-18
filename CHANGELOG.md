@@ -1,3 +1,11 @@
+## 0.5.1
+
+## What's Changed
+* fix: loosen collection constraint by @btrautmann in https://github.com/Betterment/sturdy_http/pull/16
+
+
+**Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.5.0...v0.5.1
+
 ## 0.5.0
 
 ## What's Changed
