@@ -1,8 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sturdy_http/sturdy_http.dart';
-
-part 'network_request.freezed.dart';
 
 /// {@template network_request_type}
 ///
@@ -74,19 +71,14 @@ class GetRequest extends NetworkRequest {
   /// {@macro get_request}
   const GetRequest(
     String path, {
-    super.data = const NetworkRequestBody.empty(),
+    super.data = const EmptyRequestBody(),
     Map<String, dynamic>? queryParameters,
     super.options,
     super.cancelToken,
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
-  }) : super(
-          type: NetworkRequestType.Get,
-          path: path,
-          shouldTriggerDataMutation: false,
-          queryParams: queryParameters,
-        );
+  }) : super(type: NetworkRequestType.Get, path: path, shouldTriggerDataMutation: false, queryParams: queryParameters);
 }
 
 /// {@template post_request}
@@ -104,11 +96,7 @@ class PostRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
-  }) : super(
-          type: NetworkRequestType.Post,
-          path: path,
-          queryParams: queryParameters,
-        );
+  }) : super(type: NetworkRequestType.Post, path: path, queryParams: queryParameters);
 }
 
 /// {@template put_request}
@@ -126,11 +114,7 @@ class PutRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
-  }) : super(
-          type: NetworkRequestType.Put,
-          path: path,
-          queryParams: queryParameters,
-        );
+  }) : super(type: NetworkRequestType.Put, path: path, queryParams: queryParameters);
 }
 
 /// {@template delete_request}
@@ -140,7 +124,7 @@ class DeleteRequest extends NetworkRequest {
   /// {@macro delete_request}
   const DeleteRequest(
     String path, {
-    super.data = const NetworkRequestBody.empty(),
+    super.data = const EmptyRequestBody(),
     Map<String, dynamic>? queryParameters,
     super.shouldTriggerDataMutation = true,
     super.options,
@@ -148,11 +132,7 @@ class DeleteRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
-  }) : super(
-          type: NetworkRequestType.Delete,
-          path: path,
-          queryParams: queryParameters,
-        );
+  }) : super(type: NetworkRequestType.Delete, path: path, queryParams: queryParameters);
 }
 
 /// {@template raw_request}
@@ -165,7 +145,7 @@ class RawRequest extends NetworkRequest {
   const RawRequest(
     String path, {
     required super.type,
-    super.data = const NetworkRequestBody.empty(),
+    super.data = const EmptyRequestBody(),
     Map<String, dynamic>? queryParameters,
     super.shouldTriggerDataMutation = true,
     super.options,
@@ -173,10 +153,7 @@ class RawRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
-  }) : super(
-          path: path,
-          queryParams: queryParameters,
-        );
+  }) : super(path: path, queryParams: queryParameters);
 }
 
 /// The body of a [NetworkRequest]. Note that this type is aimed at providing
@@ -184,20 +161,43 @@ class RawRequest extends NetworkRequest {
 /// with regards to the content-type header. If you want [SturdyHttp] to infer
 /// the content-type header, configure this via the `inferContentType` parameter
 /// when constructing the instance.
-@Freezed(copyWith: false)
-class NetworkRequestBody with _$NetworkRequestBody {
-  /// An empty body. Results in `null` being passed to `data` of the request.
-  const factory NetworkRequestBody.empty() = _Empty;
+sealed class NetworkRequestBody {
+  /// {@macro network_request_body}
+  const NetworkRequestBody();
+}
 
-  /// A JSON body. Passed directly to `data` of the request. If `inferContentType`
-  /// has been provided as `true` to the [SturdyHttp] instance, will result in
-  /// an `application-json` `content-type`.
-  const factory NetworkRequestBody.json(Json data) = _Json;
+/// {@template empty_request_body}
+/// An empty body. Results in `null` being passed to `data` of the request.
+/// {@endtemplate}
+final class EmptyRequestBody extends NetworkRequestBody {
+  /// {@macro empty_request_body}
+  const EmptyRequestBody();
+}
 
-  /// A raw body. Allows for nullable untyped data that is passed directly
-  /// to `data` of the request, useful for instances where the data type
-  /// is not known until runtime. If `inferContentType` has been provided as
-  /// `true` to the [SturdyHttp] instance *and* the [data] can be used to infer
-  /// the `content-type` header, it will be inferred.
-  const factory NetworkRequestBody.raw(Object? data) = _Raw;
+/// {@template json_request_body}
+/// A JSON body. Passed directly to `data` of the request. If `inferContentType`
+/// has been provided as `true` to the [SturdyHttp] instance, will result in
+/// an `application-json` `content-type`.
+/// {@endtemplate}
+final class JsonRequestBody extends NetworkRequestBody {
+  /// The JSON data to be sent as the body of the request
+  final Json data;
+
+  /// {@macro json_request_body}
+  const JsonRequestBody(this.data);
+}
+
+/// {@template raw_request_body}
+/// A raw body. Allows for nullable untyped data that is passed directly
+/// to `data` of the request, useful for instances where the data type
+/// is not known until runtime. If `inferContentType` has been provided as
+/// `true` to the [SturdyHttp] instance *and* the [data] can be used to infer
+/// the `content-type` header, it will be inferred.
+/// {@endtemplate}
+final class RawRequestBody extends NetworkRequestBody {
+  /// The raw data to be sent as the body of the request
+  final Object? data;
+
+  /// {@macro raw_request_body}
+  const RawRequestBody(this.data);
 }
