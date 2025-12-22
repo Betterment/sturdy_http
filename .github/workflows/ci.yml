@@ -7,18 +7,17 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
-  DART_VERSION: 3.5.0
+  DART_VERSION: 3.10.4
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout
         uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
 
@@ -42,7 +41,7 @@ jobs:
       - uses: codecov/codecov-action@40a12dcee2df644d47232dde008099a3e9e4f865 #v3.1.2
         with:
           files: coverage/lcov.info
-  
+
   pana:
     runs-on: ubuntu-latest
     steps:
