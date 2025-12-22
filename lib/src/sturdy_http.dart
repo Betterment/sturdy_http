@@ -32,7 +32,8 @@ class SturdyHttp {
   final RetryBehavior _retryBehavior;
 
   /// The interceptors provided when this [SturdyHttp] was constructed.
-  UnmodifiableListView<Interceptor> get interceptors => UnmodifiableListView<Interceptor>(_dio.interceptors);
+  UnmodifiableListView<Interceptor> get interceptors =>
+      UnmodifiableListView<Interceptor>(_dio.interceptors);
 
   /// The base URL of the underlying [Dio] instance.
   String get baseUrl => _dio.options.baseUrl;
@@ -100,24 +101,37 @@ class SturdyHttp {
   /// If [onResponse] fails to produce an [M] and instead throws an [Exception],
   /// some known failure reasons are emitted via [SturdyHttpEvent]s and the
   /// [Exception] is re-thrown.
-  Future<M> execute<R, M>(NetworkRequest request, {required M Function(NetworkResponse<R> response) onResponse}) async {
+  Future<M> execute<R, M>(
+    NetworkRequest request, {
+    required M Function(NetworkResponse<R> response) onResponse,
+  }) async {
     final responsePayload = await _handleRequest<R, M>(request);
 
     try {
-      return await _deserializer.deserialize(response: responsePayload.resolvedResponse, onResponse: onResponse);
+      return await _deserializer.deserialize(
+        response: responsePayload.resolvedResponse,
+        onResponse: onResponse,
+      );
     } on Exception catch (e) {
       if (e is MapperException || e is CheckedFromJsonException) {
-        final stackTrace = e is MapperException ? null : (e as CheckedFromJsonException).innerStack;
         await _onEvent(
-          DecodingError(request: responsePayload.dioResponse!.requestOptions, exception: e, stackTrace: stackTrace),
+          DecodingError(
+            request: responsePayload.dioResponse!.requestOptions,
+            exception: e,
+            stackTrace: StackTrace.current,
+          ),
         );
       }
       rethrow;
     }
   }
 
-  Future<_ResponsePayload<R>> _handleRequest<R, M>(NetworkRequest request) async {
-    Future<(Response<Object?>?, NetworkResponse<R>)> send(NetworkRequest request) async {
+  Future<_ResponsePayload<R>> _handleRequest<R, M>(
+    NetworkRequest request,
+  ) async {
+    Future<(Response<Object?>?, NetworkResponse<R>)> send(
+      NetworkRequest request,
+    ) async {
       late final NetworkResponse<R> resolvedResponse;
       Response<Object?>? dioResponse;
       try {
@@ -155,7 +169,10 @@ class SturdyHttp {
               return 'Request to ${request.path} was successful but response data $messageSuffix';
             }
 
-            resolvedResponse = GenericError(message: buildErrorMessage(), isConnectionIssue: false);
+            resolvedResponse = GenericError(
+              message: buildErrorMessage(),
+              isConnectionIssue: false,
+            );
           } else {
             resolvedResponse = OkResponse(data as R);
           }
@@ -173,7 +190,10 @@ class SturdyHttp {
             resolvedResponse = NotFound(error: error);
             break;
           case 422:
-            resolvedResponse = UnprocessableEntity<R>(error: error, response: error.response?.data as R);
+            resolvedResponse = UnprocessableEntity<R>(
+              error: error,
+              response: error.response?.data as R,
+            );
             break;
           case 426:
             resolvedResponse = UpgradeRequired(error: error);
@@ -186,7 +206,8 @@ class SturdyHttp {
             break;
           default:
             resolvedResponse = GenericError(
-              message: 'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
+              message:
+                  'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
               isConnectionIssue: error.isConnectionIssue(),
               error: error,
             );
@@ -198,13 +219,17 @@ class SturdyHttp {
     RetryBehavior determineRetryBehavior() {
       // The request's retry behavior takes precedence over the client's
       final priority = [request.retryBehavior, _retryBehavior];
-      return priority.firstWhere((b) => b is! Unspecified, orElse: () => NeverRetry());
+      return priority.firstWhere(
+        (b) => b is! Unspecified,
+        orElse: () => NeverRetry(),
+      );
     }
 
     final retryBehavior = determineRetryBehavior();
     var response = await send(request);
     var retryCount = 0;
-    while (!response.$2.isSuccess && retryBehavior.shouldRetry(response.$1, retryCount)) {
+    while (!response.$2.isSuccess &&
+        retryBehavior.shouldRetry(response.$1, retryCount)) {
       // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
       await Future.delayed((retryBehavior as Retry).retryInterval);
       retryCount++;
@@ -212,10 +237,16 @@ class SturdyHttp {
     }
 
     if (response.$2.isSuccess && request.shouldTriggerDataMutation) {
-      await _onEvent(MutativeRequestSuccess(request: response.$1!.requestOptions));
+      await _onEvent(
+        MutativeRequestSuccess(request: response.$1!.requestOptions),
+      );
     }
 
-    return _ResponsePayload(request: request, dioResponse: response.$1, resolvedResponse: response.$2);
+    return _ResponsePayload(
+      request: request,
+      dioResponse: response.$1,
+      resolvedResponse: response.$2,
+    );
   }
 }
 
@@ -224,7 +255,11 @@ class _ResponsePayload<R> {
   final Response<dynamic>? dioResponse;
   final NetworkResponse<R> resolvedResponse;
 
-  _ResponsePayload({required this.request, required this.dioResponse, required this.resolvedResponse});
+  _ResponsePayload({
+    required this.request,
+    required this.dioResponse,
+    required this.resolvedResponse,
+  });
 }
 
 Dio _configureDio({
@@ -237,7 +272,9 @@ Dio _configureDio({
 }) {
   return Dio()
     // Instruct Dio to use the same Isolate approach as requested of SturdyHttp
-    ..transformer = deserializer is MainIsolateDeserializer ? SyncTransformer() : BackgroundTransformer()
+    ..transformer = deserializer is MainIsolateDeserializer
+        ? SyncTransformer()
+        : BackgroundTransformer()
     ..options.baseUrl = baseUrl
     ..options.listFormat = ListFormat.multiCompatible
     ..interceptors.addAll(interceptors)

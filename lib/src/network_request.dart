@@ -78,7 +78,12 @@ class GetRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
-  }) : super(type: NetworkRequestType.Get, path: path, shouldTriggerDataMutation: false, queryParams: queryParameters);
+  }) : super(
+         type: NetworkRequestType.Get,
+         path: path,
+         shouldTriggerDataMutation: false,
+         queryParams: queryParameters,
+       );
 }
 
 /// {@template post_request}
@@ -96,7 +101,11 @@ class PostRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
-  }) : super(type: NetworkRequestType.Post, path: path, queryParams: queryParameters);
+  }) : super(
+         type: NetworkRequestType.Post,
+         path: path,
+         queryParams: queryParameters,
+       );
 }
 
 /// {@template put_request}
@@ -114,7 +123,11 @@ class PutRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
-  }) : super(type: NetworkRequestType.Put, path: path, queryParams: queryParameters);
+  }) : super(
+         type: NetworkRequestType.Put,
+         path: path,
+         queryParams: queryParameters,
+       );
 }
 
 /// {@template delete_request}
@@ -132,7 +145,11 @@ class DeleteRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
-  }) : super(type: NetworkRequestType.Delete, path: path, queryParams: queryParameters);
+  }) : super(
+         type: NetworkRequestType.Delete,
+         path: path,
+         queryParams: queryParameters,
+       );
 }
 
 /// {@template raw_request}

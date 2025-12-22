@@ -34,7 +34,11 @@ final class DecodingError extends SturdyHttpEvent {
   final StackTrace? stackTrace;
 
   /// {@macro decoding_error}
-  DecodingError({required super.request, required this.exception, required this.stackTrace});
+  DecodingError({
+    required super.request,
+    required this.exception,
+    required this.stackTrace,
+  });
 }
 
 /// {@template auth_failure}

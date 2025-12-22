@@ -66,9 +66,9 @@ extension RetryBehaviorX on RetryBehavior {
   bool shouldRetry(Response<Object?>? response, int retryCount) {
     return switch (this) {
       Retry(:final maxRetries, :final retryClause) => () {
-          if (retryCount >= maxRetries) return false;
-          return retryClause?.call(response) ?? defaultRetryClause(response);
-        }(),
+        if (retryCount >= maxRetries) return false;
+        return retryClause?.call(response) ?? defaultRetryClause(response);
+      }(),
       _ => false,
     };
   }

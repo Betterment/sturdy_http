@@ -34,10 +34,7 @@ void main() {
     });
     group('Retry', () {
       test('maxRetries is respected', () {
-        final retry = const Retry(
-          maxRetries: 1,
-          retryInterval: Duration.zero,
-        );
+        final retry = const Retry(maxRetries: 1, retryInterval: Duration.zero);
 
         expect(
           retry.shouldRetry(

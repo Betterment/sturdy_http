@@ -17,7 +17,8 @@ extension DioExceptionX on DioException {
       DioExceptionType.sendTimeout,
       DioExceptionType.unknown,
     ];
-    final isKnownExceptionType = error is HandshakeException ||
+    final isKnownExceptionType =
+        error is HandshakeException ||
         error is SocketException ||
         error is HttpException;
     return knownBadConnectionTypes.contains(type) || isKnownExceptionType;
