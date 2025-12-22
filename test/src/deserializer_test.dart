@@ -2,7 +2,6 @@
 
 import 'dart:isolate';
 
-import 'package:dart_mappable/dart_mappable.dart';
 import 'package:sturdy_http/sturdy_http.dart';
 import 'package:test/test.dart';
 

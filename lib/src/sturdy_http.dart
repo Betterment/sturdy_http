@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:collection/collection.dart';
-import 'package:dart_mappable/dart_mappable.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sturdy_http/sturdy_http.dart';
