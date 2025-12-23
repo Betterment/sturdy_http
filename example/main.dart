@@ -4,16 +4,8 @@ import 'package:sturdy_http/sturdy_http.dart';
 void main(List<String> args) async {
   // Set up some fake HTTP responses using Charlatan
   final charlatan = Charlatan()
-    ..whenGet(
-      '/foo',
-      (request) => CharlatanHttpResponse(
-        body: 'Hello World!',
-      ),
-    )
-    ..whenPost(
-      '/foo',
-      (request) => CharlatanHttpResponse(statusCode: 204),
-    );
+    ..whenGet('/foo', (request) => CharlatanHttpResponse(body: 'Hello World!'))
+    ..whenPost('/foo', (request) => CharlatanHttpResponse(statusCode: 204));
 
   // Create your client
   final client = SturdyHttp(
@@ -39,7 +31,7 @@ void main(List<String> args) async {
   // 'mutative request success' <-- From ExampleEventListener
   // 'success!'
   await client.execute<void, void>(
-    PostRequest('/foo', data: NetworkRequestBody.empty()),
+    PostRequest('/foo', data: EmptyRequestBody()),
     onResponse: (r) {
       return switch (r) {
         OkNoContent() => print('success!'),
@@ -51,11 +43,14 @@ void main(List<String> args) async {
 
 class ExampleEventListener implements SturdyHttpEventListener {
   @override
-  Future<void> onEvent(SturdyHttpEvent event) {
-    return event.when(
-      decodingError: (_, __, ___) async => print('decoding error'),
-      authFailure: (_) async => print('auth failure'),
-      mutativeRequestSuccess: (_) async => print('mutative request success'),
-    );
+  Future<void> onEvent(SturdyHttpEvent event) async {
+    switch (event) {
+      case DecodingError():
+        print('decoding error');
+      case AuthFailure():
+        print('auth failure');
+      case MutativeRequestSuccess():
+        print('mutative request success');
+    }
   }
 }

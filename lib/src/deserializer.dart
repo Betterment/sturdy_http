@@ -99,9 +99,7 @@ class BackgroundDeserializer implements Deserializer {
     // Use BroadcastStream to facilitate multiple requests for
     // deserialization over the same SendPort.
     _results ??= _mainReceivePort.asBroadcastStream();
-    _workerIsolate ??= await _spawnIsolate(
-      mainReceivePort: _mainReceivePort,
-    );
+    _workerIsolate ??= await _spawnIsolate(mainReceivePort: _mainReceivePort);
     _workerSendPort ??= await _results!.first as SendPort;
   }
 }
@@ -162,10 +160,8 @@ class _IsolateRequest {
   final SendPort resultPort;
   final dynamic Function() decoder;
 
-  _IsolateRequest({
-    required this.resultPort,
-    required this.decoder,
-  }) : id = const Uuid().v4();
+  _IsolateRequest({required this.resultPort, required this.decoder})
+    : id = const Uuid().v4();
 }
 
 /// The result of an attempt to deserialize a response.
@@ -184,16 +180,8 @@ class _IsolateResult {
   });
 
   factory _IsolateResult.ok(dynamic value, String requestId) =>
-      _IsolateResult._(
-        response: value,
-        error: null,
-        requestId: requestId,
-      );
+      _IsolateResult._(response: value, error: null, requestId: requestId);
 
   factory _IsolateResult.error(Exception error, String requestId) =>
-      _IsolateResult._(
-        response: null,
-        error: error,
-        requestId: requestId,
-      );
+      _IsolateResult._(response: null, error: error, requestId: requestId);
 }

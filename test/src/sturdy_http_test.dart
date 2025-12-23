@@ -2,12 +2,8 @@ import 'dart:io';
 
 import 'package:charlatan/charlatan.dart';
 import 'package:dio/dio.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sturdy_http/sturdy_http.dart';
 import 'package:test/test.dart' hide Retry;
-
-part 'sturdy_http_test.freezed.dart';
-part 'sturdy_http_test.g.dart';
 
 void main() {
   group('SturdyHttp', () {
@@ -83,7 +79,7 @@ void main() {
         charlatan.whenPost('/infer', (request) => CharlatanHttpResponse());
 
         await subject.execute(
-          PostRequest('/infer', data: NetworkRequestBody.json({'foo': 'bar'})),
+          PostRequest('/infer', data: JsonRequestBody({'foo': 'bar'})),
           onResponse: (r) {},
         );
 
@@ -107,7 +103,7 @@ void main() {
         charlatan.whenPost('/infer', (request) => CharlatanHttpResponse());
 
         await subject.execute(
-          PostRequest('/infer', data: NetworkRequestBody.json({'foo': 'bar'})),
+          PostRequest('/infer', data: JsonRequestBody({'foo': 'bar'})),
           onResponse: (r) {},
         );
 
@@ -134,19 +130,18 @@ void main() {
 
     group('withBaseUrl', () {
       test(
-          'it returns a new instance with correct baseUrl and pre-configured settings',
-          () {
-        final oldInstance = buildSubject(
-          interceptors: [_FakeInterceptor()],
-        );
-        expect(oldInstance.baseUrl != 'https://foo.com', isTrue);
+        'it returns a new instance with correct baseUrl and pre-configured settings',
+        () {
+          final oldInstance = buildSubject(interceptors: [_FakeInterceptor()]);
+          expect(oldInstance.baseUrl != 'https://foo.com', isTrue);
 
-        final newInstance = oldInstance.withBaseUrl('https://foo.com');
-        expect(identical(oldInstance, newInstance), isFalse);
-        expect(newInstance.baseUrl, 'https://foo.com');
-        expect(newInstance.interceptors, oldInstance.interceptors);
-        expect(newInstance.httpClientAdapter, oldInstance.httpClientAdapter);
-      });
+          final newInstance = oldInstance.withBaseUrl('https://foo.com');
+          expect(identical(oldInstance, newInstance), isFalse);
+          expect(newInstance.baseUrl, 'https://foo.com');
+          expect(newInstance.interceptors, oldInstance.interceptors);
+          expect(newInstance.httpClientAdapter, oldInstance.httpClientAdapter);
+        },
+      );
     });
 
     group('execute', () {
@@ -186,11 +181,7 @@ void main() {
               await buildSubject().execute<Json, Foo?>(
                 const GetRequest(
                   '/foo',
-                  data: NetworkRequestBody.json(
-                    <String, dynamic>{
-                      'foo': 'bar',
-                    },
-                  ),
+                  data: JsonRequestBody(<String, dynamic>{'foo': 'bar'}),
                 ),
                 onResponse: (response) {
                   return null;
@@ -210,11 +201,7 @@ void main() {
               await buildSubject().execute<Json, Foo?>(
                 GetRequest(
                   '/foo',
-                  data: NetworkRequestBody.json(
-                    <String, dynamic>{
-                      'foo': 'bar',
-                    },
-                  ),
+                  data: JsonRequestBody(<String, dynamic>{'foo': 'bar'}),
                   options: Options(extra: {'foo': 'bar'}),
                 ),
                 onResponse: (response) {
@@ -257,10 +244,7 @@ void main() {
             );
             expect(options.method, 'GET');
             await buildSubject().execute<void, void>(
-              const PostRequest(
-                '/bar',
-                data: NetworkRequestBody.empty(),
-              ),
+              const PostRequest('/bar', data: EmptyRequestBody()),
               onResponse: (response) {},
             );
             expect(options.method, 'POST');
@@ -277,13 +261,13 @@ void main() {
                   ..whenGet(
                     '/foo',
                     (request) => CharlatanHttpResponse(
-                      body: Foo(message: 'Hello world').toJson(),
+                      body: Foo(message: 'Hello world').toMap(),
                     ),
                   )
                   ..whenGet(
                     '/not-foo',
                     (request) => CharlatanHttpResponse(
-                      body: NotFoo(notMessage: 'Hello world').toJson(),
+                      body: NotFoo(notMessage: 'Hello world').toMap(),
                     ),
                   )
                   ..whenGet(
@@ -294,51 +278,48 @@ void main() {
 
               group('when deserialization succeeds', () {
                 test('it returns parsed model', () async {
-                  final response =
-                      await buildSubject().execute<Json, Result<Foo, String>>(
-                    const GetRequest('/foo'),
-                    onResponse: (response) {
-                      return switch (response) {
-                        OkResponse<Json>(:final response) =>
-                          Result.success(Foo.fromJson(response)),
-                        _ => const Result.failure('Not expected: orElse'),
-                      };
-                    },
-                  );
+                  final response = await buildSubject()
+                      .execute<Json, Result<Foo, String>>(
+                        const GetRequest('/foo'),
+                        onResponse: (response) {
+                          return switch (response) {
+                            OkResponse<Json>(:final response) => Success(
+                              Foo.fromMap(response),
+                            ),
+                            _ => const Failure('Not expected: orElse'),
+                          };
+                        },
+                      );
 
-                  response.when(
-                    success: (foo) => expect(foo.message, 'Hello world'),
-                    failure: fail,
-                  );
+                  switch (response) {
+                    case Success(:final success):
+                      expect(success.message, 'Hello world');
+                    case Failure():
+                      fail('Expected Success');
+                  }
                 });
               });
 
               group('when deserialization fails', () {
                 test(
-                    'it emits a decodingError event and rethrows the Exception',
-                    () async {
-                  final request =
-                      buildSubject().execute<Json, Result<Foo, String>>(
-                    const GetRequest('/not-foo'),
-                    onResponse: (response) {
-                      return switch (response) {
-                        OkResponse<Json>(:final response) =>
-                          Result.success(Foo.fromJson(response)),
-                        _ => const Result.failure('Not expected: orElse'),
-                      };
-                    },
-                  );
+                  'it emits a decodingError event and rethrows the Exception',
+                  () async {
+                    final request = buildSubject()
+                        .execute<Json, Result<Foo, String>>(
+                          const GetRequest('/not-foo'),
+                          onResponse: (response) {
+                            return switch (response) {
+                              OkResponse<Json>(:final response) => Success(
+                                Foo.fromMap(response),
+                              ),
+                              _ => const Failure('Not expected: orElse'),
+                            };
+                          },
+                        );
 
-                  await expectLater(
-                    request,
-                    throwsA(isA<CheckedFromJsonException>()),
-                  );
-
-                  expect(
-                    jsonDecodingErrors['/not-foo'].toString(),
-                    contains('CheckedFromJsonException'),
-                  );
-                });
+                    await expectLater(request, throwsA(isA<TypeError>()));
+                  },
+                );
               });
             });
 
@@ -347,31 +328,28 @@ void main() {
                 setUp(() {
                   charlatan.whenPost(
                     '/foo',
-                    (request) => CharlatanHttpResponse(
-                      statusCode: 204,
-                      body: null,
-                    ),
+                    (request) =>
+                        CharlatanHttpResponse(statusCode: 204, body: null),
                   );
                 });
                 test('it returns okNoContent', () async {
-                  final response =
-                      await buildSubject().execute<void, Result<bool, String>>(
-                    const PostRequest(
-                      '/foo',
-                      data: NetworkRequestBody.empty(),
-                    ),
-                    onResponse: (response) {
-                      return switch (response) {
-                        OkNoContent() => const Result.success(true),
-                        _ => const Result.failure('Not expected: orElse'),
-                      };
-                    },
-                  );
+                  final response = await buildSubject()
+                      .execute<void, Result<bool, String>>(
+                        const PostRequest('/foo', data: EmptyRequestBody()),
+                        onResponse: (response) {
+                          return switch (response) {
+                            OkNoContent() => const Success(true),
+                            _ => const Failure('Not expected: orElse'),
+                          };
+                        },
+                      );
 
-                  response.when(
-                    success: (s) => expect(s, isTrue),
-                    failure: fail,
-                  );
+                  switch (response) {
+                    case Success(:final success):
+                      expect(success, isTrue);
+                    case Failure():
+                      fail('Expected Success');
+                  }
                 });
               });
 
@@ -379,10 +357,8 @@ void main() {
                 setUp(() {
                   charlatan.whenPost(
                     '/foo',
-                    (request) => CharlatanHttpResponse(
-                      statusCode: 200,
-                      body: null,
-                    ),
+                    (request) =>
+                        CharlatanHttpResponse(statusCode: 200, body: null),
                   );
                 });
                 test(
@@ -390,27 +366,26 @@ void main() {
                   () async {
                     final response = await buildSubject()
                         .execute<void, Result<bool, String>>(
-                      const PostRequest(
-                        '/foo',
-                        data: NetworkRequestBody.empty(),
-                      ),
-                      onResponse: (response) {
-                        return switch (response) {
-                          GenericError(:final isConnectionIssue) => () {
-                              {
-                                expect(isConnectionIssue, isFalse);
-                                return const Result<bool, String>.success(true);
-                              }
-                            }(),
-                          _ => const Result.failure('Not expected: orElse'),
-                        };
-                      },
-                    );
+                          const PostRequest('/foo', data: EmptyRequestBody()),
+                          onResponse: (response) {
+                            return switch (response) {
+                              GenericError(:final isConnectionIssue) => () {
+                                {
+                                  expect(isConnectionIssue, isFalse);
+                                  return const Success<bool, String>(true);
+                                }
+                              }(),
+                              _ => const Failure('Not expected: orElse'),
+                            };
+                          },
+                        );
 
-                    response.when(
-                      success: (s) => expect(s, isTrue),
-                      failure: fail,
-                    );
+                    switch (response) {
+                      case Success(:final success):
+                        expect(success, isTrue);
+                      case Failure():
+                        fail('Expected Success');
+                    }
                   },
                 );
               });
@@ -446,141 +421,134 @@ void main() {
                 });
 
                 test(
-                    'it emits a MutativeRequestSuccess event with correct path',
-                    () async {
-                  final subject = buildSubject();
-                  await Future.wait([
-                    subject.execute<void, Result<String, String>>(
-                      const PostRequest(
-                        '/foo',
-                        data: NetworkRequestBody.empty(),
+                  'it emits a MutativeRequestSuccess event with correct path',
+                  () async {
+                    final subject = buildSubject();
+                    await Future.wait([
+                      subject.execute<void, Result<String, String>>(
+                        const PostRequest('/foo', data: EmptyRequestBody()),
+                        onResponse: (response) {
+                          return switch (response) {
+                            OkResponse<Json>(:final response) => Success(
+                              response['foo'] as String,
+                            ),
+                            _ => const Failure('Not expected: orElse'),
+                          };
+                        },
                       ),
-                      onResponse: (response) {
-                        return switch (response) {
-                          OkResponse<Json>(:final response) =>
-                            Result.success(response['foo'] as String),
-                          _ => const Result.failure('Not expected: orElse'),
-                        };
-                      },
-                    ),
-                    subject.execute<void, Result<String, String>>(
-                      const PutRequest(
-                        '/bar',
-                        data: NetworkRequestBody.empty(),
+                      subject.execute<void, Result<String, String>>(
+                        const PutRequest('/bar', data: EmptyRequestBody()),
+                        onResponse: (response) {
+                          return switch (response) {
+                            OkResponse<Json>(:final response) => Success(
+                              response['foo'] as String,
+                            ),
+                            _ => const Failure('Not expected: orElse'),
+                          };
+                        },
                       ),
-                      onResponse: (response) {
-                        return switch (response) {
-                          OkResponse<Json>(:final response) =>
-                            Result.success(response['foo'] as String),
-                          _ => const Result.failure('Not expected: orElse'),
-                        };
-                      },
-                    ),
-                    subject.execute<void, Result<String, String>>(
-                      const DeleteRequest(
-                        '/baz',
-                        data: NetworkRequestBody.empty(),
+                      subject.execute<void, Result<String, String>>(
+                        const DeleteRequest('/baz', data: EmptyRequestBody()),
+                        onResponse: (response) {
+                          return switch (response) {
+                            OkResponse<Json>(:final response) => Success(
+                              response['foo'] as String,
+                            ),
+                            _ => const Failure('Not expected: orElse'),
+                          };
+                        },
                       ),
-                      onResponse: (response) {
-                        return switch (response) {
-                          OkResponse<Json>(:final response) =>
-                            Result.success(response['foo'] as String),
-                          _ => const Result.failure('Not expected: orElse'),
-                        };
-                      },
-                    ),
-                  ]);
+                    ]);
 
-                  expect(
-                    mutativeRequestSuccessRequests.map((e) => e.path),
-                    contains('/foo'),
-                  );
-                  expect(
-                    mutativeRequestSuccessRequests.map((e) => e.path),
-                    contains('/bar'),
-                  );
-                  expect(
-                    mutativeRequestSuccessRequests.map((e) => e.path),
-                    contains('/baz'),
-                  );
-                });
-              });
-
-              group('and the response has status codes other than 200 or 204',
-                  () {
-                setUp(() {
-                  charlatan
-                    ..whenPost(
-                      '/foo',
-                      (request) => CharlatanHttpResponse(
-                        body: <String, dynamic>{},
-                        statusCode: 404,
-                      ),
-                    )
-                    ..whenPut(
-                      '/bar',
-                      (request) => CharlatanHttpResponse(
-                        body: <String, dynamic>{},
-                        statusCode: 422,
-                      ),
-                    )
-                    ..whenDelete(
-                      '/baz',
-                      (request) => CharlatanHttpResponse(
-                        body: <String, dynamic>{},
-                        statusCode: 500,
-                      ),
+                    expect(
+                      mutativeRequestSuccessRequests.map((e) => e.path),
+                      contains('/foo'),
                     );
-                });
-
-                test('it does not emit a MutativeRequestSuccess event',
-                    () async {
-                  final subject = buildSubject();
-                  await Future.wait([
-                    subject.execute<void, Result<String, String>>(
-                      const PostRequest(
-                        '/foo',
-                        data: NetworkRequestBody.empty(),
-                      ),
-                      onResponse: (response) {
-                        return switch (response) {
-                          OkResponse<Json>(:final response) =>
-                            Result.success(response['foo'] as String),
-                          _ => const Result.failure('Not expected: orElse'),
-                        };
-                      },
-                    ),
-                    subject.execute<void, Result<String, String>>(
-                      const PutRequest(
-                        '/bar',
-                        data: NetworkRequestBody.empty(),
-                      ),
-                      onResponse: (response) {
-                        return switch (response) {
-                          OkResponse<Json>(:final response) =>
-                            Result.success(response['foo'] as String),
-                          _ => const Result.failure('Not expected: orElse'),
-                        };
-                      },
-                    ),
-                    subject.execute<void, Result<String, String>>(
-                      const DeleteRequest(
-                        '/baz',
-                        data: NetworkRequestBody.empty(),
-                      ),
-                      onResponse: (response) {
-                        return switch (response) {
-                          OkResponse<Json>(:final response) =>
-                            Result.success(response['foo'] as String),
-                          _ => const Result.failure('Not expected: orElse'),
-                        };
-                      },
-                    ),
-                  ]);
-
-                  expect(mutativeRequestSuccessRequests.isEmpty, true);
-                });
+                    expect(
+                      mutativeRequestSuccessRequests.map((e) => e.path),
+                      contains('/bar'),
+                    );
+                    expect(
+                      mutativeRequestSuccessRequests.map((e) => e.path),
+                      contains('/baz'),
+                    );
+                  },
+                );
               });
+
+              group(
+                'and the response has status codes other than 200 or 204',
+                () {
+                  setUp(() {
+                    charlatan
+                      ..whenPost(
+                        '/foo',
+                        (request) => CharlatanHttpResponse(
+                          body: <String, dynamic>{},
+                          statusCode: 404,
+                        ),
+                      )
+                      ..whenPut(
+                        '/bar',
+                        (request) => CharlatanHttpResponse(
+                          body: <String, dynamic>{},
+                          statusCode: 422,
+                        ),
+                      )
+                      ..whenDelete(
+                        '/baz',
+                        (request) => CharlatanHttpResponse(
+                          body: <String, dynamic>{},
+                          statusCode: 500,
+                        ),
+                      );
+                  });
+
+                  test(
+                    'it does not emit a MutativeRequestSuccess event',
+                    () async {
+                      final subject = buildSubject();
+                      await Future.wait([
+                        subject.execute<void, Result<String, String>>(
+                          const PostRequest('/foo', data: EmptyRequestBody()),
+                          onResponse: (response) {
+                            return switch (response) {
+                              OkResponse<Json>(:final response) => Success(
+                                response['foo'] as String,
+                              ),
+                              _ => const Failure('Not expected: orElse'),
+                            };
+                          },
+                        ),
+                        subject.execute<void, Result<String, String>>(
+                          const PutRequest('/bar', data: EmptyRequestBody()),
+                          onResponse: (response) {
+                            return switch (response) {
+                              OkResponse<Json>(:final response) => Success(
+                                response['foo'] as String,
+                              ),
+                              _ => const Failure('Not expected: orElse'),
+                            };
+                          },
+                        ),
+                        subject.execute<void, Result<String, String>>(
+                          const DeleteRequest('/baz', data: EmptyRequestBody()),
+                          onResponse: (response) {
+                            return switch (response) {
+                              OkResponse<Json>(:final response) => Success(
+                                response['foo'] as String,
+                              ),
+                              _ => const Failure('Not expected: orElse'),
+                            };
+                          },
+                        ),
+                      ]);
+
+                      expect(mutativeRequestSuccessRequests.isEmpty, true);
+                    },
+                  );
+                },
+              );
             });
           });
         });
@@ -594,10 +562,8 @@ void main() {
           }) {
             charlatan.whenGet(
               path,
-              (request) => CharlatanHttpResponse(
-                statusCode: statusCode,
-                body: body,
-              ),
+              (request) =>
+                  CharlatanHttpResponse(statusCode: statusCode, body: body),
             );
           }
 
@@ -606,26 +572,30 @@ void main() {
               setupErrorResponse(statusCode: 401);
             });
 
-            test('it emits an authFailure event and invokes unauthorized',
-                () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
-                const GetRequest(defaultPath),
-                onResponse: (response) {
-                  return switch (response) {
-                    Unauthorized() => const Result.success(true),
-                    _ => const Result.failure('Not expected: orElse'),
-                  };
-                },
-              );
+            test(
+              'it emits an authFailure event and invokes unauthorized',
+              () async {
+                final response = await buildSubject()
+                    .execute<Json, Result<bool, String>>(
+                      const GetRequest(defaultPath),
+                      onResponse: (response) {
+                        return switch (response) {
+                          Unauthorized() => const Success(true),
+                          _ => const Failure('Not expected: orElse'),
+                        };
+                      },
+                    );
 
-              expect(authFailureRequests.single.path, '/foo');
+                expect(authFailureRequests.single.path, '/foo');
 
-              response.when(
-                success: (s) => expect(s, isTrue),
-                failure: fail,
-              );
-            });
+                switch (response) {
+                  case Success(:final success):
+                    expect(success, isTrue);
+                  case Failure():
+                    fail('Expected Success');
+                }
+              },
+            );
           });
 
           group('when status code is 403', () {
@@ -634,21 +604,23 @@ void main() {
             });
 
             test('it returns forbidden', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
-                const GetRequest(defaultPath),
-                onResponse: (response) {
-                  return switch (response) {
-                    Forbidden() => const Result.success(true),
-                    _ => const Result.failure('Not expected: orElse'),
-                  };
-                },
-              );
+              final response = await buildSubject()
+                  .execute<Json, Result<bool, String>>(
+                    const GetRequest(defaultPath),
+                    onResponse: (response) {
+                      return switch (response) {
+                        Forbidden() => const Success(true),
+                        _ => const Failure('Not expected: orElse'),
+                      };
+                    },
+                  );
 
-              response.when(
-                success: (s) => expect(s, isTrue),
-                failure: fail,
-              );
+              switch (response) {
+                case Success(:final success):
+                  expect(success, isTrue);
+                case Failure():
+                  fail('Expected Success');
+              }
             });
           });
 
@@ -658,21 +630,23 @@ void main() {
             });
 
             test('it returns notFound', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
-                const GetRequest(defaultPath),
-                onResponse: (response) {
-                  return switch (response) {
-                    NotFound() => const Result.success(true),
-                    _ => const Result.failure('Not expected: orElse'),
-                  };
-                },
-              );
+              final response = await buildSubject()
+                  .execute<Json, Result<bool, String>>(
+                    const GetRequest(defaultPath),
+                    onResponse: (response) {
+                      return switch (response) {
+                        NotFound() => const Success(true),
+                        _ => const Failure('Not expected: orElse'),
+                      };
+                    },
+                  );
 
-              response.when(
-                success: (s) => expect(s, isTrue),
-                failure: fail,
-              );
+              switch (response) {
+                case Success(:final success):
+                  expect(success, isTrue);
+                case Failure():
+                  fail('Expected Success');
+              }
             });
           });
 
@@ -680,26 +654,28 @@ void main() {
             setUp(() {
               setupErrorResponse(
                 statusCode: 422,
-                body: const Foo(message: 'error').toJson(),
+                body: const Foo(message: 'error').toMap(),
               );
             });
 
             test('it returns unprocessableEntity', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
-                const GetRequest(defaultPath),
-                onResponse: (response) {
-                  return switch (response) {
-                    UnprocessableEntity() => const Result.success(true),
-                    _ => const Result.failure('Not expected: orElse'),
-                  };
-                },
-              );
+              final response = await buildSubject()
+                  .execute<Json, Result<bool, String>>(
+                    const GetRequest(defaultPath),
+                    onResponse: (response) {
+                      return switch (response) {
+                        UnprocessableEntity() => const Success(true),
+                        _ => const Failure('Not expected: orElse'),
+                      };
+                    },
+                  );
 
-              response.when(
-                success: (s) => expect(s, isTrue),
-                failure: fail,
-              );
+              switch (response) {
+                case Success(:final success):
+                  expect(success, isTrue);
+                case Failure():
+                  fail('Expected Success');
+              }
             });
           });
 
@@ -707,26 +683,28 @@ void main() {
             setUp(() {
               setupErrorResponse(
                 statusCode: 426,
-                body: const Foo(message: 'error').toJson(),
+                body: const Foo(message: 'error').toMap(),
               );
             });
 
             test('it returns upgradeRequired', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
-                const GetRequest(defaultPath),
-                onResponse: (response) {
-                  return switch (response) {
-                    UpgradeRequired() => const Result.success(true),
-                    _ => const Result.failure('Not expected: orElse'),
-                  };
-                },
-              );
+              final response = await buildSubject()
+                  .execute<Json, Result<bool, String>>(
+                    const GetRequest(defaultPath),
+                    onResponse: (response) {
+                      return switch (response) {
+                        UpgradeRequired() => const Success(true),
+                        _ => const Failure('Not expected: orElse'),
+                      };
+                    },
+                  );
 
-              response.when(
-                success: (s) => expect(s, isTrue),
-                failure: fail,
-              );
+              switch (response) {
+                case Success(:final success):
+                  expect(success, isTrue);
+                case Failure():
+                  fail('Expected Success');
+              }
             });
           });
 
@@ -736,21 +714,23 @@ void main() {
             });
 
             test('it returns serverError', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
-                const GetRequest(defaultPath),
-                onResponse: (response) {
-                  return switch (response) {
-                    ServerError() => const Result.success(true),
-                    _ => const Result.failure('Not expected: orElse'),
-                  };
-                },
-              );
+              final response = await buildSubject()
+                  .execute<Json, Result<bool, String>>(
+                    const GetRequest(defaultPath),
+                    onResponse: (response) {
+                      return switch (response) {
+                        ServerError() => const Success(true),
+                        _ => const Failure('Not expected: orElse'),
+                      };
+                    },
+                  );
 
-              response.when(
-                success: (s) => expect(s, isTrue),
-                failure: fail,
-              );
+              switch (response) {
+                case Success(:final success):
+                  expect(success, isTrue);
+                case Failure():
+                  fail('Expected Success');
+              }
             });
           });
 
@@ -760,21 +740,23 @@ void main() {
             });
 
             test('it returns service unavailable', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
-                const GetRequest(defaultPath),
-                onResponse: (response) {
-                  return switch (response) {
-                    ServiceUnavailable() => const Result.success(true),
-                    _ => const Result.failure('Not expected: orElse'),
-                  };
-                },
-              );
+              final response = await buildSubject()
+                  .execute<Json, Result<bool, String>>(
+                    const GetRequest(defaultPath),
+                    onResponse: (response) {
+                      return switch (response) {
+                        ServiceUnavailable() => const Success(true),
+                        _ => const Failure('Not expected: orElse'),
+                      };
+                    },
+                  );
 
-              response.when(
-                success: (s) => expect(s, isTrue),
-                failure: fail,
-              );
+              switch (response) {
+                case Success(:final success):
+                  expect(success, isTrue);
+                case Failure():
+                  fail('Expected Success');
+              }
             });
           });
 
@@ -784,21 +766,23 @@ void main() {
             });
 
             test('it returns genericError', () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
-                const GetRequest(defaultPath),
-                onResponse: (response) {
-                  return switch (response) {
-                    GenericError() => const Result.success(true),
-                    _ => const Result.failure('Not expected: orElse'),
-                  };
-                },
-              );
+              final response = await buildSubject()
+                  .execute<Json, Result<bool, String>>(
+                    const GetRequest(defaultPath),
+                    onResponse: (response) {
+                      return switch (response) {
+                        GenericError() => const Success(true),
+                        _ => const Failure('Not expected: orElse'),
+                      };
+                    },
+                  );
 
-              response.when(
-                success: (s) => expect(s, isTrue),
-                failure: fail,
-              );
+              switch (response) {
+                case Success(:final success):
+                  expect(success, isTrue);
+                case Failure():
+                  fail('Expected Success');
+              }
             });
           });
 
@@ -810,67 +794,67 @@ void main() {
               );
             });
 
-            test('it returns genericError and isConnectionIssue is true',
-                () async {
-              final response =
-                  await buildSubject().execute<Json, Result<bool, String>>(
-                const GetRequest(defaultPath),
-                onResponse: (response) {
-                  return switch (response) {
-                    GenericError(:final isConnectionIssue) => () {
-                        {
-                          expect(isConnectionIssue, isTrue);
-                          return const Result<bool, String>.success(true);
-                        }
-                      }(),
-                    _ => const Result.failure('Not expected: orElse'),
-                  };
-                },
-              );
+            test(
+              'it returns genericError and isConnectionIssue is true',
+              () async {
+                final response = await buildSubject()
+                    .execute<Json, Result<bool, String>>(
+                      const GetRequest(defaultPath),
+                      onResponse: (response) {
+                        return switch (response) {
+                          GenericError(:final isConnectionIssue) => () {
+                            {
+                              expect(isConnectionIssue, isTrue);
+                              return const Success<bool, String>(true);
+                            }
+                          }(),
+                          _ => const Failure('Not expected: orElse'),
+                        };
+                      },
+                    );
 
-              response.when(
-                success: (s) => expect(s, isTrue),
-                failure: fail,
-              );
-            });
+                switch (response) {
+                  case Success(:final success):
+                    expect(success, isTrue);
+                  case Failure():
+                    fail('Expected Success');
+                }
+              },
+            );
           });
 
           group('RetryBehavior', () {
             group('when retry behavior is Retry', () {
               test('it retries maxRetries times', () async {
                 var requestCount = 0;
-                charlatan.whenGet(
-                  '/foo',
-                  (request) {
-                    requestCount++;
-                    return CharlatanHttpResponse(statusCode: 522);
-                  },
-                );
+                charlatan.whenGet('/foo', (request) {
+                  requestCount++;
+                  return CharlatanHttpResponse(statusCode: 522);
+                });
 
-                final response =
-                    await buildSubject().execute<Json, Result<bool, String>>(
-                  const GetRequest(
-                    defaultPath,
-                    retryBehavior: Retry(
-                      maxRetries: 3,
-                      retryInterval: Duration(milliseconds: 100),
-                    ),
-                  ),
-                  onResponse: (response) {
-                    return switch (response) {
-                      GenericError() => const Result.success(true),
-                      _ => const Result.failure('Not expected: orElse'),
-                    };
-                  },
-                );
+                final response = await buildSubject()
+                    .execute<Json, Result<bool, String>>(
+                      const GetRequest(
+                        defaultPath,
+                        retryBehavior: Retry(
+                          maxRetries: 3,
+                          retryInterval: Duration(milliseconds: 100),
+                        ),
+                      ),
+                      onResponse: (response) {
+                        return switch (response) {
+                          GenericError() => const Success(true),
+                          _ => const Failure('Not expected: orElse'),
+                        };
+                      },
+                    );
 
-                expect(
-                  response.when(
-                    success: (s) => s,
-                    failure: fail,
-                  ),
-                  isTrue,
-                );
+                switch (response) {
+                  case Success(:final success):
+                    expect(success, isTrue);
+                  case Failure():
+                    fail('Expected Success');
+                }
                 // maxRetries + 1
                 expect(requestCount, 4);
               });
@@ -879,35 +863,26 @@ void main() {
             group('when retry behavior is NeverRetry', () {
               test('it does not retry', () async {
                 var requestCount = 0;
-                charlatan.whenGet(
-                  '/foo',
-                  (request) {
-                    requestCount++;
-                    return CharlatanHttpResponse(statusCode: 522);
-                  },
-                );
+                charlatan.whenGet('/foo', (request) {
+                  requestCount++;
+                  return CharlatanHttpResponse(statusCode: 522);
+                });
 
-                final response =
-                    await buildSubject().execute<Json, Result<bool, String>>(
-                  const GetRequest(
-                    defaultPath,
-                    retryBehavior: NeverRetry(),
-                  ),
-                  onResponse: (response) {
-                    return switch (response) {
-                      GenericError() => const Result.success(true),
-                      _ => const Result.failure('Not expected: orElse'),
-                    };
-                  },
-                );
+                final response = await buildSubject()
+                    .execute<Json, Result<bool, String>>(
+                      const GetRequest(
+                        defaultPath,
+                        retryBehavior: NeverRetry(),
+                      ),
+                      onResponse: (response) {
+                        return switch (response) {
+                          GenericError() => const Success(true),
+                          _ => const Failure('Not expected: orElse'),
+                        };
+                      },
+                    );
 
-                expect(
-                  response.when(
-                    success: (s) => s,
-                    failure: fail,
-                  ),
-                  isTrue,
-                );
+                expect((response as Success).success, isTrue);
                 expect(requestCount, 1);
               });
             });
@@ -915,39 +890,34 @@ void main() {
             group('RetryBehavior priority', () {
               test('it prefers local RetryBehavior to global', () async {
                 var requestCount = 0;
-                charlatan.whenGet(
-                  '/foo',
-                  (request) {
-                    requestCount++;
-                    return CharlatanHttpResponse(statusCode: 522);
-                  },
-                );
+                charlatan.whenGet('/foo', (request) {
+                  requestCount++;
+                  return CharlatanHttpResponse(statusCode: 522);
+                });
 
-                final response = await buildSubject(
-                  retryBehavior: NeverRetry(),
-                ).execute<Json, Result<bool, String>>(
-                  const GetRequest(
-                    defaultPath,
-                    retryBehavior: Retry(
-                      maxRetries: 2,
-                      retryInterval: Duration(milliseconds: 100),
-                    ),
-                  ),
-                  onResponse: (response) {
-                    return switch (response) {
-                      GenericError() => const Result.success(true),
-                      _ => const Result.failure('Not expected: orElse'),
-                    };
-                  },
-                );
+                final response = await buildSubject(retryBehavior: NeverRetry())
+                    .execute<Json, Result<bool, String>>(
+                      const GetRequest(
+                        defaultPath,
+                        retryBehavior: Retry(
+                          maxRetries: 2,
+                          retryInterval: Duration(milliseconds: 100),
+                        ),
+                      ),
+                      onResponse: (response) {
+                        return switch (response) {
+                          GenericError() => const Success(true),
+                          _ => const Failure('Not expected: orElse'),
+                        };
+                      },
+                    );
 
-                expect(
-                  response.when(
-                    success: (s) => s,
-                    failure: fail,
-                  ),
-                  isTrue,
-                );
+                switch (response) {
+                  case Success(:final success):
+                    expect(success, isTrue);
+                  case Failure():
+                    fail('Expected Success');
+                }
                 expect(requestCount, 3);
               });
             });
@@ -956,43 +926,38 @@ void main() {
               test('it allows overriding retryClause', () async {
                 var requestCount = 0;
                 final statusCode = defaultRetryStatusCodes.first;
-                charlatan.whenGet(
-                  '/foo',
-                  (request) {
-                    requestCount++;
-                    return CharlatanHttpResponse(statusCode: statusCode);
-                  },
-                );
+                charlatan.whenGet('/foo', (request) {
+                  requestCount++;
+                  return CharlatanHttpResponse(statusCode: statusCode);
+                });
 
-                final response = await buildSubject(
-                  retryBehavior: NeverRetry(),
-                ).execute<Json, Result<bool, String>>(
-                  GetRequest(
-                    defaultPath,
-                    retryBehavior: Retry(
-                      maxRetries: 2,
-                      retryInterval: Duration(milliseconds: 100),
-                      retryClause: (r) {
-                        // Body will be `null`; essentially disallow retrying
-                        return r != null;
+                final response = await buildSubject(retryBehavior: NeverRetry())
+                    .execute<Json, Result<bool, String>>(
+                      GetRequest(
+                        defaultPath,
+                        retryBehavior: Retry(
+                          maxRetries: 2,
+                          retryInterval: Duration(milliseconds: 100),
+                          retryClause: (r) {
+                            // Body will be `null`; essentially disallow retrying
+                            return r != null;
+                          },
+                        ),
+                      ),
+                      onResponse: (response) {
+                        return switch (response) {
+                          GenericError() => const Success(true),
+                          _ => const Failure('Not expected: orElse'),
+                        };
                       },
-                    ),
-                  ),
-                  onResponse: (response) {
-                    return switch (response) {
-                      GenericError() => const Result.success(true),
-                      _ => const Result.failure('Not expected: orElse'),
-                    };
-                  },
-                );
+                    );
 
-                expect(
-                  response.when(
-                    success: (s) => s,
-                    failure: fail,
-                  ),
-                  isTrue,
-                );
+                switch (response) {
+                  case Success(:final success):
+                    expect(success, isTrue);
+                  case Failure():
+                    fail('Expected Success');
+                }
                 expect(requestCount, 1);
               });
             });
@@ -1005,11 +970,20 @@ void main() {
 
 /// A simple representation of the result of a procedure that can fail, like
 /// a network request.
-@freezed
-class Result<S, F> with _$Result<S, F> {
-  const factory Result.success(S success) = _Success;
+sealed class Result<S, F> {
+  const Result();
+}
 
-  const factory Result.failure(F failure) = _Failure;
+final class Success<S, F> extends Result<S, F> {
+  final S success;
+
+  const Success(this.success);
+}
+
+final class Failure<S, F> extends Result<S, F> {
+  final F failure;
+
+  const Failure(this.failure);
 }
 
 class _FakeInterceptor extends Interceptor {
@@ -1037,24 +1011,41 @@ class _SturdyHttpEventListener extends SturdyHttpEventListener {
 
   @override
   Future<void> onEvent(SturdyHttpEvent event) async {
-    event.when(
-      decodingError: onDecodingError,
-      authFailure: onAuthFailure,
-      mutativeRequestSuccess: onMutativeRequestSuccess,
-    );
+    switch (event) {
+      case DecodingError(:final request, :final exception, :final stackTrace):
+        onDecodingError(request, exception, stackTrace);
+      case AuthFailure(:final request):
+        onAuthFailure(request);
+      case MutativeRequestSuccess(:final request):
+        onMutativeRequestSuccess(request);
+    }
   }
 }
 
-@freezed
-class Foo with _$Foo {
-  const factory Foo({required String message}) = _Foo;
+class Foo {
+  const Foo({required this.message});
 
-  factory Foo.fromJson(Json json) => _$FooFromJson(json);
+  final String message;
+
+  static Foo fromMap(Map<String, dynamic> map) {
+    return Foo(message: map['message'] as String);
+  }
+
+  Map<String, dynamic> toMap() {
+    return {'message': message};
+  }
 }
 
-@freezed
-class NotFoo with _$NotFoo {
-  const factory NotFoo({required String notMessage}) = _NotFoo;
+class NotFoo {
+  const NotFoo({required this.notMessage});
 
-  factory NotFoo.fromJson(Json json) => _$NotFooFromJson(json);
+  final String notMessage;
+
+  static NotFoo fromMap(Map<String, dynamic> map) {
+    return NotFoo(notMessage: map['notMessage'] as String);
+  }
+
+  Map<String, dynamic> toMap() {
+    return {'notMessage': notMessage};
+  }
 }

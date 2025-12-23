@@ -3,7 +3,6 @@ import 'dart:isolate';
 
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sturdy_http/sturdy_http.dart';
 import 'package:uuid/uuid.dart';
 
@@ -51,18 +50,18 @@ class SturdyHttp {
     bool inferContentType = true,
     RetryBehavior retryBehavior = const NeverRetry(),
   }) : this._(
-          dio: _configureDio(
-            baseUrl: baseUrl,
-            deserializer: deserializer,
-            interceptors: interceptors,
-            customAdapter: customAdapter,
-            proxy: proxy,
-            inferContentType: inferContentType,
-          ),
-          deserializer: deserializer,
-          eventListener: eventListener,
-          retryBehavior: retryBehavior,
-        );
+         dio: _configureDio(
+           baseUrl: baseUrl,
+           deserializer: deserializer,
+           interceptors: interceptors,
+           customAdapter: customAdapter,
+           proxy: proxy,
+           inferContentType: inferContentType,
+         ),
+         deserializer: deserializer,
+         eventListener: eventListener,
+         retryBehavior: retryBehavior,
+       );
 
   /// {@macro http_client}
   SturdyHttp._({
@@ -70,10 +69,10 @@ class SturdyHttp {
     required Deserializer deserializer,
     required SturdyHttpEventListener? eventListener,
     required RetryBehavior retryBehavior,
-  })  : _dio = dio,
-        _deserializer = deserializer,
-        _eventListener = eventListener,
-        _retryBehavior = retryBehavior;
+  }) : _dio = dio,
+       _deserializer = deserializer,
+       _eventListener = eventListener,
+       _retryBehavior = retryBehavior;
 
   /// {@macro http_client}
   SturdyHttp withBaseUrl(String baseUrl) {
@@ -112,15 +111,13 @@ class SturdyHttp {
         onResponse: onResponse,
       );
     } on Exception catch (e) {
-      if (e is CheckedFromJsonException) {
-        await _onEvent(
-          SturdyHttpEvent.decodingError(
-            responsePayload.dioResponse!.requestOptions,
-            e,
-            e.innerStack,
-          ),
-        );
-      }
+      await _onEvent(
+        DecodingError(
+          request: responsePayload.dioResponse!.requestOptions,
+          exception: e,
+          stackTrace: StackTrace.current,
+        ),
+      );
       rethrow;
     }
   }
@@ -140,11 +137,11 @@ class SturdyHttp {
         // an empty String, which is not a subtype of Json.
         dioResponse = await _dio.request<Object?>(
           request.path,
-          data: request.data.when(
-            empty: () => null,
-            json: (json) => json,
-            raw: (data) => data,
-          ),
+          data: switch (request.data) {
+            EmptyRequestBody() => null,
+            JsonRequestBody(:final data) => data,
+            RawRequestBody(:final data) => data,
+          },
           queryParameters: request.queryParams,
           options: request.options != null
               ? request.options!.copyWith(method: request.type.name)
@@ -179,7 +176,7 @@ class SturdyHttp {
       } on DioException catch (error) {
         switch (error.response?.statusCode) {
           case 401:
-            await _onEvent(SturdyHttpEvent.authFailure(error.requestOptions));
+            await _onEvent(AuthFailure(request: error.requestOptions));
             resolvedResponse = Unauthorized(error: error);
             break;
           case 403:
@@ -237,7 +234,7 @@ class SturdyHttp {
 
     if (response.$2.isSuccess && request.shouldTriggerDataMutation) {
       await _onEvent(
-        SturdyHttpEvent.mutativeRequestSuccess(response.$1!.requestOptions),
+        MutativeRequestSuccess(request: response.$1!.requestOptions),
       );
     }
 

@@ -1,6 +1,3 @@
-/// A strongly typed, event-based, reliable HTTP client that wraps Dio.
-library sturdy_http;
-
 export 'src/_dio_error.dart';
 export 'src/network_request.dart';
 export 'src/network_response.dart';

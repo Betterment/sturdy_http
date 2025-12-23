@@ -75,3 +75,10 @@ build/
 !**/ios/**/default.mode2v3
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
+
+# FVM Version Cache
+.fvm/
+# FVM Configuration
+.fvmrc
+# FVM Flutter SDK Configuration
+.vscode/settings.json
