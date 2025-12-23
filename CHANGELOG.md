@@ -1,3 +1,11 @@
+## 0.6.1
+
+## What's Changed
+
+- fix: do not emit DecodingError when response is null by @btrautmann in https://github.com/Betterment/sturdy_http/pull/22
+
+**Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.6.0...v0.6.1
+
 ## 0.6.0
 
 ## What's Changed
