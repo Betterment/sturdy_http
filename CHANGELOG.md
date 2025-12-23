@@ -1,10 +1,15 @@
 ## 0.6.0
 
-## Unreleased
+## What's Changed
 
-- Removed `freezed` and `freezed_annotation` dependencies.
-- Updated `NetworkRequestBody` and `SturdyHttpEvent` to be a sealed classes.
-- Changed behavior of when `DecodingError`s are emitted.
+- chore: upgrade dependencies; remove freezed by @btrautmann in https://github.com/Betterment/sturdy_http/pull/19
+- chore: add proper toString() implementations for NetworkResponse types by @btrautmann in https://github.com/Betterment/sturdy_http/pull/20
+
+:warning: **Breaking Changes:**
+
+- Please see individual PRs for details on breaking changes.
+
+* **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.5.1...v0.6.0
 
 ## 0.5.1
 
