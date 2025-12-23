@@ -78,5 +78,7 @@ build/
 
 # FVM Version Cache
 .fvm/
+# FVM Configuration
+.fvmrc
 # FVM Flutter SDK Configuration
 .vscode/settings.json
