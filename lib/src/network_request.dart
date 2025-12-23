@@ -40,7 +40,7 @@ abstract class NetworkRequest {
   final NetworkRequestBody data;
 
   /// Whether this request should be considered as mutative. If false,
-  /// [SturdyHttp] will not emit an [SturdyHttpEvent.mutativeRequestSuccess]
+  /// [SturdyHttp] will not emit an [MutativeRequestSuccess]
   /// event.
   final bool shouldTriggerDataMutation;
 
