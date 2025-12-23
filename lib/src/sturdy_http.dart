@@ -111,13 +111,17 @@ class SturdyHttp {
         onResponse: onResponse,
       );
     } on Exception catch (e) {
-      await _onEvent(
-        DecodingError(
-          request: responsePayload.dioResponse!.requestOptions,
-          exception: e,
-          stackTrace: StackTrace.current,
-        ),
-      );
+      final response = responsePayload.dioResponse;
+      if (response != null) {
+        await _onEvent(
+          DecodingError(
+            request: response.requestOptions,
+            exception: e,
+            stackTrace: StackTrace.current,
+          ),
+        );
+      }
+
       rethrow;
     }
   }
