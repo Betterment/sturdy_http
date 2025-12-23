@@ -320,6 +320,36 @@ void main() {
                     await expectLater(request, throwsA(isA<TypeError>()));
                   },
                 );
+
+                test(
+                  'it does not emit a decodingError event when response is null',
+                  () async {
+                    charlatan.whenGet(
+                      '/throws',
+                      (request) =>
+                          throw const SocketException('Connection failed'),
+                    );
+
+                    final request = buildSubject()
+                        .execute<Json, Result<Foo, String>>(
+                          const GetRequest('/throws'),
+                          onResponse: (response) {
+                            return switch (response) {
+                              OkResponse<Json>(:final response) => Success(
+                                Foo.fromMap(response),
+                              ),
+                              GenericError() => throw Exception(
+                                'Decoding error in GenericError',
+                              ),
+                              _ => const Failure('Not expected: orElse'),
+                            };
+                          },
+                        );
+
+                    await expectLater(request, throwsA(isA<Exception>()));
+                    expect(jsonDecodingErrors, isEmpty);
+                  },
+                );
               });
             });
 
