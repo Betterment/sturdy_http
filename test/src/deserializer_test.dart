@@ -34,7 +34,7 @@ void main() {
     test('it handles multiple requests for deserialization', () async {
       Foo onResponse(NetworkResponse<Json> response) {
         return switch (response) {
-          OkResponse<Json>(:final response) => FooMapper.fromMap(response),
+          OkResponse<Json>(:final response) => Foo.fromMap(response),
           _ => fail('Not expected: orElse'),
         };
       }
@@ -54,24 +54,30 @@ void main() {
       expect(resultTwo.message, '2');
     });
 
-    test(
-      'it throws MapperExceptions when deserialization issues occur',
-      () async {
-        onResponse(NetworkResponse<Json> response) {
-          return switch (response) {
-            OkResponse<Json>(:final response) => NotFooMapper.fromMap(response),
-            _ => fail('orElse not expected'),
-          };
-        }
+    test('it rethrows Exceptions when deserialization issues occur', () async {
+      onResponse(NetworkResponse<Json> response) {
+        return switch (response) {
+          OkResponse<Json>(:final response) => NotFoo.fromMap(response),
+          _ => fail('orElse not expected'),
+        };
+      }
 
-        final response = OkResponse(const Foo(message: 'Nope').toMap());
-        final subject = BackgroundDeserializer();
-        try {
-          await subject.deserialize(response: response, onResponse: onResponse);
-        } on Exception catch (e) {
-          expect(e, isA<MapperException>());
-        }
-      },
-    );
+      final response = OkResponse(const Foo(message: 'Nope').toMap());
+      final subject = BackgroundDeserializer();
+      try {
+        await subject.deserialize(response: response, onResponse: onResponse);
+      } on Exception catch (e) {
+        expect(
+          e,
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'description',
+            contains(
+              "sturdyHttpWorkerIsolate type 'Null' is not a subtype of type 'String'",
+            ),
+          ),
+        );
+      }
+    });
   });
 }
