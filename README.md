@@ -37,10 +37,12 @@ Then, execute requests:
 Future<Result<MyData>> fetch({required int id}) async {
   return _client.execute<Json, MyData>(
     GetRequest('/v6/data/${id}'),
-    onResponse: (r) => r.maybeWhen(
-      ok: (json) => Result.success(MyData.fromJson),
-      orElse: () => Result.failure(r),
-    ),
+    onResponse: (r) {
+      return switch (r) {
+        OkResponse(:final response) => Result.success(MyData.fromJson(response)),
+        _ => Result.failure(r),
+      };
+    },
   );
 }
 ```
@@ -68,9 +70,6 @@ extension SturdyHttpX on SturdyHttp {
   }
 }
 ```
-
-> **Warning**
-> We're considering open-sourcing our `Result` type and integrating it into `SturdyHttp`. If we did, we'd likely change `execute`'s return type to be a `Result`, and offer `executeUnsafe` as the non-`Result` (i.e `Exception` throwing) alternative. This would be a breaking change.
 
 ## Contributing
 
