@@ -1,50 +1,64 @@
+## 0.6.0
+
+## Unreleased
+
+- Removed `freezed` and `freezed_annotation` dependencies.
+- Updated `NetworkRequestBody` and `SturdyHttpEvent` to be a sealed classes.
+- Changed behavior of when `DecodingError`s are emitted.
+
 ## 0.5.1
 
 ## What's Changed
-* fix: loosen collection constraint by @btrautmann in https://github.com/Betterment/sturdy_http/pull/16
 
+- fix: loosen collection constraint by @btrautmann in https://github.com/Betterment/sturdy_http/pull/16
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.5.0...v0.5.1
 
 ## 0.5.0
 
 ## What's Changed
-* refactor: make network response a sealed class by @btrautmann in https://github.com/Betterment/sturdy_http/pull/14
 
+- refactor: make network response a sealed class by @btrautmann in https://github.com/Betterment/sturdy_http/pull/14
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.4.0...v0.5.0
 
 ## 0.4.0
 
 ## What's Changed
-* feat: Add support for `426: Upgrade Required` by @willlockwood in https://github.com/Betterment/sturdy_http/pull/12
+
+- feat: Add support for `426: Upgrade Required` by @willlockwood in https://github.com/Betterment/sturdy_http/pull/12
 
 ## New Contributors
-* @willlockwood made their first contribution in https://github.com/Betterment/sturdy_http/pull/12
+
+- @willlockwood made their first contribution in https://github.com/Betterment/sturdy_http/pull/12
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.3.1...v0.4.0
 
 ## 0.3.1
 
 ## What's Changed
-* fix: export retry_behavior by @btrautmann in https://github.com/Betterment/sturdy_http/pull/10
+
+- fix: export retry_behavior by @btrautmann in https://github.com/Betterment/sturdy_http/pull/10
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.3.0...v0.3.1
 
 ## 0.3.0
 
 ## What's Changed
-* feat: support retrying failed requests by @btrautmann in https://github.com/Betterment/sturdy_http/pull/8
+
+- feat: support retrying failed requests by @btrautmann in https://github.com/Betterment/sturdy_http/pull/8
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.2.0...v0.3.0
 
 ## 0.2.0
 
 ## What's Changed
-* chore: update outdated dependencies by @ClaireDavis in https://github.com/Betterment/sturdy_http/pull/6
+
+- chore: update outdated dependencies by @ClaireDavis in https://github.com/Betterment/sturdy_http/pull/6
 
 ## New Contributors
-* @ClaireDavis made their first contribution in https://github.com/Betterment/sturdy_http/pull/6
+
+- @ClaireDavis made their first contribution in https://github.com/Betterment/sturdy_http/pull/6
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.1.0...v0.2.0
 
