@@ -77,12 +77,13 @@ class SturdyHttp {
   /// {@macro http_client}
   SturdyHttp withBaseUrl(String baseUrl) {
     return SturdyHttp._(
-      dio: Dio()
-        ..options.baseUrl = baseUrl
-        ..options.listFormat = ListFormat.multiCompatible
-        ..interceptors.addAll(_dio.interceptors)
-        ..interceptors.removeImplyContentTypeInterceptor()
-        ..httpClientAdapter = _dio.httpClientAdapter,
+      dio:
+          Dio()
+            ..options.baseUrl = baseUrl
+            ..options.listFormat = ListFormat.multiCompatible
+            ..interceptors.addAll(_dio.interceptors)
+            ..interceptors.removeImplyContentTypeInterceptor()
+            ..httpClientAdapter = _dio.httpClientAdapter,
       deserializer: _deserializer,
       eventListener: _eventListener,
       retryBehavior: _retryBehavior,
@@ -147,9 +148,10 @@ class SturdyHttp {
             RawRequestBody(:final data) => data,
           },
           queryParameters: request.queryParams,
-          options: request.options != null
-              ? request.options!.copyWith(method: request.type.name)
-              : Options(method: request.type.name),
+          options:
+              request.options != null
+                  ? request.options!.copyWith(method: request.type.name)
+                  : Options(method: request.type.name),
           cancelToken: request.cancelToken,
           onReceiveProgress: request.onReceiveProgress,
           onSendProgress: request.onSendProgress,
@@ -160,12 +162,13 @@ class SturdyHttp {
           final data = dioResponse.data;
           if (data == null || data is! R) {
             String buildErrorMessage() {
-              final messageSuffix = data == null
-                  // Disallow empty responses when status code is non-204
-                  ? 'was null and status code was ${dioResponse!.statusCode}'
-                  // Enforce that response data matches expected, otherwise we'll run into casting
-                  // issues below
-                  : 'was of type ${data.runtimeType} when it should have been of type $R';
+              final messageSuffix =
+                  data == null
+                      // Disallow empty responses when status code is non-204
+                      ? 'was null and status code was ${dioResponse!.statusCode}'
+                      // Enforce that response data matches expected, otherwise we'll run into casting
+                      // issues below
+                      : 'was of type ${data.runtimeType} when it should have been of type $R';
               return 'Request to ${request.path} was successful but response data $messageSuffix';
             }
 
@@ -272,9 +275,10 @@ Dio _configureDio({
 }) {
   return Dio()
     // Instruct Dio to use the same Isolate approach as requested of SturdyHttp
-    ..transformer = deserializer is MainIsolateDeserializer
-        ? SyncTransformer()
-        : BackgroundTransformer()
+    ..transformer =
+        deserializer is MainIsolateDeserializer
+            ? SyncTransformer()
+            : BackgroundTransformer()
     ..options.baseUrl = baseUrl
     ..options.listFormat = ListFormat.multiCompatible
     ..interceptors.addAll(interceptors)
