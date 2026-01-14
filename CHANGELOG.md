@@ -1,14 +1,16 @@
-## 0.6.1
+## 0.6.2
 
-## What's Changed
+- chore: loosen dart constraint by @btrautmann in https://github.com/Betterment/sturdy_http/pull/25
+
+**Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.6.1...v0.6.2
+
+## 0.6.1
 
 - fix: do not emit DecodingError when response is null by @btrautmann in https://github.com/Betterment/sturdy_http/pull/22
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.6.0...v0.6.1
 
 ## 0.6.0
-
-## What's Changed
 
 - chore: upgrade dependencies; remove freezed by @btrautmann in https://github.com/Betterment/sturdy_http/pull/19
 - chore: add proper toString() implementations for NetworkResponse types by @btrautmann in https://github.com/Betterment/sturdy_http/pull/20
@@ -21,23 +23,17 @@
 
 ## 0.5.1
 
-## What's Changed
-
 - fix: loosen collection constraint by @btrautmann in https://github.com/Betterment/sturdy_http/pull/16
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.5.0...v0.5.1
 
 ## 0.5.0
 
-## What's Changed
-
 - refactor: make network response a sealed class by @btrautmann in https://github.com/Betterment/sturdy_http/pull/14
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.4.0...v0.5.0
 
 ## 0.4.0
-
-## What's Changed
 
 - feat: Add support for `426: Upgrade Required` by @willlockwood in https://github.com/Betterment/sturdy_http/pull/12
 
@@ -49,23 +45,17 @@
 
 ## 0.3.1
 
-## What's Changed
-
 - fix: export retry_behavior by @btrautmann in https://github.com/Betterment/sturdy_http/pull/10
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.3.0...v0.3.1
 
 ## 0.3.0
 
-## What's Changed
-
 - feat: support retrying failed requests by @btrautmann in https://github.com/Betterment/sturdy_http/pull/8
 
 **Full Changelog**: https://github.com/Betterment/sturdy_http/compare/v0.2.0...v0.3.0
 
 ## 0.2.0
-
-## What's Changed
 
 - chore: update outdated dependencies by @ClaireDavis in https://github.com/Betterment/sturdy_http/pull/6
 
