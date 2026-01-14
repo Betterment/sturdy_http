@@ -338,9 +338,10 @@ void main() {
                               OkResponse<Json>(:final response) => Success(
                                 Foo.fromMap(response),
                               ),
-                              GenericError() => throw Exception(
-                                'Decoding error in GenericError',
-                              ),
+                              GenericError() =>
+                                throw Exception(
+                                  'Decoding error in GenericError',
+                                ),
                               _ => const Failure('Not expected: orElse'),
                             };
                           },
@@ -925,22 +926,23 @@ void main() {
                   return CharlatanHttpResponse(statusCode: 522);
                 });
 
-                final response = await buildSubject(retryBehavior: NeverRetry())
-                    .execute<Json, Result<bool, String>>(
-                      const GetRequest(
-                        defaultPath,
-                        retryBehavior: Retry(
-                          maxRetries: 2,
-                          retryInterval: Duration(milliseconds: 100),
-                        ),
-                      ),
-                      onResponse: (response) {
-                        return switch (response) {
-                          GenericError() => const Success(true),
-                          _ => const Failure('Not expected: orElse'),
-                        };
-                      },
-                    );
+                final response = await buildSubject(
+                  retryBehavior: NeverRetry(),
+                ).execute<Json, Result<bool, String>>(
+                  const GetRequest(
+                    defaultPath,
+                    retryBehavior: Retry(
+                      maxRetries: 2,
+                      retryInterval: Duration(milliseconds: 100),
+                    ),
+                  ),
+                  onResponse: (response) {
+                    return switch (response) {
+                      GenericError() => const Success(true),
+                      _ => const Failure('Not expected: orElse'),
+                    };
+                  },
+                );
 
                 switch (response) {
                   case Success(:final success):
@@ -961,26 +963,27 @@ void main() {
                   return CharlatanHttpResponse(statusCode: statusCode);
                 });
 
-                final response = await buildSubject(retryBehavior: NeverRetry())
-                    .execute<Json, Result<bool, String>>(
-                      GetRequest(
-                        defaultPath,
-                        retryBehavior: Retry(
-                          maxRetries: 2,
-                          retryInterval: Duration(milliseconds: 100),
-                          retryClause: (r) {
-                            // Body will be `null`; essentially disallow retrying
-                            return r != null;
-                          },
-                        ),
-                      ),
-                      onResponse: (response) {
-                        return switch (response) {
-                          GenericError() => const Success(true),
-                          _ => const Failure('Not expected: orElse'),
-                        };
+                final response = await buildSubject(
+                  retryBehavior: NeverRetry(),
+                ).execute<Json, Result<bool, String>>(
+                  GetRequest(
+                    defaultPath,
+                    retryBehavior: Retry(
+                      maxRetries: 2,
+                      retryInterval: Duration(milliseconds: 100),
+                      retryClause: (r) {
+                        // Body will be `null`; essentially disallow retrying
+                        return r != null;
                       },
-                    );
+                    ),
+                  ),
+                  onResponse: (response) {
+                    return switch (response) {
+                      GenericError() => const Success(true),
+                      _ => const Failure('Not expected: orElse'),
+                    };
+                  },
+                );
 
                 switch (response) {
                   case Success(:final success):

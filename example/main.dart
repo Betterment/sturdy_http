@@ -3,9 +3,13 @@ import 'package:sturdy_http/sturdy_http.dart';
 
 void main(List<String> args) async {
   // Set up some fake HTTP responses using Charlatan
-  final charlatan = Charlatan()
-    ..whenGet('/foo', (request) => CharlatanHttpResponse(body: 'Hello World!'))
-    ..whenPost('/foo', (request) => CharlatanHttpResponse(statusCode: 204));
+  final charlatan =
+      Charlatan()
+        ..whenGet(
+          '/foo',
+          (request) => CharlatanHttpResponse(body: 'Hello World!'),
+        )
+        ..whenPost('/foo', (request) => CharlatanHttpResponse(statusCode: 204));
 
   // Create your client
   final client = SturdyHttp(
