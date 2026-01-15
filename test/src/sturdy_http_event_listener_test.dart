@@ -121,8 +121,8 @@ void main() {
         expect(authFailureEvents.first.path, '/unauthorized');
       });
 
-      group('header filtering', () {
-        test('includes only specified header keys', () async {
+      group('headers', () {
+        test('includes all response headers', () async {
           final charlatan = Charlatan();
           final events = <RequestCompleted>[];
 
@@ -133,7 +133,6 @@ void main() {
               headers: {
                 'X-Custom-Header': 'custom-value',
                 'X-Another-Header': 'another-value',
-                'X-Ignored-Header': 'ignored-value',
               },
             ),
           );
@@ -142,7 +141,6 @@ void main() {
             baseUrl: 'http://example.com',
             customAdapter: charlatan.toFakeHttpClientAdapter(),
             eventListener: _TestEventListener(onRequestCompleted: events.add),
-            headerKeysToCapture: ['X-Custom-Header', 'X-Another-Header'],
           );
 
           await client.execute<Json, void>(
@@ -151,70 +149,11 @@ void main() {
           );
 
           expect(events, hasLength(1));
-          expect(events.first.headers, {
-            'X-Custom-Header': 'custom-value',
-            'X-Another-Header': 'another-value',
-          });
-          expect(events.first.headers.containsKey('X-Ignored-Header'), isFalse);
+          expect(events.first.headers['X-Custom-Header'], 'custom-value');
+          expect(events.first.headers['X-Another-Header'], 'another-value');
         });
 
-        test('returns empty map when no header keys configured', () async {
-          final charlatan = Charlatan();
-          final events = <RequestCompleted>[];
-
-          charlatan.whenGet(
-            '/with-headers',
-            (request) => CharlatanHttpResponse(
-              body: {'data': 'value'},
-              headers: {'X-Custom-Header': 'custom-value'},
-            ),
-          );
-
-          final client = SturdyHttp(
-            baseUrl: 'http://example.com',
-            customAdapter: charlatan.toFakeHttpClientAdapter(),
-            eventListener: _TestEventListener(onRequestCompleted: events.add),
-          );
-
-          await client.execute<Json, void>(
-            const GetRequest('/with-headers'),
-            onResponse: (_) {},
-          );
-
-          expect(events, hasLength(1));
-          expect(events.first.headers, isEmpty);
-        });
-
-        test('omits missing headers from result', () async {
-          final charlatan = Charlatan();
-          final events = <RequestCompleted>[];
-
-          charlatan.whenGet(
-            '/with-headers',
-            (request) => CharlatanHttpResponse(
-              body: {'data': 'value'},
-              headers: {'X-Present': 'present-value'},
-            ),
-          );
-
-          final client = SturdyHttp(
-            baseUrl: 'http://example.com',
-            customAdapter: charlatan.toFakeHttpClientAdapter(),
-            eventListener: _TestEventListener(onRequestCompleted: events.add),
-            headerKeysToCapture: ['X-Present', 'X-Missing'],
-          );
-
-          await client.execute<Json, void>(
-            const GetRequest('/with-headers'),
-            onResponse: (_) {},
-          );
-
-          expect(events, hasLength(1));
-          expect(events.first.headers, {'X-Present': 'present-value'});
-          expect(events.first.headers.containsKey('X-Missing'), isFalse);
-        });
-
-        test('captures headers from error responses', () async {
+        test('includes headers from error responses', () async {
           final charlatan = Charlatan();
           final events = <RequestCompleted>[];
 
@@ -230,7 +169,6 @@ void main() {
             baseUrl: 'http://example.com',
             customAdapter: charlatan.toFakeHttpClientAdapter(),
             eventListener: _TestEventListener(onRequestCompleted: events.add),
-            headerKeysToCapture: ['X-Error-Id'],
           );
 
           await client.execute<Json, void>(
@@ -241,7 +179,7 @@ void main() {
           expect(events, hasLength(1));
           expect(events.first.statusCode, 500);
           expect(events.first.isSuccess, isFalse);
-          expect(events.first.headers, {'X-Error-Id': 'error-123'});
+          expect(events.first.headers['X-Error-Id'], 'error-123');
         });
       });
 

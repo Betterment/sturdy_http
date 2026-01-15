@@ -53,12 +53,9 @@ final class AuthFailure extends SturdyHttpEvent {
 /// Indicates that a network request has completed and a response was received.
 /// This event fires for all requests that receive any HTTP response,
 /// regardless of success or error status.
-///
-/// Use [headers] to access response headers (filtered to only keys specified
-/// in `headerKeysToCapture` when constructing [SturdyHttp]).
 /// {@endtemplate}
 final class RequestCompleted extends SturdyHttpEvent {
-  /// Filtered response headers (only keys specified in `headerKeysToCapture`).
+  /// The response headers.
   final Map<String, String> headers;
 
   /// The HTTP status code of the response.
