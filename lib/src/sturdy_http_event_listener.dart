@@ -58,8 +58,8 @@ final class RequestCompleted extends SturdyHttpEvent {
   /// The response headers.
   final Map<String, String> headers;
 
-  /// The HTTP status code of the response.
-  final int statusCode;
+  /// The HTTP status code of the response, if available.
+  final int? statusCode;
 
   /// Whether the response was successful (2xx status code).
   final bool isSuccess;

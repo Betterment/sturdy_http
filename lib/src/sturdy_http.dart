@@ -248,7 +248,7 @@ class SturdyHttp {
           headers: dioResponse.headers.map.map(
             (key, values) => MapEntry(key, values.join(', ')),
           ),
-          statusCode: dioResponse.statusCode ?? 0,
+          statusCode: dioResponse.statusCode,
           isSuccess: response.$2.isSuccess,
           shouldTriggerDataMutation: request.shouldTriggerDataMutation,
         ),
