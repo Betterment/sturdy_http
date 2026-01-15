@@ -49,12 +49,31 @@ final class AuthFailure extends SturdyHttpEvent {
   AuthFailure({required super.request});
 }
 
-/// {@template mutative_request_success}
-/// Indicates that a "mutative" request succeeded and the data on the client
-/// likely does not match the data on the server.
-/// See [NetworkRequest.shouldTriggerDataMutation].
+/// {@template request_completed}
+/// Indicates that a network request has completed and a response was received.
+/// This event fires for all requests that receive any HTTP response,
+/// regardless of success or error status.
 /// {@endtemplate}
-final class MutativeRequestSuccess extends SturdyHttpEvent {
-  /// {@macro mutative_request_success}
-  MutativeRequestSuccess({required super.request});
+final class RequestCompleted extends SturdyHttpEvent {
+  /// The response headers.
+  final Map<String, String> headers;
+
+  /// The HTTP status code of the response, if available.
+  final int? statusCode;
+
+  /// Whether the response was successful (2xx status code).
+  final bool isSuccess;
+
+  /// Whether the request was marked as mutative (data-changing).
+  /// See [NetworkRequest.shouldTriggerDataMutation].
+  final bool shouldTriggerDataMutation;
+
+  /// {@macro request_completed}
+  RequestCompleted({
+    required super.request,
+    required this.headers,
+    required this.statusCode,
+    required this.isSuccess,
+    required this.shouldTriggerDataMutation,
+  });
 }

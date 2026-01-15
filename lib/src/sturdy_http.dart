@@ -181,6 +181,7 @@ class SturdyHttp {
           }
         }
       } on DioException catch (error) {
+        dioResponse = error.response;
         switch (error.response?.statusCode) {
           case 401:
             await _onEvent(AuthFailure(request: error.requestOptions));
@@ -239,9 +240,18 @@ class SturdyHttp {
       response = await send(request);
     }
 
-    if (response.$2.isSuccess && request.shouldTriggerDataMutation) {
+    final dioResponse = response.$1;
+    if (dioResponse != null) {
       await _onEvent(
-        MutativeRequestSuccess(request: response.$1!.requestOptions),
+        RequestCompleted(
+          request: dioResponse.requestOptions,
+          headers: dioResponse.headers.map.map(
+            (key, values) => MapEntry(key, values.join(', ')),
+          ),
+          statusCode: dioResponse.statusCode,
+          isSuccess: response.$2.isSuccess,
+          shouldTriggerDataMutation: request.shouldTriggerDataMutation,
+        ),
       );
     }
 
