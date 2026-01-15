@@ -972,8 +972,8 @@ void main() {
                       maxRetries: 2,
                       retryInterval: Duration(milliseconds: 100),
                       retryClause: (r) {
-                        // Body will be `null`; essentially disallow retrying
-                        return r != null;
+                        // Disallow retrying by always returning false
+                        return false;
                       },
                     ),
                   ),
@@ -1049,8 +1049,14 @@ class _SturdyHttpEventListener extends SturdyHttpEventListener {
         onDecodingError(request, exception, stackTrace);
       case AuthFailure(:final request):
         onAuthFailure(request);
-      case MutativeRequestSuccess(:final request):
-        onMutativeRequestSuccess(request);
+      case RequestCompleted(
+        :final request,
+        :final isSuccess,
+        :final shouldTriggerDataMutation,
+      ):
+        if (isSuccess && shouldTriggerDataMutation) {
+          onMutativeRequestSuccess(request);
+        }
     }
   }
 }

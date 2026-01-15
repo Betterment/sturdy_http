@@ -28,6 +28,7 @@ class SturdyHttp {
   final Deserializer _deserializer;
   final SturdyHttpEventListener? _eventListener;
   final RetryBehavior _retryBehavior;
+  final List<String> _headerKeysToCapture;
 
   /// The interceptors provided when this [SturdyHttp] was constructed.
   UnmodifiableListView<Interceptor> get interceptors =>
@@ -49,6 +50,7 @@ class SturdyHttp {
     Map<String, String>? proxy,
     bool inferContentType = true,
     RetryBehavior retryBehavior = const NeverRetry(),
+    List<String> headerKeysToCapture = const [],
   }) : this._(
          dio: _configureDio(
            baseUrl: baseUrl,
@@ -61,6 +63,7 @@ class SturdyHttp {
          deserializer: deserializer,
          eventListener: eventListener,
          retryBehavior: retryBehavior,
+         headerKeysToCapture: headerKeysToCapture,
        );
 
   /// {@macro http_client}
@@ -69,10 +72,12 @@ class SturdyHttp {
     required Deserializer deserializer,
     required SturdyHttpEventListener? eventListener,
     required RetryBehavior retryBehavior,
+    required List<String> headerKeysToCapture,
   }) : _dio = dio,
        _deserializer = deserializer,
        _eventListener = eventListener,
-       _retryBehavior = retryBehavior;
+       _retryBehavior = retryBehavior,
+       _headerKeysToCapture = headerKeysToCapture;
 
   /// {@macro http_client}
   SturdyHttp withBaseUrl(String baseUrl) {
@@ -87,11 +92,23 @@ class SturdyHttp {
       deserializer: _deserializer,
       eventListener: _eventListener,
       retryBehavior: _retryBehavior,
+      headerKeysToCapture: _headerKeysToCapture,
     );
   }
 
   Future<void> _onEvent(SturdyHttpEvent event) async {
     await _eventListener?.onEvent(event);
+  }
+
+  Map<String, String> _filterHeaders(Headers headers) {
+    final filtered = <String, String>{};
+    for (final key in _headerKeysToCapture) {
+      final value = headers.value(key);
+      if (value != null) {
+        filtered[key] = value;
+      }
+    }
+    return filtered;
   }
 
   /// Executes the provided [request] and returns the result of type [M] that is
@@ -181,6 +198,7 @@ class SturdyHttp {
           }
         }
       } on DioException catch (error) {
+        dioResponse = error.response;
         switch (error.response?.statusCode) {
           case 401:
             await _onEvent(AuthFailure(request: error.requestOptions));
@@ -239,9 +257,16 @@ class SturdyHttp {
       response = await send(request);
     }
 
-    if (response.$2.isSuccess && request.shouldTriggerDataMutation) {
+    final dioResponse = response.$1;
+    if (dioResponse != null) {
       await _onEvent(
-        MutativeRequestSuccess(request: response.$1!.requestOptions),
+        RequestCompleted(
+          request: dioResponse.requestOptions,
+          headers: _filterHeaders(dioResponse.headers),
+          statusCode: dioResponse.statusCode ?? 0,
+          isSuccess: response.$2.isSuccess,
+          shouldTriggerDataMutation: request.shouldTriggerDataMutation,
+        ),
       );
     }
 

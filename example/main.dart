@@ -53,8 +53,17 @@ class ExampleEventListener implements SturdyHttpEventListener {
         print('decoding error');
       case AuthFailure():
         print('auth failure');
-      case MutativeRequestSuccess():
-        print('mutative request success');
+      case RequestCompleted(
+        :final headers,
+        :final statusCode,
+        :final isSuccess,
+        :final shouldTriggerDataMutation,
+      ):
+        print('request completed: $statusCode, success: $isSuccess');
+        print('headers: $headers');
+        if (shouldTriggerDataMutation) {
+          print('mutative request success');
+        }
     }
   }
 }
