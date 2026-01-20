@@ -1,3 +1,7 @@
+## 0.7.0
+
+- feat: support capturing and emitting header values by @btrautmann in https://github.com/Betterment/sturdy_http/pull/27
+
 ## 0.6.2
 
 - chore: loosen dart constraint by @btrautmann in https://github.com/Betterment/sturdy_http/pull/25
