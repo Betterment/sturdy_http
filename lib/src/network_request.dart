@@ -28,6 +28,7 @@ abstract class NetworkRequest {
     this.onReceiveProgress,
     this.onSendProgress,
     this.retryBehavior = const Unspecified(),
+    this.timeouts,
   });
 
   /// {@macro network_request_type}
@@ -62,6 +63,9 @@ abstract class NetworkRequest {
   /// The [RetryBehavior] for this request. Defaults to [Unspecified]. If not
   /// overridden, the [SturdyHttp] instance's [RetryBehavior] will be used.
   final RetryBehavior retryBehavior;
+
+  /// Timeouts for this request. Set fields override the client's timeouts.
+  final HttpTimeouts? timeouts;
 }
 
 /// {@template get_request}
@@ -78,6 +82,7 @@ class GetRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
+    super.timeouts,
   }) : super(
          type: NetworkRequestType.Get,
          path: path,
@@ -101,6 +106,7 @@ class PostRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
+    super.timeouts,
   }) : super(
          type: NetworkRequestType.Post,
          path: path,
@@ -123,6 +129,7 @@ class PutRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
+    super.timeouts,
   }) : super(
          type: NetworkRequestType.Put,
          path: path,
@@ -145,6 +152,7 @@ class DeleteRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
+    super.timeouts,
   }) : super(
          type: NetworkRequestType.Delete,
          path: path,
@@ -170,6 +178,7 @@ class RawRequest extends NetworkRequest {
     super.onReceiveProgress,
     super.onSendProgress,
     super.retryBehavior,
+    super.timeouts,
   }) : super(path: path, queryParams: queryParameters);
 }
 

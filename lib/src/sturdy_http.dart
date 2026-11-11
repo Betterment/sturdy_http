@@ -29,6 +29,9 @@ class SturdyHttp {
   final SturdyHttpEventListener? _eventListener;
   final RetryBehavior _retryBehavior;
 
+  /// The client-level timeouts provided when this [SturdyHttp] was constructed.
+  final HttpTimeouts? timeouts;
+
   /// The interceptors provided when this [SturdyHttp] was constructed.
   UnmodifiableListView<Interceptor> get interceptors =>
       UnmodifiableListView<Interceptor>(_dio.interceptors);
@@ -49,6 +52,7 @@ class SturdyHttp {
     Map<String, String>? proxy,
     bool inferContentType = true,
     RetryBehavior retryBehavior = const NeverRetry(),
+    HttpTimeouts? timeouts,
   }) : this._(
          dio: _configureDio(
            baseUrl: baseUrl,
@@ -57,10 +61,12 @@ class SturdyHttp {
            customAdapter: customAdapter,
            proxy: proxy,
            inferContentType: inferContentType,
+           timeouts: timeouts,
          ),
          deserializer: deserializer,
          eventListener: eventListener,
          retryBehavior: retryBehavior,
+         timeouts: timeouts,
        );
 
   /// {@macro http_client}
@@ -69,6 +75,7 @@ class SturdyHttp {
     required Deserializer deserializer,
     required SturdyHttpEventListener? eventListener,
     required RetryBehavior retryBehavior,
+    required this.timeouts,
   }) : _dio = dio,
        _deserializer = deserializer,
        _eventListener = eventListener,
@@ -81,12 +88,16 @@ class SturdyHttp {
           Dio()
             ..options.baseUrl = baseUrl
             ..options.listFormat = ListFormat.multiCompatible
+            ..options.connectTimeout = timeouts?.connect
+            ..options.receiveTimeout = timeouts?.receive
+            ..options.sendTimeout = timeouts?.send
             ..interceptors.addAll(_dio.interceptors)
             ..interceptors.removeImplyContentTypeInterceptor()
             ..httpClientAdapter = _dio.httpClientAdapter,
       deserializer: _deserializer,
       eventListener: _eventListener,
       retryBehavior: _retryBehavior,
+      timeouts: timeouts,
     );
   }
 
@@ -148,10 +159,12 @@ class SturdyHttp {
             RawRequestBody(:final data) => data,
           },
           queryParameters: request.queryParams,
-          options:
-              request.options != null
-                  ? request.options!.copyWith(method: request.type.name)
-                  : Options(method: request.type.name),
+          options: (request.options ?? Options()).copyWith(
+            method: request.type.name,
+            connectTimeout: request.timeouts?.connect,
+            receiveTimeout: request.timeouts?.receive,
+            sendTimeout: request.timeouts?.send,
+          ),
           cancelToken: request.cancelToken,
           onReceiveProgress: request.onReceiveProgress,
           onSendProgress: request.onSendProgress,
@@ -282,6 +295,7 @@ Dio _configureDio({
   required HttpClientAdapter? customAdapter,
   required Map<String, String>? proxy,
   required bool inferContentType,
+  required HttpTimeouts? timeouts,
 }) {
   return Dio()
     // Instruct Dio to use the same Isolate approach as requested of SturdyHttp
@@ -291,6 +305,9 @@ Dio _configureDio({
             : BackgroundTransformer()
     ..options.baseUrl = baseUrl
     ..options.listFormat = ListFormat.multiCompatible
+    ..options.connectTimeout = timeouts?.connect
+    ..options.receiveTimeout = timeouts?.receive
+    ..options.sendTimeout = timeouts?.send
     ..interceptors.addAll(interceptors)
     ..map((dio) {
       if (customAdapter != null) {

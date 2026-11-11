@@ -37,6 +37,7 @@ void main() {
       Map<String, String>? proxy,
       bool inferContentType = false,
       RetryBehavior retryBehavior = const NeverRetry(),
+      HttpTimeouts? timeouts,
     }) {
       return SturdyHttp(
         baseUrl: baseUrl,
@@ -46,6 +47,7 @@ void main() {
         proxy: proxy,
         inferContentType: inferContentType,
         retryBehavior: retryBehavior,
+        timeouts: timeouts,
       );
     }
 
@@ -58,6 +60,77 @@ void main() {
         );
 
         expect(subject.interceptors, interceptors);
+      });
+    });
+
+    group('timeouts', () {
+      late List<RequestOptions> seen;
+
+      setUp(() {
+        seen = [];
+        charlatan.whenGet('/t', (_) => CharlatanHttpResponse(body: {}));
+      });
+
+      SturdyHttp timeoutsSubject([HttpTimeouts? timeouts]) => buildSubject(
+        timeouts: timeouts,
+        interceptors: [_FakeInterceptor(onRequestInvoked: seen.add)],
+      );
+
+      Future<void> get(SturdyHttp subject, [HttpTimeouts? timeouts]) =>
+          subject.execute<Json, void>(
+            GetRequest('/t', timeouts: timeouts),
+            onResponse: (_) {},
+          );
+
+      test('it applies client per-attempt timeouts to every request', () async {
+        await get(
+          timeoutsSubject(
+            const HttpTimeouts(
+              connect: Duration(seconds: 1),
+              receive: Duration(seconds: 2),
+              send: Duration(seconds: 3),
+            ),
+          ),
+        );
+
+        expect(seen.single.connectTimeout, const Duration(seconds: 1));
+        expect(seen.single.receiveTimeout, const Duration(seconds: 2));
+        expect(seen.single.sendTimeout, const Duration(seconds: 3));
+      });
+
+      test('it overrides client timeouts per field from the request', () async {
+        await get(
+          timeoutsSubject(
+            const HttpTimeouts(
+              connect: Duration(seconds: 1),
+              receive: Duration(seconds: 2),
+            ),
+          ),
+          const HttpTimeouts(receive: Duration(seconds: 5)),
+        );
+
+        expect(seen.single.connectTimeout, const Duration(seconds: 1));
+        expect(seen.single.receiveTimeout, const Duration(seconds: 5));
+      });
+
+      test('it leaves timeouts null when none are configured', () async {
+        await get(timeoutsSubject());
+
+        expect(seen.single.connectTimeout, isNull);
+        expect(seen.single.receiveTimeout, isNull);
+        expect(seen.single.sendTimeout, isNull);
+      });
+
+      test('withBaseUrl keeps the client timeouts', () async {
+        final subject = timeoutsSubject(
+          const HttpTimeouts(connect: Duration(seconds: 1)),
+        );
+        final other = subject.withBaseUrl('http://other.com');
+
+        await get(other);
+
+        expect(other.timeouts, subject.timeouts);
+        expect(seen.single.connectTimeout, const Duration(seconds: 1));
       });
     });
 
