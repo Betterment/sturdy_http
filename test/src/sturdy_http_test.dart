@@ -152,12 +152,20 @@ void main() {
         onResponse: (response) => response,
       );
 
-      void expectCallTimeout(NetworkResponse<Json> response) {
+      void expectCallTimeout(
+        NetworkResponse<Json> response, {
+        Duration? timeout,
+      }) {
         expect(
           response,
           isA<GenericError<Json>>()
               .having((e) => e.isConnectionIssue, 'isConnectionIssue', isTrue)
-              .having((e) => e.isCallTimeout, 'isCallTimeout', isTrue)
+              .having((e) => e.callTimeout, 'callTimeout', isNotNull)
+              .having(
+                (e) => e.callTimeout?.timeout,
+                'callTimeout.timeout',
+                timeout ?? isNotNull,
+              )
               .having((e) => e.error!.type, 'type', DioExceptionType.cancel),
         );
       }
@@ -174,7 +182,10 @@ void main() {
             GetRequest('/slow'),
           );
 
-          expectCallTimeout(response);
+          expectCallTimeout(
+            response,
+            timeout: const Duration(milliseconds: 100),
+          );
           expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
         },
       );
@@ -300,9 +311,9 @@ void main() {
         expect(
           response,
           isA<GenericError<Json>>().having(
-            (e) => e.isCallTimeout,
-            'isCallTimeout',
-            isFalse,
+            (e) => e.callTimeout,
+            'callTimeout',
+            isNull,
           ),
         );
       });

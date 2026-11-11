@@ -73,7 +73,7 @@ extension SturdyHttpX on SturdyHttp {
 
 ## Timeouts
 
-`connect`, `receive` and `send` limit a single attempt; `call` limits the whole call, including every attempt and retry wait, and returns a `GenericError` with `isCallTimeout == true`. A null value means no limit.
+`connect`, `receive` and `send` limit a single attempt; `call` limits the whole call, including every attempt and retry wait, and returns a `GenericError` with a non-null `callTimeout`. A null value means no limit.
 
 Set defaults on the client:
 

@@ -142,6 +142,9 @@ extension NetworkResponseX<R> on NetworkResponse<R> {
 
 /// Extensions on the [GenericError] type
 extension GenericErrorCallTimeoutX on GenericError<Object?> {
-  /// Whether this error is a call timeout.
-  bool get isCallTimeout => error?.error is CallTimeoutException;
+  /// The [CallTimeoutException] behind this error, or null.
+  CallTimeoutException? get callTimeout {
+    final cause = error?.error;
+    return cause is CallTimeoutException ? cause : null;
+  }
 }
