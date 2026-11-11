@@ -71,6 +71,31 @@ extension SturdyHttpX on SturdyHttp {
 }
 ```
 
+## Timeouts
+
+`connect`, `receive` and `send` limit a single attempt; `call` limits the whole call, including every attempt and retry wait, and returns a `GenericError` with `isCallTimeout == true`. A null value means no limit.
+
+Set defaults on the client:
+
+```dart
+SturdyHttp(
+  baseUrl: '$baseUrl/api/',
+  timeouts: const HttpTimeouts(
+    connect: Duration(seconds: 5),
+    call: Duration(seconds: 30),
+  ),
+);
+```
+
+Override individual fields for one request:
+
+```dart
+GetRequest(
+  '/v6/data/${id}',
+  timeouts: const HttpTimeouts(call: Duration(seconds: 10)),
+);
+```
+
 ## Contributing
 
 If you run into a bug or limitation when using `SturdyHttp`, we'd love your help in resolving it. First, it would be awesome if you could [open an issue](https://github.com/Betterment/sturdy_http/issues/new/choose) to discuss. If we feel like we should move forward with a change and you're willing to contribute, create a fork of `SturdyHttp` and open a PR against the main repo.
