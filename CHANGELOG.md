@@ -1,3 +1,7 @@
+## 0.8.0
+
+- feat: support connect, receive, send and call timeouts
+
 ## 0.7.0
 
 - feat: support capturing and emitting header values by @btrautmann in https://github.com/Betterment/sturdy_http/pull/27
