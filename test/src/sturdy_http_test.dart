@@ -226,8 +226,7 @@ void main() {
         },
       );
 
-      test('it uses an existing deadline from Options.extra and starts no new '
-          'timer', () async {
+      test('it uses an existing deadline from Options.extra', () async {
         final stopwatch = Stopwatch()..start();
         final response = await get(
           buildSubject(
