@@ -5,7 +5,6 @@ formatter:
 
 linter:
   rules:
-    - package_api_docs
     - public_member_api_docs
     - sort_pub_dependencies
     - require_trailing_commas

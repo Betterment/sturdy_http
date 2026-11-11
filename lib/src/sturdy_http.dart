@@ -29,6 +29,9 @@ class SturdyHttp {
   final SturdyHttpEventListener? _eventListener;
   final RetryBehavior _retryBehavior;
 
+  /// The client-level timeouts provided when this [SturdyHttp] was constructed.
+  final HttpTimeouts? timeouts;
+
   /// The interceptors provided when this [SturdyHttp] was constructed.
   UnmodifiableListView<Interceptor> get interceptors =>
       UnmodifiableListView<Interceptor>(_dio.interceptors);
@@ -49,6 +52,7 @@ class SturdyHttp {
     Map<String, String>? proxy,
     bool inferContentType = true,
     RetryBehavior retryBehavior = const NeverRetry(),
+    HttpTimeouts? timeouts,
   }) : this._(
          dio: _configureDio(
            baseUrl: baseUrl,
@@ -57,10 +61,12 @@ class SturdyHttp {
            customAdapter: customAdapter,
            proxy: proxy,
            inferContentType: inferContentType,
+           timeouts: timeouts,
          ),
          deserializer: deserializer,
          eventListener: eventListener,
          retryBehavior: retryBehavior,
+         timeouts: timeouts,
        );
 
   /// {@macro http_client}
@@ -69,6 +75,7 @@ class SturdyHttp {
     required Deserializer deserializer,
     required SturdyHttpEventListener? eventListener,
     required RetryBehavior retryBehavior,
+    required this.timeouts,
   }) : _dio = dio,
        _deserializer = deserializer,
        _eventListener = eventListener,
@@ -81,12 +88,16 @@ class SturdyHttp {
           Dio()
             ..options.baseUrl = baseUrl
             ..options.listFormat = ListFormat.multiCompatible
+            ..options.connectTimeout = timeouts?.connect
+            ..options.receiveTimeout = timeouts?.receive
+            ..options.sendTimeout = timeouts?.send
             ..interceptors.addAll(_dio.interceptors)
             ..interceptors.removeImplyContentTypeInterceptor()
             ..httpClientAdapter = _dio.httpClientAdapter,
       deserializer: _deserializer,
       eventListener: _eventListener,
       retryBehavior: _retryBehavior,
+      timeouts: timeouts,
     );
   }
 
@@ -130,6 +141,37 @@ class SturdyHttp {
   Future<_ResponsePayload<R>> _handleRequest<R, M>(
     NetworkRequest request,
   ) async {
+    final now = DateTime.now();
+    final callTimeout = request.timeouts?.call ?? timeouts?.call;
+    final deadline =
+        request.options?.extra?[callDeadlineExtraKey] as DateTime? ??
+        (callTimeout == null ? null : now.add(callTimeout));
+
+    // The caller's token is never cancelled by the call timeout, so a
+    // separate token carries both the caller's cancel and the timeout.
+    CancelToken? callToken;
+    Timer? callTimer;
+    if (deadline != null) {
+      final timeout = deadline.difference(now);
+      final token = callToken = CancelToken();
+      request.cancelToken?.whenCancel.then((e) => token.cancel(e.error));
+      callTimer = Timer(
+        timeout,
+        () => token.cancel(CallTimeoutException(timeout)),
+      );
+    }
+
+    NetworkResponse<R> callTimeoutError(DioException error) {
+      final timeout = (error.error! as CallTimeoutException).timeout;
+      return GenericError(
+        message:
+            'No response within ${timeout.inMilliseconds} ms '
+            'for ${request.path}',
+        isConnectionIssue: true,
+        error: error,
+      );
+    }
+
     Future<(Response<Object?>?, NetworkResponse<R>)> send(
       NetworkRequest request,
     ) async {
@@ -148,11 +190,20 @@ class SturdyHttp {
             RawRequestBody(:final data) => data,
           },
           queryParameters: request.queryParams,
-          options:
-              request.options != null
-                  ? request.options!.copyWith(method: request.type.name)
-                  : Options(method: request.type.name),
-          cancelToken: request.cancelToken,
+          options: (request.options ?? Options()).copyWith(
+            method: request.type.name,
+            connectTimeout: request.timeouts?.connect,
+            receiveTimeout: request.timeouts?.receive,
+            sendTimeout: request.timeouts?.send,
+            extra:
+                deadline == null
+                    ? null
+                    : {
+                      ...?request.options?.extra,
+                      callDeadlineExtraKey: deadline,
+                    },
+          ),
+          cancelToken: callToken ?? request.cancelToken,
           onReceiveProgress: request.onReceiveProgress,
           onSendProgress: request.onSendProgress,
         );
@@ -181,6 +232,9 @@ class SturdyHttp {
           }
         }
       } on DioException catch (error) {
+        if (error.error is CallTimeoutException) {
+          return (null, callTimeoutError(error));
+        }
         dioResponse = error.response;
         switch (error.response?.statusCode) {
           case 401:
@@ -230,14 +284,28 @@ class SturdyHttp {
     }
 
     final retryBehavior = determineRetryBehavior();
-    var response = await send(request);
-    var retryCount = 0;
-    while (!response.$2.isSuccess &&
-        retryBehavior.shouldRetry(response.$1, retryCount)) {
-      // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
-      await Future.delayed((retryBehavior as Retry).retryInterval);
-      retryCount++;
+    (Response<Object?>?, NetworkResponse<R>) response;
+    try {
       response = await send(request);
+      var retryCount = 0;
+      while (!response.$2.isSuccess &&
+          retryBehavior.shouldRetry(response.$1, retryCount)) {
+        // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
+        // The wait ends early if the call token is cancelled.
+        await Future.any([
+          Future<void>.delayed((retryBehavior as Retry).retryInterval),
+          if (callToken != null) callToken.whenCancel,
+        ]);
+        final cancelError = callToken?.cancelError;
+        if (cancelError != null && cancelError.error is CallTimeoutException) {
+          response = (null, callTimeoutError(cancelError));
+          break;
+        }
+        retryCount++;
+        response = await send(request);
+      }
+    } finally {
+      callTimer?.cancel();
     }
 
     final dioResponse = response.$1;
@@ -282,6 +350,7 @@ Dio _configureDio({
   required HttpClientAdapter? customAdapter,
   required Map<String, String>? proxy,
   required bool inferContentType,
+  required HttpTimeouts? timeouts,
 }) {
   return Dio()
     // Instruct Dio to use the same Isolate approach as requested of SturdyHttp
@@ -291,6 +360,9 @@ Dio _configureDio({
             : BackgroundTransformer()
     ..options.baseUrl = baseUrl
     ..options.listFormat = ListFormat.multiCompatible
+    ..options.connectTimeout = timeouts?.connect
+    ..options.receiveTimeout = timeouts?.receive
+    ..options.sendTimeout = timeouts?.send
     ..interceptors.addAll(interceptors)
     ..map((dio) {
       if (customAdapter != null) {
