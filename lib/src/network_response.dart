@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:dio/dio.dart';
+import 'package:sturdy_http/src/call_timeout.dart';
 
 /// The produced object after [SturdyHttp] processes a [NetworkRequest].
 ///
@@ -137,4 +138,10 @@ final class GenericError<R> extends NetworkResponseFailure<R> {
 extension NetworkResponseX<R> on NetworkResponse<R> {
   /// Whether this [NetworkResponse] should be considered successful
   bool get isSuccess => this is NetworkResponseSuccess;
+}
+
+/// Extensions on the [GenericError] type
+extension GenericErrorCallTimeoutX on GenericError<Object?> {
+  /// Whether this error is a call timeout.
+  bool get isCallTimeout => error?.error is CallTimeoutException;
 }

@@ -141,6 +141,37 @@ class SturdyHttp {
   Future<_ResponsePayload<R>> _handleRequest<R, M>(
     NetworkRequest request,
   ) async {
+    final now = DateTime.now();
+    final callTimeout = request.timeouts?.call ?? timeouts?.call;
+    final deadline =
+        request.options?.extra?[callDeadlineExtraKey] as DateTime? ??
+        (callTimeout == null ? null : now.add(callTimeout));
+
+    // The caller's token is never cancelled by the call timeout, so a
+    // separate token carries both the caller's cancel and the timeout.
+    CancelToken? callToken;
+    Timer? callTimer;
+    if (deadline != null) {
+      final timeout = deadline.difference(now);
+      final token = callToken = CancelToken();
+      request.cancelToken?.whenCancel.then((e) => token.cancel(e.error));
+      callTimer = Timer(
+        timeout,
+        () => token.cancel(CallTimeoutException(timeout)),
+      );
+    }
+
+    NetworkResponse<R> callTimeoutError(DioException error) {
+      final timeout = (error.error! as CallTimeoutException).timeout;
+      return GenericError(
+        message:
+            'No response within ${timeout.inMilliseconds} ms '
+            'for ${request.path}',
+        isConnectionIssue: true,
+        error: error,
+      );
+    }
+
     Future<(Response<Object?>?, NetworkResponse<R>)> send(
       NetworkRequest request,
     ) async {
@@ -164,8 +195,15 @@ class SturdyHttp {
             connectTimeout: request.timeouts?.connect,
             receiveTimeout: request.timeouts?.receive,
             sendTimeout: request.timeouts?.send,
+            extra:
+                deadline == null
+                    ? null
+                    : {
+                      ...?request.options?.extra,
+                      callDeadlineExtraKey: deadline,
+                    },
           ),
-          cancelToken: request.cancelToken,
+          cancelToken: callToken ?? request.cancelToken,
           onReceiveProgress: request.onReceiveProgress,
           onSendProgress: request.onSendProgress,
         );
@@ -194,6 +232,9 @@ class SturdyHttp {
           }
         }
       } on DioException catch (error) {
+        if (error.error is CallTimeoutException) {
+          return (null, callTimeoutError(error));
+        }
         dioResponse = error.response;
         switch (error.response?.statusCode) {
           case 401:
@@ -243,14 +284,28 @@ class SturdyHttp {
     }
 
     final retryBehavior = determineRetryBehavior();
-    var response = await send(request);
-    var retryCount = 0;
-    while (!response.$2.isSuccess &&
-        retryBehavior.shouldRetry(response.$1, retryCount)) {
-      // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
-      await Future.delayed((retryBehavior as Retry).retryInterval);
-      retryCount++;
+    (Response<Object?>?, NetworkResponse<R>) response;
+    try {
       response = await send(request);
+      var retryCount = 0;
+      while (!response.$2.isSuccess &&
+          retryBehavior.shouldRetry(response.$1, retryCount)) {
+        // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
+        // The wait ends early if the call token is cancelled.
+        await Future.any([
+          Future<void>.delayed((retryBehavior as Retry).retryInterval),
+          if (callToken != null) callToken.whenCancel,
+        ]);
+        final cancelError = callToken?.cancelError;
+        if (cancelError != null && cancelError.error is CallTimeoutException) {
+          response = (null, callTimeoutError(cancelError));
+          break;
+        }
+        retryCount++;
+        response = await send(request);
+      }
+    } finally {
+      callTimer?.cancel();
     }
 
     final dioResponse = response.$1;

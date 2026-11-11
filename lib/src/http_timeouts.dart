@@ -14,7 +14,7 @@ class HttpTimeouts {
   /// Per-attempt limit on sending request data.
   final Duration? send;
 
-  /// Limit on the whole call. Stored but not yet applied.
+  /// Limit on the whole call: every attempt and every retry wait.
   final Duration? call;
 
   @override
