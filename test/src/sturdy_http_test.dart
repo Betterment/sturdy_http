@@ -349,6 +349,141 @@ void main() {
         expect(response, isA<OkResponse<Json>>());
         expect(events.whereType<RequestCompleted>(), hasLength(1));
       });
+
+      test('it returns a call timeout when the AuthFailure listener does not '
+          'finish before the deadline', () async {
+        charlatan.whenGet(
+          '/unauthorized',
+          (_) => CharlatanHttpResponse(statusCode: 401),
+        );
+        eventListener = _StallingAuthFailureListener();
+
+        final stopwatch = Stopwatch()..start();
+        final response = await get(
+          buildSubject(
+            timeouts: const HttpTimeouts(call: Duration(milliseconds: 100)),
+          ),
+          GetRequest('/unauthorized'),
+        );
+
+        expectCallTimeout(response);
+        expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
+      });
+
+      test('it returns a call timeout when the AuthFailure listener stalls on '
+          'a retry attempt', () async {
+        var attempts = 0;
+        charlatan.whenGet('/flaky', (_) {
+          attempts++;
+          return CharlatanHttpResponse(statusCode: attempts == 1 ? 503 : 401);
+        });
+        eventListener = _StallingAuthFailureListener();
+
+        final stopwatch = Stopwatch()..start();
+        final response = await get(
+          buildSubject(),
+          GetRequest(
+            '/flaky',
+            retryBehavior: const Retry(
+              maxRetries: 1,
+              retryInterval: Duration(milliseconds: 10),
+            ),
+            timeouts: const HttpTimeouts(call: Duration(milliseconds: 200)),
+          ),
+        );
+
+        expectCallTimeout(response);
+        expect(attempts, 2);
+        expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
+      });
+
+      test('it leaves no pending timers after a call timeout during a retry '
+          'interval', () async {
+        charlatan.whenGet(
+          '/unavailable',
+          (_) => CharlatanHttpResponse(statusCode: 503),
+        );
+        final timers = <Timer>[];
+
+        final response = await runZoned(
+          () => get(
+            buildSubject(),
+            GetRequest(
+              '/unavailable',
+              retryBehavior: const Retry(
+                maxRetries: 1,
+                retryInterval: Duration(minutes: 10),
+              ),
+              timeouts: const HttpTimeouts(call: Duration(milliseconds: 50)),
+            ),
+          ),
+          zoneSpecification: ZoneSpecification(
+            createTimer: (self, parent, zone, duration, callback) {
+              final timer = parent.createTimer(zone, duration, callback);
+              timers.add(timer);
+              return timer;
+            },
+          ),
+        );
+
+        expectCallTimeout(response);
+        expect(timers, isNotEmpty);
+        expect(timers.where((t) => t.isActive), isEmpty);
+      });
+
+      test('it returns a cancel without sending when the caller token is '
+          'already cancelled', () async {
+        var attempts = 0;
+        charlatan.whenGet('/counted', (_) {
+          attempts++;
+          return CharlatanHttpResponse(body: {});
+        });
+        final token = CancelToken()..cancel();
+
+        final response = await get(
+          buildSubject(
+            timeouts: const HttpTimeouts(call: Duration(seconds: 10)),
+          ),
+          GetRequest('/counted', cancelToken: token),
+        );
+
+        expect(
+          response,
+          isA<GenericError<Json>>()
+              .having((e) => e.callTimeout, 'callTimeout', isNull)
+              .having((e) => e.error?.type, 'type', DioExceptionType.cancel),
+        );
+        expect(attempts, 0);
+      });
+
+      test(
+        'a caller token reused across calls still cancels a later call',
+        () async {
+          final token = CancelToken();
+          final subject = buildSubject(
+            timeouts: const HttpTimeouts(call: Duration(seconds: 10)),
+          );
+          for (var i = 0; i < 3; i++) {
+            expect(
+              await get(subject, GetRequest('/ok', cancelToken: token)),
+              isA<OkResponse<Json>>(),
+            );
+          }
+
+          Timer(const Duration(milliseconds: 50), token.cancel);
+          final response = await get(
+            subject,
+            GetRequest('/slow', cancelToken: token),
+          );
+
+          expect(
+            response,
+            isA<GenericError<Json>>()
+                .having((e) => e.callTimeout, 'callTimeout', isNull)
+                .having((e) => e.error?.type, 'type', DioExceptionType.cancel),
+          );
+        },
+      );
     });
 
     group('inferContentType', () {
@@ -1328,6 +1463,12 @@ class _RecordingEventListener extends SturdyHttpEventListener {
 
   @override
   Future<void> onEvent(SturdyHttpEvent event) async => events.add(event);
+}
+
+class _StallingAuthFailureListener extends SturdyHttpEventListener {
+  @override
+  Future<void> onEvent(SturdyHttpEvent event) =>
+      event is AuthFailure ? Completer<void>().future : Future.value();
 }
 
 class _SturdyHttpEventListener extends SturdyHttpEventListener {

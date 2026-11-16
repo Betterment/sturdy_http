@@ -151,14 +151,22 @@ class SturdyHttp {
     // separate token carries both the caller's cancel and the timeout.
     CancelToken? callToken;
     Timer? callTimer;
+    // Completes when the deadline passes. Attempts and retry waits race
+    // against it, so work that ignores the cancel token, such as an
+    // `AuthFailure` listener, cannot hold the call past its deadline.
+    Completer<DioException>? deadlineReached;
+    final callerToken = request.cancelToken;
     if (deadline != null) {
       final timeout = deadline.difference(now);
       final token = callToken = CancelToken();
-      request.cancelToken?.whenCancel.then((e) => token.cancel(e.error));
-      callTimer = Timer(
-        timeout,
-        () => token.cancel(CallTimeoutException(timeout)),
-      );
+      final reached = deadlineReached = Completer<DioException>();
+      if (callerToken != null) _forwardCancel(from: callerToken, to: token);
+      callTimer = Timer(timeout, () {
+        // A caller cancel that arrived first stays a caller cancel.
+        if (token.isCancelled) return;
+        token.cancel(CallTimeoutException(timeout));
+        reached.complete(token.cancelError!);
+      });
     }
 
     NetworkResponse<R> callTimeoutError(DioException error) {
@@ -283,29 +291,54 @@ class SturdyHttp {
       );
     }
 
+    // Sends one attempt. When a deadline is set, the attempt resolves to a
+    // call timeout as soon as the deadline passes, even if `send` is still
+    // waiting; a late result from `send` is discarded.
+    Future<(Response<Object?>?, NetworkResponse<R>)> attempt() {
+      final reached = deadlineReached;
+      if (reached == null) return send(request);
+      return Future.any([
+        send(request),
+        reached.future.then((error) => (null, callTimeoutError(error))),
+      ]);
+    }
+
+    // Waits [interval], ending early if the call token is cancelled. The
+    // timer is cancelled either way so it does not outlive the call.
+    Future<void> wait(Duration interval) async {
+      final elapsed = Completer<void>();
+      final timer = Timer(interval, elapsed.complete);
+      try {
+        await Future.any([
+          elapsed.future,
+          if (callToken != null) callToken.whenCancel,
+        ]);
+      } finally {
+        timer.cancel();
+      }
+    }
+
     final retryBehavior = determineRetryBehavior();
     (Response<Object?>?, NetworkResponse<R>) response;
     try {
-      response = await send(request);
+      response = await attempt();
       var retryCount = 0;
       while (!response.$2.isSuccess &&
           retryBehavior.shouldRetry(response.$1, retryCount)) {
         // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
-        // The wait ends early if the call token is cancelled.
-        await Future.any([
-          Future<void>.delayed((retryBehavior as Retry).retryInterval),
-          if (callToken != null) callToken.whenCancel,
-        ]);
-        final cancelError = callToken?.cancelError;
-        if (cancelError != null && cancelError.error is CallTimeoutException) {
-          response = (null, callTimeoutError(cancelError));
+        await wait((retryBehavior as Retry).retryInterval);
+        if (deadlineReached?.isCompleted ?? false) {
+          response = (null, callTimeoutError(callToken!.cancelError!));
           break;
         }
         retryCount++;
-        response = await send(request);
+        response = await attempt();
       }
     } finally {
       callTimer?.cancel();
+      if (callerToken != null && callToken != null) {
+        _stopForwardingCancel(from: callerToken, to: callToken);
+      }
     }
 
     final dioResponse = response.$1;
@@ -373,6 +406,40 @@ Dio _configureDio({
       }
       return dio;
     });
+}
+
+/// For each caller [CancelToken], the call tokens of calls still in flight
+/// that its cancel is forwarded to.
+///
+/// A `Future` listener cannot be removed, so each caller token gets one
+/// `whenCancel` listener for its lifetime. Calls add and remove their own
+/// token from the set. A long-lived caller token reused across many calls
+/// therefore holds one listener and only the tokens of calls in flight.
+final _cancelForwards = Expando<Set<CancelToken>>();
+
+void _forwardCancel({required CancelToken from, required CancelToken to}) {
+  if (from.isCancelled) {
+    to.cancel(from.cancelError?.error);
+    return;
+  }
+  var targets = _cancelForwards[from];
+  if (targets == null) {
+    final created = targets = _cancelForwards[from] = <CancelToken>{};
+    from.whenCancel.then((e) {
+      for (final target in [...created]) {
+        target.cancel(e.error);
+      }
+      created.clear();
+    });
+  }
+  targets.add(to);
+}
+
+void _stopForwardingCancel({
+  required CancelToken from,
+  required CancelToken to,
+}) {
+  _cancelForwards[from]?.remove(to);
 }
 
 extension _ObjectExtensions<I extends Object?> on I {
