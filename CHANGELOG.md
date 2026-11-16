@@ -1,6 +1,6 @@
 ## 0.8.0
 
-- feat: support connect, receive, send and call timeouts
+- feat: support connect, receive, send and call timeouts by @mrtnrst in https://github.com/Betterment/sturdy_http/pull/29
 
 ## 0.7.0
 
