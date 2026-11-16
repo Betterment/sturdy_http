@@ -18,7 +18,9 @@ class HttpTimeouts {
   /// Per-attempt limit on sending request data.
   final Duration? send;
 
-  /// Limit on the whole call: every attempt and every retry wait.
+  /// Limit on the whole call: every attempt, every retry wait and the
+  /// `RequestCompleted` event. Response deserialization and the
+  /// `DecodingError` event run after the call and are not covered.
   final Duration? call;
 
   @override

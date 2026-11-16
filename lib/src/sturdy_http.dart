@@ -149,24 +149,29 @@ class SturdyHttp {
 
     // The caller's token is never cancelled by the call timeout, so a
     // separate token carries both the caller's cancel and the timeout.
+    // Attempts, retry waits and the `RequestCompleted` event race against
+    // this token's cancellation, so work that ignores the token, such as a
+    // stalled event listener, cannot hold the call once it is cancelled.
     CancelToken? callToken;
     Timer? callTimer;
-    // Completes when the deadline passes. Attempts and retry waits race
-    // against it, so work that ignores the cancel token, such as an
-    // `AuthFailure` listener, cannot hold the call past its deadline.
-    Completer<DioException>? deadlineReached;
     final callerToken = request.cancelToken;
     if (deadline != null) {
-      final timeout = deadline.difference(now);
+      final remaining = deadline.difference(now);
+      final timeout = remaining.isNegative ? Duration.zero : remaining;
       final token = callToken = CancelToken();
-      final reached = deadlineReached = Completer<DioException>();
       if (callerToken != null) _forwardCancel(from: callerToken, to: token);
-      callTimer = Timer(timeout, () {
-        // A caller cancel that arrived first stays a caller cancel.
-        if (token.isCancelled) return;
-        token.cancel(CallTimeoutException(timeout));
-        reached.complete(token.cancelError!);
-      });
+      // A caller cancel that arrived first stays a caller cancel.
+      void expire() {
+        if (!token.isCancelled) token.cancel(CallTimeoutException(timeout));
+      }
+
+      // An inherited deadline can already have passed. Expiring now, rather
+      // than on a zero-length timer, means no attempt starts after it.
+      if (timeout > Duration.zero) {
+        callTimer = Timer(timeout, expire);
+      } else {
+        expire();
+      }
     }
 
     NetworkResponse<R> callTimeoutError(DioException error) {
@@ -178,6 +183,23 @@ class SturdyHttp {
         isConnectionIssue: true,
         error: error,
       );
+    }
+
+    NetworkResponse<R> unexpectedStatusError(DioException error) {
+      return GenericError(
+        message:
+            'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
+        isConnectionIssue: error.isConnectionIssue(),
+        error: error,
+      );
+    }
+
+    // The result for a cancelled call token, matching what `send` returns
+    // when Dio reports the same cancel.
+    NetworkResponse<R> cancelledError(DioException error) {
+      return error.error is CallTimeoutException
+          ? callTimeoutError(error)
+          : unexpectedStatusError(error);
     }
 
     Future<(Response<Object?>?, NetworkResponse<R>)> send(
@@ -271,12 +293,7 @@ class SturdyHttp {
             resolvedResponse = ServiceUnavailable(error: error);
             break;
           default:
-            resolvedResponse = GenericError(
-              message:
-                  'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
-              isConnectionIssue: error.isConnectionIssue(),
-              error: error,
-            );
+            resolvedResponse = unexpectedStatusError(error);
         }
       }
       return (dioResponse, resolvedResponse);
@@ -291,15 +308,15 @@ class SturdyHttp {
       );
     }
 
-    // Sends one attempt. When a deadline is set, the attempt resolves to a
-    // call timeout as soon as the deadline passes, even if `send` is still
-    // waiting; a late result from `send` is discarded.
+    // Sends one attempt. When a deadline is set, the attempt resolves as soon
+    // as the call token is cancelled, by the deadline or by the caller, even
+    // if `send` is still waiting; a late result from `send` is discarded.
     Future<(Response<Object?>?, NetworkResponse<R>)> attempt() {
-      final reached = deadlineReached;
-      if (reached == null) return send(request);
+      final token = callToken;
+      if (token == null) return send(request);
       return Future.any([
         send(request),
-        reached.future.then((error) => (null, callTimeoutError(error))),
+        token.whenCancel.then((error) => (null, cancelledError(error))),
       ]);
     }
 
@@ -327,33 +344,40 @@ class SturdyHttp {
           retryBehavior.shouldRetry(response.$1, retryCount)) {
         // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
         await wait((retryBehavior as Retry).retryInterval);
-        if (deadlineReached?.isCompleted ?? false) {
-          response = (null, callTimeoutError(callToken!.cancelError!));
+        final cancelError = callToken?.cancelError;
+        if (cancelError != null) {
+          response = (null, cancelledError(cancelError));
           break;
         }
         retryCount++;
         response = await attempt();
+      }
+
+      final dioResponse = response.$1;
+      if (dioResponse != null) {
+        final completed = _onEvent(
+          RequestCompleted(
+            request: dioResponse.requestOptions,
+            headers: dioResponse.headers.map.map(
+              (key, values) => MapEntry(key, values.join(', ')),
+            ),
+            statusCode: dioResponse.statusCode,
+            isSuccess: response.$2.isSuccess,
+            shouldTriggerDataMutation: request.shouldTriggerDataMutation,
+          ),
+        );
+        // The response is already decided, so a deadline that passes while
+        // the listener runs ends the wait and the response is still returned.
+        await Future.any([
+          completed,
+          if (callToken != null) callToken.whenCancel,
+        ]);
       }
     } finally {
       callTimer?.cancel();
       if (callerToken != null && callToken != null) {
         _stopForwardingCancel(from: callerToken, to: callToken);
       }
-    }
-
-    final dioResponse = response.$1;
-    if (dioResponse != null) {
-      await _onEvent(
-        RequestCompleted(
-          request: dioResponse.requestOptions,
-          headers: dioResponse.headers.map.map(
-            (key, values) => MapEntry(key, values.join(', ')),
-          ),
-          statusCode: dioResponse.statusCode,
-          isSuccess: response.$2.isSuccess,
-          shouldTriggerDataMutation: request.shouldTriggerDataMutation,
-        ),
-      );
     }
 
     return _ResponsePayload(

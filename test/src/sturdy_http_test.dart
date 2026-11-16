@@ -397,6 +397,74 @@ void main() {
         expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
       });
 
+      test('it sends nothing when an inherited deadline has passed', () async {
+        var attempts = 0;
+        charlatan.whenGet('/counted', (_) {
+          attempts++;
+          return CharlatanHttpResponse(body: {});
+        });
+
+        final response = await get(
+          buildSubject(),
+          GetRequest(
+            '/counted',
+            options: Options(
+              extra: {
+                callDeadlineExtraKey: DateTime.now().subtract(
+                  const Duration(seconds: 1),
+                ),
+              },
+            ),
+          ),
+        );
+
+        expectCallTimeout(response, timeout: Duration.zero);
+        expect(attempts, 0);
+      });
+
+      test('it returns a cancel when the caller cancels while the AuthFailure '
+          'listener stalls', () async {
+        charlatan.whenGet(
+          '/unauthorized',
+          (_) => CharlatanHttpResponse(statusCode: 401),
+        );
+        eventListener = _StallingAuthFailureListener();
+        final token = CancelToken();
+        Timer(const Duration(milliseconds: 50), token.cancel);
+
+        final stopwatch = Stopwatch()..start();
+        final response = await get(
+          buildSubject(
+            timeouts: const HttpTimeouts(call: Duration(seconds: 10)),
+          ),
+          GetRequest('/unauthorized', cancelToken: token),
+        );
+
+        expect(
+          response,
+          isA<GenericError<Json>>()
+              .having((e) => e.callTimeout, 'callTimeout', isNull)
+              .having((e) => e.error?.type, 'type', DioExceptionType.cancel),
+        );
+        expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
+      });
+
+      test('it returns the response when the RequestCompleted listener stalls '
+          'past the deadline', () async {
+        eventListener = _StallingRequestCompletedListener();
+
+        final stopwatch = Stopwatch()..start();
+        final response = await get(
+          buildSubject(
+            timeouts: const HttpTimeouts(call: Duration(milliseconds: 100)),
+          ),
+          GetRequest('/ok'),
+        );
+
+        expect(response, isA<OkResponse<Json>>());
+        expect(stopwatch.elapsed, lessThan(const Duration(seconds: 1)));
+      });
+
       test('it leaves no pending timers after a call timeout during a retry '
           'interval', () async {
         charlatan.whenGet(
@@ -1469,6 +1537,12 @@ class _StallingAuthFailureListener extends SturdyHttpEventListener {
   @override
   Future<void> onEvent(SturdyHttpEvent event) =>
       event is AuthFailure ? Completer<void>().future : Future.value();
+}
+
+class _StallingRequestCompletedListener extends SturdyHttpEventListener {
+  @override
+  Future<void> onEvent(SturdyHttpEvent event) =>
+      event is RequestCompleted ? Completer<void>().future : Future.value();
 }
 
 class _SturdyHttpEventListener extends SturdyHttpEventListener {
