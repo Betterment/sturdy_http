@@ -1,5 +1,9 @@
 /// {@template http_timeouts}
-/// Timeouts for HTTP requests. A null value means no limit.
+/// Timeouts for HTTP requests.
+///
+/// On a `SturdyHttp` client, a null field means no limit. On a request, a
+/// null field uses the client's value, so a request can change a client
+/// limit but cannot remove it.
 /// {@endtemplate}
 class HttpTimeouts {
   /// {@macro http_timeouts}
