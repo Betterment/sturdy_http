@@ -1,3 +1,11 @@
+## 0.8.0
+
+- feat: support connect, receive, send and call timeouts by @mrtnrst in https://github.com/Betterment/sturdy_http/pull/29
+
+**Dependencies:**
+
+- Requires `dio` 5.9.1 or later (previously 5.9.0). Per-request connect timeouts use `Options.connectTimeout`, which Dio added in 5.9.1.
+
 ## 0.7.0
 
 - feat: support capturing and emitting header values by @btrautmann in https://github.com/Betterment/sturdy_http/pull/27
