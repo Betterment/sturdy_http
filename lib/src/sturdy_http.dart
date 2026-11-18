@@ -29,6 +29,9 @@ class SturdyHttp {
   final SturdyHttpEventListener? _eventListener;
   final RetryBehavior _retryBehavior;
 
+  /// The client-level timeouts provided when this [SturdyHttp] was constructed.
+  final HttpTimeouts? timeouts;
+
   /// The interceptors provided when this [SturdyHttp] was constructed.
   UnmodifiableListView<Interceptor> get interceptors =>
       UnmodifiableListView<Interceptor>(_dio.interceptors);
@@ -49,6 +52,7 @@ class SturdyHttp {
     Map<String, String>? proxy,
     bool inferContentType = true,
     RetryBehavior retryBehavior = const NeverRetry(),
+    HttpTimeouts? timeouts,
   }) : this._(
          dio: _configureDio(
            baseUrl: baseUrl,
@@ -57,10 +61,12 @@ class SturdyHttp {
            customAdapter: customAdapter,
            proxy: proxy,
            inferContentType: inferContentType,
+           timeouts: timeouts,
          ),
          deserializer: deserializer,
          eventListener: eventListener,
          retryBehavior: retryBehavior,
+         timeouts: timeouts,
        );
 
   /// {@macro http_client}
@@ -69,6 +75,7 @@ class SturdyHttp {
     required Deserializer deserializer,
     required SturdyHttpEventListener? eventListener,
     required RetryBehavior retryBehavior,
+    required this.timeouts,
   }) : _dio = dio,
        _deserializer = deserializer,
        _eventListener = eventListener,
@@ -81,12 +88,16 @@ class SturdyHttp {
           Dio()
             ..options.baseUrl = baseUrl
             ..options.listFormat = ListFormat.multiCompatible
+            ..options.connectTimeout = timeouts?.connect
+            ..options.receiveTimeout = timeouts?.receive
+            ..options.sendTimeout = timeouts?.send
             ..interceptors.addAll(_dio.interceptors)
             ..interceptors.removeImplyContentTypeInterceptor()
             ..httpClientAdapter = _dio.httpClientAdapter,
       deserializer: _deserializer,
       eventListener: _eventListener,
       retryBehavior: _retryBehavior,
+      timeouts: timeouts,
     );
   }
 
@@ -130,6 +141,67 @@ class SturdyHttp {
   Future<_ResponsePayload<R>> _handleRequest<R, M>(
     NetworkRequest request,
   ) async {
+    final now = DateTime.now();
+    final callTimeout = request.timeouts?.call ?? timeouts?.call;
+    final deadline =
+        request.options?.extra?[callDeadlineExtraKey] as DateTime? ??
+        (callTimeout == null ? null : now.add(callTimeout));
+
+    // The caller's token is never cancelled by the call timeout, so a
+    // separate token carries both the caller's cancel and the timeout.
+    // Attempts, retry waits and the `RequestCompleted` event race against
+    // this token's cancellation, so work that ignores the token, such as a
+    // stalled event listener, cannot hold the call once it is cancelled.
+    CancelToken? callToken;
+    Timer? callTimer;
+    final callerToken = request.cancelToken;
+    if (deadline != null) {
+      final remaining = deadline.difference(now);
+      final timeout = remaining.isNegative ? Duration.zero : remaining;
+      final token = callToken = CancelToken();
+      if (callerToken != null) _forwardCancel(from: callerToken, to: token);
+      // A caller cancel that arrived first stays a caller cancel.
+      void expire() {
+        if (!token.isCancelled) token.cancel(CallTimeoutException(timeout));
+      }
+
+      // An inherited deadline can already have passed. Expiring now, rather
+      // than on a zero-length timer, means no attempt starts after it.
+      if (timeout > Duration.zero) {
+        callTimer = Timer(timeout, expire);
+      } else {
+        expire();
+      }
+    }
+
+    NetworkResponse<R> callTimeoutError(DioException error) {
+      final timeout = (error.error! as CallTimeoutException).timeout;
+      return GenericError(
+        message:
+            'No response within ${timeout.inMilliseconds} ms '
+            'for ${request.path}',
+        isConnectionIssue: true,
+        error: error,
+      );
+    }
+
+    NetworkResponse<R> unexpectedStatusError(DioException error) {
+      return GenericError(
+        message:
+            'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
+        isConnectionIssue: error.isConnectionIssue(),
+        error: error,
+      );
+    }
+
+    // The result for a cancelled call token, matching what `send` returns
+    // when Dio reports the same cancel.
+    NetworkResponse<R> cancelledError(DioException error) {
+      return error.error is CallTimeoutException
+          ? callTimeoutError(error)
+          : unexpectedStatusError(error);
+    }
+
     Future<(Response<Object?>?, NetworkResponse<R>)> send(
       NetworkRequest request,
     ) async {
@@ -148,11 +220,20 @@ class SturdyHttp {
             RawRequestBody(:final data) => data,
           },
           queryParameters: request.queryParams,
-          options:
-              request.options != null
-                  ? request.options!.copyWith(method: request.type.name)
-                  : Options(method: request.type.name),
-          cancelToken: request.cancelToken,
+          options: (request.options ?? Options()).copyWith(
+            method: request.type.name,
+            connectTimeout: request.timeouts?.connect,
+            receiveTimeout: request.timeouts?.receive,
+            sendTimeout: request.timeouts?.send,
+            extra:
+                deadline == null
+                    ? null
+                    : {
+                      ...?request.options?.extra,
+                      callDeadlineExtraKey: deadline,
+                    },
+          ),
+          cancelToken: callToken ?? request.cancelToken,
           onReceiveProgress: request.onReceiveProgress,
           onSendProgress: request.onSendProgress,
         );
@@ -181,6 +262,9 @@ class SturdyHttp {
           }
         }
       } on DioException catch (error) {
+        if (error.error is CallTimeoutException) {
+          return (null, callTimeoutError(error));
+        }
         dioResponse = error.response;
         switch (error.response?.statusCode) {
           case 401:
@@ -209,12 +293,7 @@ class SturdyHttp {
             resolvedResponse = ServiceUnavailable(error: error);
             break;
           default:
-            resolvedResponse = GenericError(
-              message:
-                  'Unexpected status code ${error.response?.statusCode} returned for ${request.path}',
-              isConnectionIssue: error.isConnectionIssue(),
-              error: error,
-            );
+            resolvedResponse = unexpectedStatusError(error);
         }
       }
       return (dioResponse, resolvedResponse);
@@ -229,30 +308,76 @@ class SturdyHttp {
       );
     }
 
-    final retryBehavior = determineRetryBehavior();
-    var response = await send(request);
-    var retryCount = 0;
-    while (!response.$2.isSuccess &&
-        retryBehavior.shouldRetry(response.$1, retryCount)) {
-      // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
-      await Future.delayed((retryBehavior as Retry).retryInterval);
-      retryCount++;
-      response = await send(request);
+    // Sends one attempt. When a deadline is set, the attempt resolves as soon
+    // as the call token is cancelled, by the deadline or by the caller, even
+    // if `send` is still waiting; a late result from `send` is discarded.
+    Future<(Response<Object?>?, NetworkResponse<R>)> attempt() {
+      final token = callToken;
+      if (token == null) return send(request);
+      return Future.any([
+        send(request),
+        token.whenCancel.then((error) => (null, cancelledError(error))),
+      ]);
     }
 
-    final dioResponse = response.$1;
-    if (dioResponse != null) {
-      await _onEvent(
-        RequestCompleted(
-          request: dioResponse.requestOptions,
-          headers: dioResponse.headers.map.map(
-            (key, values) => MapEntry(key, values.join(', ')),
+    // Waits [interval], ending early if the call token is cancelled. The
+    // timer is cancelled either way so it does not outlive the call.
+    Future<void> wait(Duration interval) async {
+      final elapsed = Completer<void>();
+      final timer = Timer(interval, elapsed.complete);
+      try {
+        await Future.any([
+          elapsed.future,
+          if (callToken != null) callToken.whenCancel,
+        ]);
+      } finally {
+        timer.cancel();
+      }
+    }
+
+    final retryBehavior = determineRetryBehavior();
+    (Response<Object?>?, NetworkResponse<R>) response;
+    try {
+      response = await attempt();
+      var retryCount = 0;
+      while (!response.$2.isSuccess &&
+          retryBehavior.shouldRetry(response.$1, retryCount)) {
+        // `retryBehavior` must be a `Retry`, otherwise we wouldn't be here.
+        await wait((retryBehavior as Retry).retryInterval);
+        final cancelError = callToken?.cancelError;
+        if (cancelError != null) {
+          response = (null, cancelledError(cancelError));
+          break;
+        }
+        retryCount++;
+        response = await attempt();
+      }
+
+      final dioResponse = response.$1;
+      if (dioResponse != null) {
+        final completed = _onEvent(
+          RequestCompleted(
+            request: dioResponse.requestOptions,
+            headers: dioResponse.headers.map.map(
+              (key, values) => MapEntry(key, values.join(', ')),
+            ),
+            statusCode: dioResponse.statusCode,
+            isSuccess: response.$2.isSuccess,
+            shouldTriggerDataMutation: request.shouldTriggerDataMutation,
           ),
-          statusCode: dioResponse.statusCode,
-          isSuccess: response.$2.isSuccess,
-          shouldTriggerDataMutation: request.shouldTriggerDataMutation,
-        ),
-      );
+        );
+        // The response is already decided, so a deadline that passes while
+        // the listener runs ends the wait and the response is still returned.
+        await Future.any([
+          completed,
+          if (callToken != null) callToken.whenCancel,
+        ]);
+      }
+    } finally {
+      callTimer?.cancel();
+      if (callerToken != null && callToken != null) {
+        _stopForwardingCancel(from: callerToken, to: callToken);
+      }
     }
 
     return _ResponsePayload(
@@ -282,6 +407,7 @@ Dio _configureDio({
   required HttpClientAdapter? customAdapter,
   required Map<String, String>? proxy,
   required bool inferContentType,
+  required HttpTimeouts? timeouts,
 }) {
   return Dio()
     // Instruct Dio to use the same Isolate approach as requested of SturdyHttp
@@ -291,6 +417,9 @@ Dio _configureDio({
             : BackgroundTransformer()
     ..options.baseUrl = baseUrl
     ..options.listFormat = ListFormat.multiCompatible
+    ..options.connectTimeout = timeouts?.connect
+    ..options.receiveTimeout = timeouts?.receive
+    ..options.sendTimeout = timeouts?.send
     ..interceptors.addAll(interceptors)
     ..map((dio) {
       if (customAdapter != null) {
@@ -301,6 +430,40 @@ Dio _configureDio({
       }
       return dio;
     });
+}
+
+/// For each caller [CancelToken], the call tokens of calls still in flight
+/// that its cancel is forwarded to.
+///
+/// A `Future` listener cannot be removed, so each caller token gets one
+/// `whenCancel` listener for its lifetime. Calls add and remove their own
+/// token from the set. A long-lived caller token reused across many calls
+/// therefore holds one listener and only the tokens of calls in flight.
+final _cancelForwards = Expando<Set<CancelToken>>();
+
+void _forwardCancel({required CancelToken from, required CancelToken to}) {
+  if (from.isCancelled) {
+    to.cancel(from.cancelError?.error);
+    return;
+  }
+  var targets = _cancelForwards[from];
+  if (targets == null) {
+    final created = targets = _cancelForwards[from] = <CancelToken>{};
+    from.whenCancel.then((e) {
+      for (final target in [...created]) {
+        target.cancel(e.error);
+      }
+      created.clear();
+    });
+  }
+  targets.add(to);
+}
+
+void _stopForwardingCancel({
+  required CancelToken from,
+  required CancelToken to,
+}) {
+  _cancelForwards[from]?.remove(to);
 }
 
 extension _ObjectExtensions<I extends Object?> on I {
